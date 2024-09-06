@@ -1,5 +1,5 @@
 import { cn } from "@/utils/cn"
-import { BarChart3, FileBarChart, LayoutGrid, Monitor, User } from "lucide-react"
+import { BarChart3, Briefcase, FileBarChart, LayoutGrid, Monitor, User } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 
 
@@ -24,13 +24,18 @@ export const DashboardSideBar = () => {
             icon: User,
         },
         {
+            label: "Departments",
+            route: "/departments",
+            icon: Briefcase,
+        },
+        {
             label: "Reports",
             route: "/reports",
             icon: BarChart3,
         },
         {
-            label: "Files",
-            route: "/files",
+            label: "Documents",
+            route: "/documents",
             icon: FileBarChart,
         },
     ];

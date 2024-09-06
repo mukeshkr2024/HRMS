@@ -3,7 +3,15 @@ import { create, SetState } from "zustand";
 
 type IEmployee = {
   _id: string
-  firstName: string;
+  personalInformation: {
+    firstName: string;
+    middleName: string;
+    lastName: string;
+  }
+  email: string
+  contactInformation: {
+    workPhone: string;
+  }
 };
 
 type AuthState = {
@@ -24,8 +32,8 @@ export const useAuthStore = create<AuthState>((set: SetState<AuthState>) => ({
     try {
       const { data } = await apiClient.get("/auth/validate-session");
 
-      if (data?.employee) {
-        set({ employee: data.employee, loading: false });
+      if (data) {
+        set({ employee: data, loading: false });
       } else {
         set({ employee: null, loading: false });
       }

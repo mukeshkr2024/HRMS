@@ -8,7 +8,7 @@ import { useAuthStore } from "@/context/useAuthStore"
 
 export const Navbar = () => {
     return (
-        <nav className="w-full pl-[30%] bg-white py-8 flex justify-between">
+        <nav className="w-full pl-[30%] bg-white pt-8 flex justify-between">
             <div className="w-[60%] relative flex items-center">
                 <div className="absolute left-4 flex items-center">
                     <img src="/icons/search-icon.svg" className="w-5 h-5" alt="Search Icon" />

@@ -37,7 +37,6 @@ export const AddNewTaskPopup = ({ children }: { children: React.ReactNode }) => 
             title: values.title
         })
         setisOpen(false)
-
         form.reset()
     }
     return (

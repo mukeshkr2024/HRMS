@@ -14,6 +14,9 @@ import { AssetsPage } from "./pages/assets/AssetsPage";
 import { TrainingPage } from "./pages/training/TrainingPage";
 import { TasksPage } from "./pages/tasks/TasksPage";
 import { GoalPage } from "./pages/goals/goals";
+import { DocumentLayout } from "./layouts/DocumentLayout";
+import { NewEmployeePage } from "./pages/employees/NewEmployeePage";
+import { DepartmentPage } from "./pages/department/DepartmentPage";
 
 
 function App() {
@@ -36,8 +39,12 @@ function App() {
             <Route path="/my-info/goals" element={<GoalPage />} />
           </Route>
           <Route path="/employees" element={<EmployeesPage />} />
+          <Route path="/departments" element={<DepartmentPage />} />
+          <Route path="/employees/new" element={<NewEmployeePage />} />
           <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/files" element={<FilesPage />} />
+          <Route element={<DocumentLayout />}>
+            <Route path="/documents" element={<FilesPage />} />
+          </Route>
         </Route>
 
       </Route>

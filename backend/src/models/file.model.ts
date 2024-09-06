@@ -1,4 +1,4 @@
-import { Model, model, Schema, Types } from "mongoose";
+import { Document, Model, model, Schema, Types } from "mongoose";
 
 interface IFile extends Document {
   name: string;
@@ -22,7 +22,8 @@ const fileSchema = new Schema<IFile>(
     },
     folderId: {
       type: Schema.Types.ObjectId,
-      required: true,
+      ref: "Folder",
+      default: null,
     },
     addedBy: {
       type: Schema.Types.ObjectId,

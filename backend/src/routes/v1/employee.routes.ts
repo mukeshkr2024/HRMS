@@ -4,20 +4,21 @@ import {
   deleteEmployeeById,
   getAllEmployees,
   getEmployeeById,
+  getEmployeeInfo,
   updateEmployeeById,
 } from "../../controllers/employee.controller";
 import { authorizeRoles, isAuthenticated } from "../../middleware/auth";
-import { getEmployeePersonalInfo } from "../../controllers/personal-info.controller";
 
 export const employeeRouter = express.Router();
 
 employeeRouter.post(
-  "/",
+  "/create",
   // isAuthenticated,
   // authorizeRoles("admin", "manager"),
   createEmployee
 );
-employeeRouter.get("/", isAuthenticated, getAllEmployees);
+employeeRouter.get("/info", isAuthenticated, getEmployeeInfo)
+employeeRouter.get("/", isAuthenticated, getAllEmployees); // add authorized roles 
 employeeRouter.get("/:employeeId", isAuthenticated, getEmployeeById);
 employeeRouter.delete(
   "/:employeeId",

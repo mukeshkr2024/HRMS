@@ -46,29 +46,32 @@ export const LoginEmployee = CatchAsyncError(
 export const validateSession = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const employeeData = await req.employee;
+      const employeeId = req.employee?._id;
 
-      if (!employeeData) {
-        return next(new ErrorHandler("No data found in the session", 401));
+      if (!employeeId) {
+        return next(new ErrorHandler("Unauthorized: Employee not found", 401));
       }
-      return res.status(200).json({
-        employee: {
-          _id: employeeData._id,
-          firstName: employeeData.firstName,
-          lastName: employeeData.lastName,
-          email: employeeData.email,
-          role: employeeData.role,
-          phone: employeeData.phone,
-          jobTitle: employeeData.jobTitle,
-          status: employeeData.status,
-          employeeNumber: employeeData.employeeNumber,
-        },
-      });
+
+      const employee = await Employee.findById(employeeId)
+        .populate({
+          path: "personalInformation",
+          select: "firstName middleName lastName"
+        }).populate({
+          path: "contactInformation",
+          select: "workPhone -_id"
+        }).select("employeeNumber departmentId positionId jobTitle reportsTo role email personalInformation contactInformation status")
+
+      if (!employee) {
+        return next(new ErrorHandler("Unauthorized: Employee not found", 401));
+      }
+
+      return res.status(200).json(employee);
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error || "An error occurred", 400));
     }
   }
 );
+
 
 export const logoutEmployee = (
   req: Request,

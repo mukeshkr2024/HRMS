@@ -8,11 +8,11 @@ export const DashboardLayout = () => {
         <>
             <div className="w-full flex h-full">
                 <DashboardSideBar />
-                <div className="w-full ml-[331px]  pl-10 pr-16">
-                    <div className="fixed z-50 pl-[331px] left-0 top-0 w-full pr-16">
+                <div className="w-full ml-[280px]  pl-10 pr-16">
+                    <div className="fixed z-50 pl-[280px] left-0 top-0 w-full pr-16">
                         <Navbar />
                     </div>
-                    <main className="mt-28 min-h-[400px]">
+                    <main className="mt-20 min-h-[400px]">
                         <Outlet />
                     </main>
                 </div>

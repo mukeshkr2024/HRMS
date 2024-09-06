@@ -1,9 +1,10 @@
-import { Model, model, Schema, Types } from "mongoose";
+import { Document, Model, model, Schema, Types } from "mongoose";
 
 interface IFolder extends Document {
   name: string;
-  files: Types.ObjectId[];
   employeeId: Types.ObjectId;
+  parentId?: Types.ObjectId;
+  files?: Types.ObjectId[];
 }
 
 const folderSchema = new Schema<IFolder>(
@@ -12,17 +13,20 @@ const folderSchema = new Schema<IFolder>(
       type: String,
       required: true,
     },
-    files: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "File",
-      },
-    ],
     employeeId: {
       type: Schema.Types.ObjectId,
       ref: "Employee",
       required: true,
     },
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Folder",
+      default: null,
+    },
+    files: [{
+      type: Schema.Types.ObjectId,
+      ref: "File",
+    }],
   },
   {
     timestamps: true,
