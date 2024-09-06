@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiClient } from "../api-client"
 
-export const useGetDepartments = () => {
+export const useGetProfiles = () => {
     return useQuery({
-        queryKey: ["departments"],
+        queryKey: ["profiles"],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/departments`);
+            const { data } = await apiClient.get(`/profiles`);
             return data;
         },
     });

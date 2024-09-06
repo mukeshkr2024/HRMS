@@ -6,11 +6,17 @@ import { PersonalInformation } from "../models/personal-information.model";
 import { Address } from "../models/address.model";
 import { Compensation } from "../models/compensation.model";
 import { ContactInformation } from "../models/contact-information.model";
+import { Department } from "../models/department.model";
+import { Position } from "../models/position.model";
 
 export const createEmployee = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { employeeNumber, jobDetails, jobInformation, contactInformation, personalInformation, address, compensation } = req.body;
+
+      if (!employeeNumber || !jobDetails || !jobInformation || !contactInformation || !personalInformation || !address || !compensation) {
+        return res.status(400).json({ message: "All fields are required." });
+      }
 
       const { hireDate } = jobDetails;
       const { firstName, middleName, lastName, preferredName, birthDate, gender, maritalStatus, ssn } = personalInformation;
@@ -19,6 +25,7 @@ export const createEmployee = CatchAsyncError(
       const { street1, street2, city, state, zipCode, country } = address;
       const { paySchedule, payType, payRate, payRateType, ethnicity } = compensation;
 
+      // Validate email and employee number uniqueness
       const existingEmployee = await Employee.findOne({
         $or: [
           { employeeNumber },
@@ -32,6 +39,7 @@ export const createEmployee = CatchAsyncError(
         });
       }
 
+      // Create associated documents
       const [personalInfo, addressInfo, compensationInfo, contactInfo] = await Promise.all([
         PersonalInformation.create({
           firstName,
@@ -67,23 +75,24 @@ export const createEmployee = CatchAsyncError(
         }),
       ]);
 
+
       // Create the employee document
       const employee = await Employee.create({
         employeeNumber,
-        hireDate,
-        departmentId: department || "66d59c9fbc525e0b9b9c882e", // Fallback for department
-        positionId: jobTitle || "66d59c9fbc525e0b9b9c882e", // Fallback for job title
+        hireDate: new Date(hireDate), // Ensure hireDate is a Date object
+        name: `${firstName} ${middleName} ${lastName}`,
+        departmentId: department,
+        position: jobTitle,
         jobTitle,
-        password: "password", // Hash the password
+        password: "password",
         email: workEmail,
         personalInformation: personalInfo._id,
         address: addressInfo._id,
         compensation: compensationInfo._id,
         contactInformation: contactInfo._id,
-        reportsTo: "66d59c9fbc525e0b9b9c882e", // Fallback for manager
+        reportsTo: "66d59c9fbc525e0b9b9c882e",
       });
 
-      // Log created employee (for debugging)
       console.log("Employee created: ", employee);
 
       // Return success response
@@ -92,11 +101,10 @@ export const createEmployee = CatchAsyncError(
         data: employee,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error || "An error occurred while creating the employee.", 400));
     }
   }
 );
-
 
 export const getAllEmployees = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -191,3 +199,40 @@ export const updateEmployeeById = CatchAsyncError(
     }
   }
 );
+
+export const getEmployeeOptions = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+      const departments = await Department.find({}, { name: 1 });
+
+      const profiles = await Position.find({}, { name: 1 });
+
+      const employees = await Employee.find({}, {
+        personalInformation: 1,
+        position: 1
+      }).populate("personalInformation position");
+
+      const formattedEmployees = employees.map(employee => {
+        // @ts-ignore
+        const firstName = employee.personalInformation?.firstName || "";
+        // @ts-ignore
+        const lastName = employee.personalInformation?.lastName || "";
+        const fullName = `${firstName} ${lastName}`.trim();
+
+        return {
+          _id: employee._id,
+          name: fullName || "Unnamed Employee",
+        };
+      });
+
+      return res.status(200).json({
+        departments,
+        profiles,
+        employees: formattedEmployees,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  }
+)

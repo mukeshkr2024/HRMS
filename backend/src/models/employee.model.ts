@@ -13,25 +13,27 @@ export interface IEmployee extends Document {
   employeeNumber: string;
   hireDate: Date;
   departmentId: Schema.Types.ObjectId;
-  positionId: Schema.Types.ObjectId;
+  position: Schema.Types.ObjectId;
   jobTitle: string;
-  reportsTo: string;
+  reportsTo: Schema.Types.ObjectId,
   role: string;
   comparePassword(enteredPassword: string): Promise<boolean>;
   email: string;
   educations: Schema.Types.ObjectId[];
   languages: string[];
+  name: string;
 }
 
 const employeeSchema = new Schema<IEmployee>(
   {
 
     employeeNumber: { type: String, unique: true },
+    name: { type: String, required: true },
     hireDate: { type: Date },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department" },
-    positionId: { type: Schema.Types.ObjectId, ref: "Position" },
+    position: { type: Schema.Types.ObjectId, ref: "Position" },
     jobTitle: { type: String, required: true },
-    reportsTo: { type: String, required: true },
+    reportsTo: { type: Schema.Types.ObjectId, ref: "Employee", required: true },
     role: { type: String, enum: ["admin", "hr", "employee", "manager"], default: "employee" },
     email: {
       type: String,
@@ -43,7 +45,7 @@ const employeeSchema = new Schema<IEmployee>(
     compensation: { type: Schema.Types.ObjectId, ref: "Compensation" },
     contactInformation: { type: Schema.Types.ObjectId, ref: "ContactInformation" },
     password: { type: String, required: true, select: false },
-    status: { type: String, enum: ["active", "inactive", "on-leave"], default: "active" },
+    status: { type: String, enum: ["active", "inactive", "on-leave", "terminated"], default: "active" },
     educations: [
       {
         type: [Schema.Types.ObjectId],

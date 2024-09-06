@@ -10,6 +10,7 @@ import { departmentRouter } from "./v1/departments.routes";
 import { announcementRouter } from "./v1/announcement-routes";
 import { taskRouter } from "./v1/task-routes";
 import { goalRouter } from "./v1/goal.routes";
+import { positionRouter } from "./v1/position.routes";
 
 export const router = express.Router();
 
@@ -29,6 +30,8 @@ router.use("/trainingparticipant", trainingParticipantRouter);
 router.use("/training", trainingRouter);
 // department routes
 router.use("/departments", departmentRouter);
+// positons routes
+router.use("/profiles", positionRouter)
 // goal routes
 router.use("/employee/goals", goalRouter);
 // announcement routes

@@ -17,6 +17,7 @@ import { GoalPage } from "./pages/goals/goals";
 import { DocumentLayout } from "./layouts/DocumentLayout";
 import { NewEmployeePage } from "./pages/employees/NewEmployeePage";
 import { DepartmentPage } from "./pages/department/DepartmentPage";
+import { ProfilesPage } from "./pages/profiles/profiles";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           </Route>
           <Route path="/employees" element={<EmployeesPage />} />
           <Route path="/departments" element={<DepartmentPage />} />
+          <Route path="/profiles" element={<ProfilesPage />} />
           <Route path="/employees/new" element={<NewEmployeePage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route element={<DocumentLayout />}>

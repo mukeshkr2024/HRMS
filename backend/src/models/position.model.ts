@@ -1,21 +1,28 @@
 import { Model, model, Schema, Document } from "mongoose";
 
 export interface IPosition extends Document {
-  title: string;
+  name: string;
   description: string;
+  employees: Schema.Types.ObjectId[];
+  createdAt: Date;
 }
 
 const positionSchema = new Schema<IPosition>(
   {
-    title: {
+    name: {
       type: String,
       required: true,
       maxlength: 255,
     },
     description: {
       type: String,
-      required: true,
     },
+    employees: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Employee",
+      },
+    ],
   },
   {
     timestamps: true,

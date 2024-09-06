@@ -5,6 +5,7 @@ import { router as v1ApiRoutes } from "../routes/index.routes";
 import morgan from "morgan";
 import { ErrorMiddleware } from "../middleware/error";
 import cookieParser from "cookie-parser";
+import { main } from "../../scripts/test";
 
 export const app = express();
 
@@ -20,13 +21,15 @@ app.use(express.json({ limit: "50mb" }));
 //cors4
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:4174", "http://82.112.227.200:4000"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:4174", "http://82.112.227.200:4000", "http://82.112.227.200:4000"],
     credentials: true,
   })
 );
 
 // V1 api routes
 app.use("/api/v1", v1ApiRoutes);
+
+// main()
 
 // test route
 app.get("/api/v1/test", (req: Request, res: Response, next: NextFunction) => {

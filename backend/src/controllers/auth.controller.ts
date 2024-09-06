@@ -59,7 +59,14 @@ export const validateSession = CatchAsyncError(
         }).populate({
           path: "contactInformation",
           select: "workPhone -_id"
+        }).populate({
+          path: "reportsTo",
+          select: "",
+          populate: {
+            path: "personalInformation"
+          }
         }).select("employeeNumber departmentId positionId jobTitle reportsTo role email personalInformation contactInformation status")
+
 
       if (!employee) {
         return next(new ErrorHandler("Unauthorized: Employee not found", 401));

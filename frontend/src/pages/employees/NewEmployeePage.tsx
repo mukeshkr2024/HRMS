@@ -1,9 +1,11 @@
 import { useCreateEmployee } from "@/api/employee/use-create-employee";
+import { useGetEmployeeOptions } from "@/api/employee/use-get-employeeOptions";
 import { EmployeeFormSection } from "@/components/employees/employee-form-section";
 import { EmployeeFormFieldWrapper } from "@/components/employees/employee-form-wrapper";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -32,7 +34,7 @@ const formSchema = z.object({
         paySchedule: z.string().nonempty("Pay schedule is required"),
         payType: z.string().nonempty("Pay type is required"),
         payRate: z.string(),
-        payRateType: z.enum(["hourly", "salary", "commission", "other"]),
+        payRateType: z.string(),
         ethnicity: z.string().optional(),
     }),
     contactInformation: z.object({
@@ -60,6 +62,8 @@ export type EmployeeFormSchemaType = z.infer<typeof formSchema>;
 export const NewEmployeePage = () => {
 
     const mutation = useCreateEmployee()
+
+    const { data, isLoading } = useGetEmployeeOptions()
 
     const navigate = useNavigate()
     const form = useForm<EmployeeFormSchemaType>({
@@ -98,7 +102,7 @@ export const NewEmployeePage = () => {
                 homeEmail: "",
             },
             jobDetails: {
-                hireDate: "",
+                hireDate: new Date().toISOString().split("T")[0],
                 employmentStatus: "",
             },
             jobInformation: {
@@ -115,6 +119,27 @@ export const NewEmployeePage = () => {
         console.log(values);
         mutation.mutate(values)
     };
+
+    if (isLoading) {
+        return <div className="w-full min-h-screen flex items-center justify-center">
+            <Loader className="animate-spin text-muted-foreground" size={20} />
+        </div>
+    }
+
+    const departmentOptions = data?.departments?.map((department: any) => ({
+        value: department._id,
+        label: department.name
+    }));
+
+    const profileOptions = data?.profiles?.map((profile: any) => ({
+        value: profile._id,
+        label: profile.name
+    }));
+
+    const employeeOptions = data?.employees?.map((employee: any) => ({
+        value: employee._id,
+        label: employee.name
+    }))
 
     return (
         <div>
@@ -139,8 +164,33 @@ export const NewEmployeePage = () => {
                                         className="max-w-44"
                                     />
                                     <div className="flex gap-4">
-                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.gender" label="Gender" />
-                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.maritalStatus" label="Marital Status" />
+                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.gender" label="Gender"
+                                            className="w-40"
+                                            options={[
+                                                {
+                                                    label: "Male",
+                                                    value: "male"
+                                                }, {
+                                                    label: "Female",
+                                                    value: "female"
+                                                }, {
+                                                    label: "Other",
+                                                    value: "other"
+                                                }
+                                            ]}
+                                        />
+                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.maritalStatus" label="Marital Status"
+                                            className="w-40"
+                                            options={[
+                                                {
+                                                    label: "Married",
+                                                    value: "married"
+                                                }, {
+                                                    label: "Unmarried",
+                                                    value: "unmarried"
+                                                }
+                                            ]}
+                                        />
                                     </div>
                                     <EmployeeFormFieldWrapper control={form.control} name="personalInformation.ssn" label="SSN" className="max-w-44" />
                                 </div>
@@ -163,13 +213,109 @@ export const NewEmployeePage = () => {
                             {/* Compensation */}
                             <EmployeeFormSection title="Compensation" icon="/icons/home-2.svg">
                                 <div className="flex flex-col gap-4">
-                                    <EmployeeFormFieldWrapper control={form.control} name="compensation.paySchedule" label="Pay Schedule" className="max-w-60" />
+                                    <EmployeeFormFieldWrapper control={form.control} name="compensation.paySchedule" label="Pay Schedule" className="max-w-60"
+                                        options={[
+                                            {
+                                                label: "Weekly",
+                                                value: "weekly"
+                                            },
+                                            {
+                                                label: "Bi-Weekly",
+                                                value: "bi_weekly"
+                                            },
+                                            {
+                                                label: "Monthly",
+                                                value: "monthly"
+                                            },
+                                            {
+                                                label: "Semi-Monthly",
+                                                value: "semi_monthly"
+                                            },
+                                            {
+                                                label: "Quarterly",
+                                                value: "quarterly"
+                                            },
+                                            {
+                                                label: "Annually",
+                                                value: "annually"
+                                            },
+                                            {
+                                                label: "One-Time",
+                                                value: "one_time"
+                                            },
+                                            {
+                                                label: "Other",
+                                                value: "other"
+                                            }
+                                        ]}
+                                    />
                                     <EmployeeFormFieldWrapper control={form.control} name="compensation.payType" label="Pay Type"
                                         className="max-w-60"
+                                        options={[
+                                            {
+                                                label: "Salary",
+                                                value: "salary"
+                                            }, {
+                                                label: "Hourly",
+                                                value: "hourly"
+                                            }, {
+                                                label: "Commission",
+                                                value: "commission"
+                                            }, {
+                                                label: "Contract",
+                                                value: "contract"
+                                            }, {
+                                                label: "Bonus",
+                                                value: "bonus"
+                                            }, {
+                                                label: "Other",
+                                                value: "other"
+                                            }
+                                        ]}
                                     />
                                     <div className="flex gap-4">
                                         <EmployeeFormFieldWrapper control={form.control} name="compensation.payRate" label="Pay Rate" type="number" />
-                                        <EmployeeFormFieldWrapper control={form.control} name="compensation.payRateType" label="Pay Rate Type" />
+                                        <EmployeeFormFieldWrapper control={form.control} name="compensation.payRateType" label="Pay Rate Type"
+                                            className="w-40"
+                                            options={[
+                                                {
+                                                    label: "Fixed",
+                                                    value: "fixed"
+                                                },
+                                                {
+                                                    label: "Hourly",
+                                                    value: "hourly"
+                                                },
+                                                {
+                                                    label: "Daily",
+                                                    value: "daily"
+                                                },
+                                                {
+                                                    label: "Weekly",
+                                                    value: "weekly"
+                                                },
+                                                {
+                                                    label: "Monthly",
+                                                    value: "monthly"
+                                                },
+                                                {
+                                                    label: "Per Project",
+                                                    value: "per_project"
+                                                },
+                                                {
+                                                    label: "Commission-Based",
+                                                    value: "commission_based"
+                                                },
+                                                {
+                                                    label: "Piece Rate",
+                                                    value: "piece_rate"
+                                                },
+                                                {
+                                                    label: "Other",
+                                                    value: "other"
+                                                }
+                                            ]}
+                                        />
                                     </div>
                                     <EmployeeFormFieldWrapper control={form.control} name="compensation.ethnicity" label="Ethnicity" className="max-w-60" />
                                 </div>
@@ -190,7 +336,22 @@ export const NewEmployeePage = () => {
                             <EmployeeFormSection title="Job Details" icon="/icons/call-slash.svg">
                                 <div className="flex gap-4">
                                     <EmployeeFormFieldWrapper control={form.control} name="jobDetails.hireDate" label="Hire Date" type="date" />
-                                    <EmployeeFormFieldWrapper control={form.control} name="jobDetails.employmentStatus" label="Employment Status" />
+                                    <EmployeeFormFieldWrapper control={form.control} name="jobDetails.employmentStatus" label=" Status"
+                                        className="w-40"
+                                        options={[
+                                            {
+                                                label: "Active", value: "active",
+                                            }, {
+                                                label: "Inactive", value: "inactive",
+                                            },
+                                            {
+                                                label: "On-Leave", value: "on-leave",
+                                            },
+                                            {
+                                                label: "Terminated", value: "terminated",
+                                            }
+                                        ]}
+                                    />
                                 </div>
                             </EmployeeFormSection>
 
@@ -198,14 +359,28 @@ export const NewEmployeePage = () => {
                             <EmployeeFormSection title="Job Information" icon="/icons/call-slash.svg">
                                 <div className="flex flex-col gap-4">
                                     <div className="flex gap-4">
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.jobTitle" label="Job Title" className="w-64" />
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.reportsTo" label="Reports To" className="w-64" />
+                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.jobTitle" label="Job Title" className="w-64"
+                                            options={profileOptions}
+                                        />
+                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.reportsTo" label="Reports To" className="w-64"
+                                            useCombobox
+                                            options={employeeOptions}
+                                        />
                                     </div>
                                     <div className="flex gap-4">
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.department" label="Department" className="w-64" />
+                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.department" label="Department" className="w-64"
+                                            options={departmentOptions}
+                                        />
                                         <EmployeeFormFieldWrapper control={form.control} name="jobInformation.division" label="Division" className="w-64" />
                                     </div>
-                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.location" label="Location" className="w-64" />
+                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.location" label="Location" className="w-64"
+                                        options={
+                                            [
+                                                { label: "Pune, India", value: "pune, india" },
+                                                { label: "Patna, India", value: "patna, india" },
+                                            ]
+                                        }
+                                    />
                                 </div>
                             </EmployeeFormSection>
 
