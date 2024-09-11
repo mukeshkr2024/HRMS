@@ -1,10 +1,10 @@
 import { useEmployeeLogin } from "@/api/auth/useLogin";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
   email: z.string().email("Invalid Email"),
@@ -17,8 +17,8 @@ export const LoginPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "test@gmail.com",
-      password: "test@123",
+      email: "",
+      password: "",
     },
   })
 
@@ -30,8 +30,6 @@ export const LoginPage = () => {
     })
   };
 
-  // email: "test@gmail.com",
-  // password: "test@123",
 
   return (
 
@@ -106,18 +104,13 @@ export const LoginPage = () => {
                       </a>
                     </div>
                   </div>
-
                   <Button type="submit"
-                    className="flex justify-center w-full px-4 py-3 font-urbanist font-bold text-sm leading-5 text-[#FFFFFF] bg-[#1FBE8E] hover:bg-[#1FBE8E] rounded-md mt-4">Sign in</Button>
+                    className="flex justify-center w-full px-4 py-3 font-urbanist font-bold text-sm leading-5 text-[#FFFFFF] bg-[#1FBE8E] hover:bg-[#1FBE8E] rounded-md mt-4 pb-5">Sign in</Button>
                 </form>
               </Form>
             </div>
-
           </div>
-
-
         </div>
-
 
         <div className="">
           <img

@@ -25,12 +25,12 @@ export const LoginEmployee = CatchAsyncError(
 
       const access_token = generateToken(employee._id);
 
-      res.cookie("access_token", access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-      });
+      // res.cookie("access_token", access_token, {
+      //   httpOnly: true,
+      //   secure: process.env.NODE_ENV === "production",
+      //   sameSite: "strict",
+      //   maxAge: 7 * 24 * 60 * 60 * 1000,
+      // });
 
       return res.status(200).json({
         sucess: true,
@@ -65,7 +65,7 @@ export const validateSession = CatchAsyncError(
           populate: {
             path: "personalInformation"
           }
-        }).select("employeeNumber departmentId positionId jobTitle reportsTo role email personalInformation contactInformation status")
+        }).select("employeeNumber avatar departmentId positionId jobTitle reportsTo role email personalInformation contactInformation status name")
 
 
       if (!employee) {

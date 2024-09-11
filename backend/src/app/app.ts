@@ -6,6 +6,8 @@ import morgan from "morgan";
 import { ErrorMiddleware } from "../middleware/error";
 import cookieParser from "cookie-parser";
 import { main } from "../../scripts/test";
+import path from "path";
+
 
 export const app = express();
 
@@ -18,6 +20,9 @@ app.use(morgan("dev"));
 // body parser
 app.use(express.json({ limit: "50mb" }));
 
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+
 //cors4
 app.use(
   cors({
@@ -29,7 +34,7 @@ app.use(
 // V1 api routes
 app.use("/api/v1", v1ApiRoutes);
 
-// main()
+main()
 
 // test route
 app.get("/api/v1/test", (req: Request, res: Response, next: NextFunction) => {

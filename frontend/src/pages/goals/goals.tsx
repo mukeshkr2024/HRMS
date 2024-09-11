@@ -52,7 +52,7 @@ export const GoalPage = () => {
                                 <span className="text-[#313131] font-medium">Status</span>
                                 <Select>
                                     <SelectTrigger className="w-[180px] h-9">
-                                        <SelectValue placeholder="Theme" />
+                                        <SelectValue placeholder="Status" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="pending">Pending</SelectItem>

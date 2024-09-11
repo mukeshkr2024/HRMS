@@ -137,8 +137,35 @@ export const addComment = CatchAsyncError(
     }
 )
 
+export const updateGoal = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { goalId } = req.params;
 
+            console.log("Goal ID:", goalId);
+            console.log("Request Body:", req.body);
 
+            const updatedGoal = await Goal.findByIdAndUpdate(
+                goalId,
+                { $set: req.body },
+                { new: true, runValidators: true }
+            );
+
+            if (!updatedGoal) {
+                return next(new ErrorHandler("Goal not found", 404));
+            }
+
+            return res.status(200).json({
+                message: "Goal updated successfully",
+                goal: updatedGoal
+            });
+
+        } catch (error) {
+            console.error("Error updating goal:", error);
+            return next(new ErrorHandler("Failed to update goal", 400));
+        }
+    }
+);
 
 
 

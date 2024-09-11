@@ -7,8 +7,11 @@ import {
   getEmployeeInfo,
   getEmployeeOptions,
   updateEmployeeById,
+  uploadAvatar,
+  // uploadAvatar,
 } from "../../controllers/employee.controller";
 import { authorizeRoles, isAuthenticated } from "../../middleware/auth";
+import { uploadAvatar as uploadAvatarMiddleware } from "../../utils/upload-avatar";
 
 export const employeeRouter = express.Router();
 
@@ -34,3 +37,8 @@ employeeRouter.put(
   authorizeRoles("admin", "manager"),
   updateEmployeeById
 );
+employeeRouter.post("/avatar/upload",
+  isAuthenticated,
+  uploadAvatarMiddleware.single("avatar"),
+  uploadAvatar
+)

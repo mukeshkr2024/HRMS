@@ -2,12 +2,17 @@ import { useGetDepartments } from "@/api/departments/use-get-departments";
 import { AddNewDepartment } from "@/components/departments/add-new-model";
 import { DepartmentColumnData } from "@/components/departments/department-data-coloums";
 import { DepartmentDataTable } from "@/components/departments/department-data-table";
+import { Loader } from "lucide-react";
 
 export const DepartmentPage = () => {
     const { data, isLoading } = useGetDepartments()
 
     if (isLoading) {
-        return null
+        return (<div className="h-full pt-20 w-full flex items-center justify-center">
+            <Loader
+                className="animate-spin text-muted-foreground"
+            />
+        </div>)
     }
 
     return (

@@ -1,7 +1,10 @@
+
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { Department } from "@/types";
+import { ConfirmDialog } from "../confirm-dialog";
+import { useDeleteDepartment } from "@/api/departments/use-delete-department";
 
 export const DepartmentColumnData: ColumnDef<Department>[] = [
     {
@@ -57,6 +60,23 @@ export const DepartmentColumnData: ColumnDef<Department>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: () => <Button variant="link">Edit</Button>,
+        cell: ({
+            row
+        }) => {
+            const deleteMutation = useDeleteDepartment()
+
+            const onDelete = (departmentId: string) => {
+                if (!departmentId) return;
+                deleteMutation.mutate(departmentId)
+            }
+
+            return (<div className="flex gap-x-5 w-full items-center justify-center">
+                <ConfirmDialog
+                    onConfirm={() => onDelete(row.original._id)}
+                >
+                    <Trash size={18} className="text-red-500 cursor-pointer hover:text-red-700" />
+                </ConfirmDialog>
+            </div>)
+        }
     },
 ];

@@ -2,12 +2,20 @@ import { useGetEmployees } from "@/api/employee/use-get-employees";
 import { EmployeeDataData } from "@/components/employees/employee-data";
 import { Employee, EmployeeColumnData } from "@/components/employees/employee-data-coloums";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { Loader, PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export const EmployeesPage = () => {
     const { data, isLoading } = useGetEmployees();
     const navigate = useNavigate();
+
+    if (isLoading) {
+        return (<div className="h-full pt-20 w-full flex items-center justify-center">
+            <Loader
+                className="animate-spin text-muted-foreground"
+            />
+        </div>)
+    }
 
     let employeeData: Employee[] = [];
 
@@ -47,13 +55,7 @@ export const EmployeesPage = () => {
                 </Button>
             </div>
             <div>
-                {isLoading ? (
-                    <p>Loading...</p>
-                ) : (
-                    <div>
-                        <EmployeeDataData columns={EmployeeColumnData} data={employeeData} />
-                    </div>
-                )}
+                <EmployeeDataData columns={EmployeeColumnData} data={employeeData} />
             </div>
         </div>
     );

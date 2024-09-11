@@ -1,13 +1,12 @@
 import { useGetDocuments } from "@/api/document/use-get-documents";
 import { DocumentList } from "@/components/documents/document-list";
 import { useDocumentStore } from "@/context/use-document";
-import { CircleArrowLeft } from "lucide-react";
+import { CircleArrowLeft, Loader } from "lucide-react";
 import { useEffect } from "react";
 
 export const FilesPage = () => {
     const { currentFolderId, setCurrentFolderId, setPreviousFolder, previousFolder } = useDocumentStore();
-
-    const { data } = useGetDocuments(currentFolderId || "");
+    const { data, isLoading } = useGetDocuments(currentFolderId || "");
 
     useEffect(() => {
         if (data?.documents?.parentFolder) {
@@ -16,24 +15,29 @@ export const FilesPage = () => {
     }, [data, setPreviousFolder]);
 
     const handleBackClick = () => {
-        // @ts-ignore
-        if (previousFolder?.parentId) {
-            // @ts-ignore
+        if (previousFolder && previousFolder.parentId) {
             setCurrentFolderId(previousFolder.parentId._id);
         } else {
             setCurrentFolderId(null);
         }
     };
 
+    if (isLoading) {
+        return (
+            <div className="h-full pt-20 w-full flex items-center justify-center">
+                <Loader className="animate-spin text-muted-foreground" />
+            </div>
+        );
+    }
+
     return (
         <div className="w-full">
             {previousFolder && (
-                <div>
+                <div className="absolute top-6 right-0 flex items-center gap-2.5">
                     <CircleArrowLeft
                         onClick={handleBackClick}
                         className="cursor-pointer"
                     />
-                    {/*  @ts-ignore */}
                     <h3>{previousFolder.name}</h3>
                 </div>
             )}

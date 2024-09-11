@@ -23,12 +23,10 @@ import { ProfilesPage } from "./pages/profiles/profiles";
 function App() {
   return (
     <Routes>
-      {/* Public routes */}
       <Route element={<UnprotectedRoutes />}>
         <Route path="/login" element={<LoginPage />} />
       </Route>
 
-      {/* Protected Routes */}
       <Route element={<PrivateRoutes />}>
         <Route element={<DashboardLayout />}>
           <Route path="/" element={<HomePage />} />

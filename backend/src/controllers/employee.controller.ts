@@ -8,6 +8,8 @@ import { Compensation } from "../models/compensation.model";
 import { ContactInformation } from "../models/contact-information.model";
 import { Department } from "../models/department.model";
 import { Position } from "../models/position.model";
+import path from "path"
+import { API_URL } from "../config/config";
 
 export const createEmployee = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +22,7 @@ export const createEmployee = CatchAsyncError(
 
       const { hireDate } = jobDetails;
       const { firstName, middleName, lastName, preferredName, birthDate, gender, maritalStatus, ssn } = personalInformation;
-      const { department, jobTitle } = jobInformation;
+      const { department, jobTitle, reportsTo } = jobInformation;
       const { workEmail, workPhone, mobilePhone, homePhone, homeEmail } = contactInformation;
       const { street1, street2, city, state, zipCode, country } = address;
       const { paySchedule, payType, payRate, payRateType, ethnicity } = compensation;
@@ -90,7 +92,7 @@ export const createEmployee = CatchAsyncError(
         address: addressInfo._id,
         compensation: compensationInfo._id,
         contactInformation: contactInfo._id,
-        reportsTo: "66d59c9fbc525e0b9b9c882e",
+        reportsTo: reportsTo
       });
 
       console.log("Employee created: ", employee);
@@ -135,6 +137,12 @@ export const getEmployeeInfo = CatchAsyncError(
         path: "address"
       }).populate({
         path: "contactInformation"
+      }).populate({
+        path: "reportsTo"
+      }).populate({
+        path: "position"
+      }).populate({
+        path: "department"
       })
 
       return res.status(200).json(employee);
@@ -236,3 +244,30 @@ export const getEmployeeOptions = CatchAsyncError(
     }
   }
 )
+
+export const uploadAvatar = CatchAsyncError(async (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded." });
+  }
+
+  let filePath = path.posix.join("/uploads/avatars/", req.file.filename);
+  filePath = filePath.replace(/\\/g, '/');
+
+  const avatar_url = `${process.env.API_URL}${filePath}`;
+
+  try {
+    const employeeId = req.employee.id;
+    const updatedEmployee = await Employee.findByIdAndUpdate(employeeId, {
+      avatar: avatar_url,
+    }, { new: true });
+
+    if (!updatedEmployee) {
+      return res.status(404).json({ message: "Employee not found!" });
+    }
+
+    res.status(200).json({ message: "Avatar uploaded successfully." });
+  } catch (error) {
+    console.error("Error updating avatar:", error);
+    res.status(500).json({ message: "Server error." });
+  }
+});

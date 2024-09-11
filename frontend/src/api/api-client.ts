@@ -1,8 +1,21 @@
+import { API_URL } from "@/utils/config";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export const apiClient = axios.create({
-  baseURL: "http://localhost:8000/api/v1",
-  // baseURL: "http://82.112.227.200:8082/api/v1",
-  // baseURL: "http://82.112.227.200:8082/api/v1",
+  baseURL: API_URL + "/api/v1",
   withCredentials: true,
 })
+
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);

@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircle } from "lucide-react";
+import { Loader, PlusCircle } from "lucide-react";
+import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -49,10 +50,7 @@ const formSchema = z.object({
         employmentStatus: z.string().nonempty("Employment status is required"),
     }),
     jobInformation: z.object({
-        jobTitle: z.string().nonempty("Job title is required"),
         reportsTo: z.string().nonempty("Reports to is required"),
-        department: z.string().nonempty("Department is required"),
-        division: z.string().optional(),
         location: z.string().nonempty("Location is required"),
     }),
     languages: z.array(z.object({
@@ -66,64 +64,52 @@ const formSchema = z.object({
         startDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid start date format" }),
         endDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid end date format" }),
     })).optional(),
-
+    position: z.string().nonempty("Job title is required"),
+    department: z.string().nonempty("Job title is required"),
 });
 
 export type EmployeeFormSchemaType = z.infer<typeof formSchema>;
 
 export const MyInfo = () => {
-    const { data } = useGetEmployee()
-
+    const { data, isLoading } = useGetEmployee();
     const form = useForm<EmployeeFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeNumber: data?.employeeNumber || "",
-            status: data?.status || "",
+            employeeNumber: "",
+            status: "",
             personalInformation: {
-                firstName: data?.personalInformation?.firstName || "",
-                middleName: data?.personalInformation?.middleName || "",
-                lastName: data?.personalInformation?.lastName || "",
-                preferredName: data?.personalInformation?.preferredName || "",
-                birthDate: data?.personalInformation?.dateOfBirth || "",
-                gender: data?.personalInformation?.gender || "",
-                maritalStatus: data?.personalInformation?.maritalStatus || "",
-                ssn: data?.personalInformation?.ssn || "",
+                firstName: "",
+                middleName: "",
+                lastName: "",
+                preferredName: "",
+                birthDate: "",
+                gender: "",
+                maritalStatus: "",
+                ssn: "",
             },
             address: {
-                street1: data?.address?.street1 || "",
-                street2: data?.address?.street2 || "",
-                city: data?.address?.city || "",
-                state: data?.address?.state || "",
-                zipCode: data?.address?.zipCode || "",
-                country: data?.address?.country || "",
+                street1: "",
+                street2: "",
+                city: "",
+                state: "",
+                zipCode: "",
+                country: "",
             },
             contactInformation: {
-                workPhone: data?.contactInformation?.workPhone || "",
-                mobilePhone: data?.contactInformation?.mobilePhone || "",
-                homePhone: data?.contactInformation?.homePhone || "",
-                workEmail: data?.contactInformation?.workEmail || "",
-                homeEmail: data?.contactInformation?.homeEmail || "",
+                workPhone: "",
+                mobilePhone: "",
+                homePhone: "",
+                workEmail: "",
+                homeEmail: "",
             },
             jobInformation: {
-                jobTitle: "",
                 reportsTo: "",
-                department: "",
-                division: "",
                 location: "",
             },
-            languages: [{ name: "" }, { name: "" }],
-            educations: [
-                {
-
-                }
-            ]
+            languages: [{ name: "" }],
+            educations: [{}]
         }
     });
-
-    const onSubmit = (values: EmployeeFormSchemaType) => {
-        console.log(values);
-        // You can handle form submission here, e.g., mutation.mutate(values)
-    };
 
     const { fields, append } = useFieldArray({
         control: form.control,
@@ -135,7 +121,68 @@ export const MyInfo = () => {
         name: "educations",
     });
 
+    useEffect(() => {
+        if (data) {
+            form.reset({
+                employeeNumber: data?.employeeNumber || "",
+                status: data?.status || "",
+                personalInformation: {
+                    firstName: data?.personalInformation?.firstName || "",
+                    middleName: data?.personalInformation?.middleName || "",
+                    lastName: data?.personalInformation?.lastName || "",
+                    preferredName: data?.personalInformation?.preferredName || "",
+                    birthDate: data?.personalInformation?.dateOfBirth || "",
+                    gender: data?.personalInformation?.gender || "",
+                    maritalStatus: data?.personalInformation?.maritalStatus || "",
+                    ssn: data?.personalInformation?.ssn || "",
+                },
+                address: {
+                    street1: data?.address?.street1 || "",
+                    street2: data?.address?.street2 || "",
+                    city: data?.address?.city || "",
+                    state: data?.address?.state || "",
+                    zipCode: data?.address?.zipCode || "",
+                    country: data?.address?.country || "",
+                },
+                contactInformation: {
+                    workPhone: data?.contactInformation?.workPhone || "",
+                    mobilePhone: data?.contactInformation?.mobilePhone || "",
+                    homePhone: data?.contactInformation?.homePhone || "",
+                    workEmail: data?.contactInformation?.workEmail || "",
+                    homeEmail: data?.contactInformation?.homeEmail || "",
+                },
+                jobInformation: {
+                    reportsTo: data?.jobInformation?.reportsTo || "",
+                    location: data?.jobInformation?.location || "",
+                },
+                languages: data?.languages || [{ name: "" }],
+                educations: data?.educations || [{
+                    college: "",
+                    degree: "",
+                    specialization: "",
+                    gpa: "",
+                    startDate: "",
+                    endDate: "",
+                }],
+                department: data?.department?.name || "",
+                position: data?.position?.name || "",
+            });
+        }
+    }, [data, form]);
 
+    const onSubmit = (values: EmployeeFormSchemaType) => {
+        console.log(values);
+    };
+
+    if (isLoading) {
+        return (
+            <div className="w-full flex justify-center items-center h-screen">
+                <Loader
+                    className="animate-spin text-muted-foreground"
+                />
+            </div>
+        );
+    }
     return (
         <div className="w-full">
             <div className="w-full">
@@ -149,8 +196,8 @@ export const MyInfo = () => {
                                     isReadOnly={true}
                                 />
                                 <EmployeeFormFieldWrapper control={form.control} name="status" label="Status" isReadOnly={true} />
-                                <EmployeeFormFieldWrapper control={form.control} name="jobInformation.jobTitle" label="Designation" isReadOnly={true} />
-                                <EmployeeFormFieldWrapper control={form.control} name="jobInformation.department" label="Department" isReadOnly={true} />
+                                <EmployeeFormFieldWrapper control={form.control} name="position" label="Designation" isReadOnly={true} />
+                                <EmployeeFormFieldWrapper control={form.control} name="department" label="Department" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.firstName" label="First name" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.middleName" label="Middle name" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.lastName" label="Last name" isReadOnly={true} />
@@ -231,32 +278,9 @@ export const MyInfo = () => {
                                                 label="End Date"
                                                 type="date"
                                             />
-                                            {/* <button
-                                                type="button"
-                                                onClick={() => removeEducation(index)}
-                                                className="btn btn-danger"
-                                            >
-                                                Remove
-                                            </button> */}
                                         </div>
                                     </Card>
                                 ))}
-                                {/* <button
-                                    type="button"
-                                    onClick={() =>
-                                        appendEducation({
-                                            college: "",
-                                            degree: "",
-                                            specialization: "",
-                                            gpa: "",
-                                            startDate: "",
-                                            endDate: "",
-                                        })
-                                    }
-                                    className="btn btn-primary mt-2"
-                                >
-                                    Add Education
-                                </button> */}
                             </div>
                             <div className="w-full flex  mt-4 items-center justify-end">
                                 <Button

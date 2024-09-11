@@ -20,7 +20,11 @@ type Role = (typeof Roles)[keyof typeof Roles];
 // isAuthenticated middleware
 export const isAuthenticated = CatchAsyncError(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
-    const access_token = req.cookies.access_token;
+
+    const access_token =
+      req.cookies.access_token || req.headers.authorization?.split(" ")[1];
+
+    console.log(access_token);
 
     if (!access_token) {
       return next(

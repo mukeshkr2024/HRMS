@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/table";
 import { Department } from "@/types";
 
-interface DepartmentDataProps {
+interface ProfileDataProps {
     columns: ColumnDef<Department>[];
     data: Department[];
 }
 
-export function DepartmentDataTable({ columns, data }: DepartmentDataProps) {
+export function ProfileDataTable({ columns, data }: ProfileDataProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
 
     const table = useReactTable({

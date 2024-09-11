@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createDepartment,
+  deleteDepartment,
   getAllDepartments,
 
 } from "../../controllers/departments.controller";
@@ -14,3 +15,4 @@ departmentRouter.post(
   createDepartment
 );
 departmentRouter.get("/", isAuthenticated, getAllDepartments)
+departmentRouter.delete("/:departmentId", isAuthenticated, deleteDepartment)

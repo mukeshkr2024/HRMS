@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { Asset } from "./asset-details"
-import { statusColor } from "@/utils";
+import { formatDate } from "@/utils";
 
 
 
@@ -22,33 +22,40 @@ export const columns: ColumnDef<Asset>[] = [
     {
         accessorKey: "assignedAt",
         header: "Date assigned",
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
         cell: ({ row }) => {
-            const status: string = row.getValue("status");
-            const color = statusColor(status)
             return (
-                <div className="flex items-center">
-                    <span
-                        style={{
-                            backgroundColor: color,
-                        }}
-                        className="inline-block size-[10px] rounded-full mr-[8px]"
-                    ></span>
-                    <p style={{ margin: 0 }}>{status}</p>
+                <div>
+                    {formatDate(row.original.assignedAt)}
                 </div>
-            );
+            )
         }
     },
-    {
-        accessorKey: "actions",
-        header: "Tickets",
-        cell: () => (
-            <div>
-                Tickets
-            </div>
-        ),
-    }
+    // {
+    //     accessorKey: "status",
+    //     header: "Status",
+    //     cell: ({ row }) => {
+    //         const status: string = row.getValue("status");
+    //         const color = statusColor(status)
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span
+    //                     style={{
+    //                         backgroundColor: color,
+    //                     }}
+    //                     className="inline-block size-[10px] rounded-full mr-[8px]"
+    //                 ></span>
+    //                 <p style={{ margin: 0 }}>{status}</p>
+    //             </div>
+    //         );
+    //     }
+    // },
+    // {
+    //     accessorKey: "actions",
+    //     header: "Tickets",
+    //     cell: () => (
+    //         <div>
+    //             Tickets
+    //         </div>
+    //     ),
+    // }
 ]

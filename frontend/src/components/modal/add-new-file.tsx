@@ -1,3 +1,4 @@
+
 import {
     Dialog,
     DialogContent,
@@ -16,13 +17,14 @@ import {
 import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 
 interface FileUploadDialogProps {
     label: string;
     formItemLabel: string;
     onSubmit: SubmitHandler<{ file: File | null }>;
     children: React.ReactNode;
+    isOpen: boolean
+    setIsOpen: (isOpen: boolean) => void
 }
 
 const fileSchema = z.object({
@@ -33,8 +35,9 @@ export const FileUploadDialog = ({
     label,
     onSubmit,
     children,
+    isOpen,
+    setIsOpen
 }: FileUploadDialogProps) => {
-    const [isOpen, setIsOpen] = useState(false);
 
     const form = useForm<{ file: File | null }>({
         resolver: zodResolver(fileSchema),

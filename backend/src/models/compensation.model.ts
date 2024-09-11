@@ -14,7 +14,7 @@ const compensationSchema = new Schema<ICompensation>({
     paySchedule: { type: String, required: true },
     payType: { type: String, required: true },
     payRate: { type: Number, required: true },
-    payRateType: { type: String, enum: ["hourly", "salary", "commission", "other"], required: true },
+    payRateType: { type: String, enum: ["hourly", "salary", "commission", "other", "fixed"], required: true },
     salary: { type: Number },
     bonus: { type: Number },
     commission: { type: Number },

@@ -4,8 +4,6 @@ const uploadDir = path.join(__dirname, "../../uploads");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const employeeName = req.employee?.firstName || "unknown";
-    // const uploadPath = `${uploadDir}/documents/${employeeName}`;
     const uploadPath = `${uploadDir}/documents/`;
     cb(null, uploadPath);
   },

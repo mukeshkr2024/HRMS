@@ -50,3 +50,20 @@ export const getAllDepartments = CatchAsyncError(
         }
     }
 )
+
+export const deleteDepartment = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const departmentId = await req.params.departmentId;
+            const department = await Department.findByIdAndDelete(departmentId);
+            if (!department) {
+                throw new ErrorHandler("Department not found", 404);
+            }
+            return res.status(200).json({
+                message: "Department deleted successfully"
+            })
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+        }
+    }
+)

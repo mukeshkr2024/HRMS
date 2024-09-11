@@ -12,7 +12,7 @@ export interface IEmployee extends Document {
   status: string;
   employeeNumber: string;
   hireDate: Date;
-  departmentId: Schema.Types.ObjectId;
+  department: Schema.Types.ObjectId;
   position: Schema.Types.ObjectId;
   jobTitle: string;
   reportsTo: Schema.Types.ObjectId,
@@ -22,6 +22,7 @@ export interface IEmployee extends Document {
   educations: Schema.Types.ObjectId[];
   languages: string[];
   name: string;
+  avatar: string;
 }
 
 const employeeSchema = new Schema<IEmployee>(
@@ -30,7 +31,7 @@ const employeeSchema = new Schema<IEmployee>(
     employeeNumber: { type: String, unique: true },
     name: { type: String, required: true },
     hireDate: { type: Date },
-    departmentId: { type: Schema.Types.ObjectId, ref: "Department" },
+    department: { type: Schema.Types.ObjectId, ref: "Department" },
     position: { type: Schema.Types.ObjectId, ref: "Position" },
     jobTitle: { type: String, required: true },
     reportsTo: { type: Schema.Types.ObjectId, ref: "Employee", required: true },
@@ -46,6 +47,7 @@ const employeeSchema = new Schema<IEmployee>(
     contactInformation: { type: Schema.Types.ObjectId, ref: "ContactInformation" },
     password: { type: String, required: true, select: false },
     status: { type: String, enum: ["active", "inactive", "on-leave", "terminated"], default: "active" },
+    avatar: { type: String },
     educations: [
       {
         type: [Schema.Types.ObjectId],

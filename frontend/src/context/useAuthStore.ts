@@ -12,6 +12,10 @@ type IEmployee = {
   contactInformation: {
     workPhone: string;
   }
+  avatar: string
+  reportsTo: {
+    name: string;
+  }
 };
 
 type AuthState = {

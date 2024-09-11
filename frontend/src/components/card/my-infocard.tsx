@@ -1,21 +1,22 @@
 import { useAuthStore } from "@/context/useAuthStore"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
+import { UploadAvatar } from "../my-info/upload-avatar"
 
 export const MyInfoCard = () => {
 
     const { employee, loading } = useAuthStore()
 
-    // console.log(employee);
-
     if (loading) return <div>Loading...</div>
-
 
     return (
         <Card className="flex flex-wrap justify-between items-center px-14 py-8 font-urbanist shadow-md">
             <div className="flex gap-x-10">
-                <div>
-                    <img src="/my-info.svg" alt="my-info" />
+                <div className="flex items-center justify-center">
+                    <UploadAvatar
+                        name="cn"
+                        avatar={employee?.avatar!}
+                    />
                 </div>
                 <div className="flex flex-col gap-y-4">
                     <h3 className="font-semibold text-3xl text-[#000000]">{employee?.personalInformation?.firstName} {employee?.personalInformation?.middleName} {employee?.personalInformation?.lastName}</h3>
@@ -53,7 +54,7 @@ export const MyInfoCard = () => {
                                 <p className="text-[#1E1E1E]">Reports to</p>
                                 <div className="flex items-center gap-x-3">
                                     <img src="/my-info.svg" alt="" className="size-[23px]" />
-                                    <p className="font-normal text-xs">Daisy Jane</p>
+                                    <p className="font-normal text-xs">{employee?.reportsTo?.name}</p>
                                 </div>
                             </div>
                         </div>

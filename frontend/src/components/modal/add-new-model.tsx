@@ -18,7 +18,6 @@ import { z } from "zod";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
-import { useState } from "react";
 
 interface AddNewDialogProps {
     fieldName: string;
@@ -27,6 +26,8 @@ interface AddNewDialogProps {
     formItemLabel: string;
     onSubmit: SubmitHandler<{ [key: string]: string }>;
     children: React.ReactNode;
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const formSchema = (fieldName: string) =>
@@ -41,8 +42,9 @@ export const AddNewDialog = ({
     formItemLabel,
     onSubmit,
     children,
+    isOpen,
+    setIsOpen
 }: AddNewDialogProps) => {
-    const [isOpen, setIsOpen] = useState(false);
 
     const form = useForm<{ [key: string]: string }>({
         resolver: zodResolver(formSchema(fieldName)),
