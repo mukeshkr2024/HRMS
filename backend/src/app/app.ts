@@ -26,7 +26,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 //cors4
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:4174", "http://82.112.227.200:4000", "http://82.112.227.200:4000"],
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:4174", "http://82.112.227.200:4000", "http://82.112.227.200:4000", "https://hrms.cloudprism.in", "https://www.hrms.cloudprism.in"],
     credentials: true,
   })
 );
