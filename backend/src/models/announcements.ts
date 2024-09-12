@@ -25,11 +25,9 @@ const announcementSchema = new Schema<IAnnouncements>(
     },
     startDate: {
       type: Date,
-      // required: true,
     },
     endDate: {
       type: Date,
-      // required: true,
     },
     audience: {
       type: String,

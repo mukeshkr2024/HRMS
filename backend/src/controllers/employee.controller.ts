@@ -271,3 +271,55 @@ export const uploadAvatar = CatchAsyncError(async (req: Request, res: Response) 
     res.status(500).json({ message: "Server error." });
   }
 });
+
+export const updateMyInfo = CatchAsyncError(async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    console.log(req.body);
+
+    const { address, contactInformation, languages, educations } = req.body;
+
+    // Find the employee
+    const employee = await Employee.findById(req.employee.id).exec();
+
+    if (!employee) {
+      return next(new ErrorHandler("Employee not found", 404));
+    }
+
+    // Update address if provided
+    if (address) {
+      await Address.findByIdAndUpdate(employee.address, address, { new: true }).exec();
+    }
+
+    // Update contact information if provided
+    if (contactInformation) {
+      await ContactInformation.findByIdAndUpdate(employee.contactInformation, contactInformation, { new: true }).exec();
+    }
+
+    // Update languages
+    if (languages) {
+      employee.languages = languages.map((language: { name: string }) => language.name);
+    }
+
+    if (educations) {
+      employee.educations = educations.map((education: { college: string, degree: string, specialization: string, gpa: string, startDate: string, endDate: string }) => ({
+        college: education.college,
+        degree: education.degree,
+        specialization: education.specialization,
+        gpa: education.gpa,
+        startDate: education.startDate,
+        endDate: education.endDate
+      }));
+    }
+
+    // Save the updated employee
+    const updatedEmployee = await employee.save();
+
+    return res.status(200).json(updatedEmployee);
+  } catch (error) {
+    return next(new ErrorHandler(error, 400));
+  }
+});

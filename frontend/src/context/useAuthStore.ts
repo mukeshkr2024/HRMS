@@ -8,6 +8,7 @@ type IEmployee = {
     middleName: string;
     lastName: string;
   }
+  name: string;
   email: string
   contactInformation: {
     workPhone: string;

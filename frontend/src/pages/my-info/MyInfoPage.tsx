@@ -1,4 +1,5 @@
 import { useGetEmployee } from "@/api/employee/use-get-employeeInfo";
+import { useUpdateMyInfo } from "@/api/employee/use-update-myInfo";
 import { EmployeeFormSection } from "@/components/employees/employee-form-section";
 import { EmployeeFormFieldWrapper } from "@/components/employees/employee-form-wrapper";
 import { Button } from "@/components/ui/button";
@@ -31,27 +32,12 @@ const formSchema = z.object({
         zipCode: z.string().nonempty("Zip code is required").length(5, "Zip code must be 5 digits"),
         country: z.string().nonempty("Country is required"),
     }),
-    compensation: z.object({
-        paySchedule: z.string().nonempty("Pay schedule is required"),
-        payType: z.string().nonempty("Pay type is required"),
-        payRate: z.number().nonnegative("Pay rate must be a positive number").optional(),
-        payRateType: z.enum(["hourly", "salary", "commission", "other"]),
-        ethnicity: z.string().optional(),
-    }),
     contactInformation: z.object({
         workPhone: z.string().optional(),
         mobilePhone: z.string().optional(),
         homePhone: z.string().optional(),
         workEmail: z.string().optional(),
         homeEmail: z.string().optional(),
-    }),
-    jobDetails: z.object({
-        hireDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid hire date format" }),
-        employmentStatus: z.string().nonempty("Employment status is required"),
-    }),
-    jobInformation: z.object({
-        reportsTo: z.string().nonempty("Reports to is required"),
-        location: z.string().nonempty("Location is required"),
     }),
     languages: z.array(z.object({
         name: z.string().nonempty("Language is required"),
@@ -72,6 +58,8 @@ export type EmployeeFormSchemaType = z.infer<typeof formSchema>;
 
 export const MyInfo = () => {
     const { data, isLoading } = useGetEmployee();
+    const mutation = useUpdateMyInfo()
+
     const form = useForm<EmployeeFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -101,10 +89,6 @@ export const MyInfo = () => {
                 homePhone: "",
                 workEmail: "",
                 homeEmail: "",
-            },
-            jobInformation: {
-                reportsTo: "",
-                location: "",
             },
             languages: [{ name: "" }],
             educations: [{}]
@@ -151,11 +135,11 @@ export const MyInfo = () => {
                     workEmail: data?.contactInformation?.workEmail || "",
                     homeEmail: data?.contactInformation?.homeEmail || "",
                 },
-                jobInformation: {
-                    reportsTo: data?.jobInformation?.reportsTo || "",
-                    location: data?.jobInformation?.location || "",
-                },
-                languages: data?.languages || [{ name: "" }],
+                languages: data?.languages?.map((language: string) => {
+                    return {
+                        name: language
+                    }
+                }) || [{ name: "" }],
                 educations: data?.educations || [{
                     college: "",
                     degree: "",
@@ -172,7 +156,11 @@ export const MyInfo = () => {
 
     const onSubmit = (values: EmployeeFormSchemaType) => {
         console.log(values);
+        mutation.mutate(values)
     };
+
+    console.log(form.formState.errors);
+
 
     if (isLoading) {
         return (
@@ -248,33 +236,33 @@ export const MyInfo = () => {
                                         <div className="grid grid-cols-2 gap-4">
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
-                                                name={`education.${index}.college`}
+                                                name={`educations.${index}.college`}
                                                 label="College"
                                             />
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
-                                                name={`education.${index}.degree`}
+                                                name={`educations.${index}.degree`}
                                                 label="Degree"
                                             />
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
-                                                name={`education.${index}.specialization`}
+                                                name={`educations.${index}.specialization`}
                                                 label="Specialization"
                                             />
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
-                                                name={`education.${index}.gpa`}
+                                                name={`educations.${index}.gpa`}
                                                 label="GPA"
                                             />
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
-                                                name={`education.${index}.startDate`}
+                                                name={`educations.${index}.startDate`}
                                                 label="Start Date"
                                                 type="date"
                                             />
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
-                                                name={`education.${index}.endDate`}
+                                                name={`educations.${index}.endDate`}
                                                 label="End Date"
                                                 type="date"
                                             />

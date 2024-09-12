@@ -7,6 +7,9 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useEffect, useState } from 'react'
 import { useUpdateGoalProgress } from '@/api/goals/use-update-goalProgress'
+import { formatDate } from '@/utils'
+import { Loader } from 'lucide-react'
+import { UserAvatar } from '../shared/user-avatar'
 
 interface UpdateGoalProps {
     goalId: string
@@ -15,7 +18,7 @@ interface UpdateGoalProps {
 
 export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
     const [progress, setProgress] = useState<number>(0)
-    const { data: goal } = useGetGoal(goalId)
+    const { data: goal, isLoading } = useGetGoal(goalId)
 
     useEffect(() => {
         if (goal?.progress) {
@@ -42,10 +45,25 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
         })
     }
 
+    if (isLoading) {
+        return <div className='flex w-full h-full items-center justify-center'>
+            <Loader
+                className='text-muted-foreground animate-spin'
+            />
+        </div>
+    }
+
     return (
-        <Card>
+        <Card className='mt-4'>
             <CardHeader className='space-y-4'>
-                {/* <p className='text-sm text-red-500 font-semibold'>Created: {formatDate(goal?.createdAt)} - Due: {formatDate(goal?.dueDate)}</p> */}
+                <div className='flex w-full justify-between items-center'>
+                    <p className='text-sm text-red-500 font-semibold'>Created: {formatDate(goal?.createdAt)} - Due: {formatDate(goal?.dueDate)}</p>
+                    <Button
+                        variant="addAction"
+                        className='h-9 font-semibold px-6'
+                        onClick={() => setIsEditing(null)}
+                    >Close</Button>
+                </div>
                 <CardTitle>{goal?.title}</CardTitle>
                 <CardDescription>{goal?.description}</CardDescription>
                 <CardContent className='p-0'>
@@ -80,10 +98,14 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
                         <div className='flex gap-y-4 flex-col mt-5'>
                             {goal?.comments?.length > 0 ? (
                                 goal.comments.map((comment: any) => (
-                                    <div key={comment._id} className='flex gap-2.5 mt-2'>
-                                        <img src="/icons/avatar-icon.svg" alt="" className='w-[40px] h-[40px]' />
+                                    <div key={comment._id} className='flex gap-2.5 mt-2 items-center '>
+                                        <UserAvatar
+                                            avatar={comment?.addedBy?.avatar}
+                                            name={comment?.addedBy?.name}
+                                            className='w-[40px] h-[40px]'
+                                        />
                                         <div>
-                                            <h3>{comment?.addedBy?.firstName} {comment?.addedBy?.lastName}</h3>
+                                            <h3 className='text-[#242424] font-semibold font-urbanist'>{comment?.addedBy?.name} </h3>
                                             <p className='text-muted-foreground text-sm'>{comment?.title}</p>
                                         </div>
                                     </div>

@@ -8,7 +8,7 @@ import { formatDate } from "@/utils";
 
 export const columns: ColumnDef<Asset>[] = [
     {
-        accessorKey: "category",
+        accessorKey: "name",
         header: "Category",
     },
     {
@@ -16,7 +16,7 @@ export const columns: ColumnDef<Asset>[] = [
         header: "Description",
     },
     {
-        accessorKey: "serial",
+        accessorKey: "serialNo",
         header: "Serial no.",
     },
     {

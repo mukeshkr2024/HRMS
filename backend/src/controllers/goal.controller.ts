@@ -78,7 +78,7 @@ export const getGoal = CatchAsyncError(
                 _id: goalId,
             }).populate({
                 path: "comments.addedBy",
-                select: "firstName middleName lastName email",
+                select: "name email avatar",
             })
 
             if (!goal) {

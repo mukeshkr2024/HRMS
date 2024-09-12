@@ -7,6 +7,7 @@ import {
   getEmployeeInfo,
   getEmployeeOptions,
   updateEmployeeById,
+  updateMyInfo,
   uploadAvatar,
   // uploadAvatar,
 } from "../../controllers/employee.controller";
@@ -31,6 +32,7 @@ employeeRouter.delete(
   authorizeRoles("admin"),
   deleteEmployeeById
 );
+employeeRouter.put("/my-info", isAuthenticated, updateMyInfo)
 employeeRouter.put(
   "/:employeeId",
   isAuthenticated,

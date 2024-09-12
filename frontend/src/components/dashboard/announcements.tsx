@@ -5,6 +5,8 @@ import { AddNewAnnouncementPopup } from "./add-newAnnouncement";
 import { useGetAnnouncements } from "@/api/announcement/useGetAnnouncemts";
 import { useAuthStore } from "@/context/useAuthStore";
 import { useDeleteAnnouncement } from "@/api/announcement/useDeleteAnnouncement";
+import { UserAvatar } from "../shared/user-avatar";
+import { ConfirmDialog } from "../confirm-dialog";
 
 
 export const Announcements = () => {
@@ -24,7 +26,6 @@ export const Announcements = () => {
     }
 
 
-    const profilePic = "https://media.istockphoto.com/id/1365997131/photo/portrait-of-mid-20s-african-american-man-outdoors-at-dusk.webp?b=1&s=170667a&w=0&k=20&c=_XMq-GZm_VV-N_kS8KCHp1nNjhdKkaLz0JgRdl3OlAk="
 
     return (
         <section className="flex-1">
@@ -45,13 +46,19 @@ export const Announcements = () => {
                 <div className="px-10 py-8 flex flex-col gap-y-5">
                     {data?.announcements.map((announcement: any) => (
                         <div key={announcement?._id} className="flex items-center gap-x-4">
-                            <img src={profilePic} alt={announcement.author} height={40} width={40} className="size-[40px] rounded-full object-cover" />
-                            <div>
-                                <div className="flex justify-between">
-                                    <span className="text-[#242424] font-semibold">{announcement.author || "Daisy"}</span>
-                                    {employee?._id === announcement?.createdBy && <div>
-                                        <Trash className="size-3 text-red-400 cursor-pointer" onClick={() => { handleDelete(announcement?._id) }} />
-                                    </div>}
+                            <UserAvatar
+                                className="size-[40px]"
+                                avatar={announcement?.createdBy?.avatar}
+                                name={announcement?.createdBy?.name}
+                            />
+                            <div className="w-full">
+                                <div className="flex justify-between w-full">
+                                    <span className="text-[#242424] font-semibold">{announcement?.createdBy?.name}</span>
+                                    {employee?._id === announcement?.createdBy?._id && <ConfirmDialog
+                                        onConfirm={() => { handleDelete(announcement?._id) }}
+                                    >
+                                        <Trash className="size-3 text-red-400 cursor-pointer" />
+                                    </ConfirmDialog>}
                                 </div>
                                 <p className="text-[#616161] font-normal text-sm">{announcement.description}</p>
                             </div>

@@ -50,8 +50,24 @@ const employeeSchema = new Schema<IEmployee>(
     avatar: { type: String },
     educations: [
       {
-        type: [Schema.Types.ObjectId],
-        ref: "Education"
+        college: {
+          type: String,
+        },
+        degree: {
+          type: String,
+        },
+        specialization: {
+          type: String,
+        },
+        gpa: {
+          type: String,
+        },
+        startDate: {
+          type: Date,
+        },
+        endDate: {
+          type: Date,
+        }
       }
     ],
     languages: [

@@ -11,6 +11,7 @@ import { announcementRouter } from "./v1/announcement-routes";
 import { taskRouter } from "./v1/task-routes";
 import { goalRouter } from "./v1/goal.routes";
 import { positionRouter } from "./v1/position.routes";
+import { assetRouter } from "./v1/asset.routes";
 
 export const router = express.Router();
 
@@ -38,3 +39,5 @@ router.use("/employee/goals", goalRouter);
 router.use("/announcements", announcementRouter);
 // tasks routes
 router.use("/tasks", taskRouter)
+// assets routes 
+router.use("/assets", assetRouter);

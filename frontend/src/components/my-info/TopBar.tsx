@@ -14,23 +14,23 @@ export default function TopBar() {
         },
         // {
         //     label: "Time off",
-        //     href: '/my-info/time-off',
+        //     href: '/time-off',
         // }, 
         {
             label: "Assets",
-            href: '/my-info/assets',
+            href: '/assets',
         },
         // {
         //     label: "Training",
-        //     href: '/my-info/training',
+        //     href: '/training',
         // },
         // {
         //     label: "To-do",
-        //     href: '/my-info/tasks',
+        //     href: '/tasks',
         // },
         {
             label: "Goals",
-            href: "/my-info/goals"
+            href: "/goals"
         }
     ]
 

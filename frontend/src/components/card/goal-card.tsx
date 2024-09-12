@@ -1,11 +1,12 @@
 import { Edit3Icon } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { Progress } from "../ui/progress";
+import { formatDate } from "@/utils";
 
 interface GoalCardProps {
     title: string;
     progress: number;
-    dueDate: string;
+    dueDate: Date;
     onEditClick: () => void
 }
 
@@ -27,7 +28,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ title, progress, dueDate, on
                     <Progress value={progress} className="h-2" />
                 </CardContent>
                 <CardFooter className="p-0 pt-4">
-                    <p className="text-sm font-semibold">Due: {dueDate}</p>
+                    <p className="text-sm font-semibold">Due: {formatDate(dueDate)}</p>
                 </CardFooter>
             </CardHeader>
         </Card>

@@ -7,6 +7,9 @@ import { LogOut } from "lucide-react"
 import { useAuthStore } from "@/context/useAuthStore"
 
 export const Navbar = () => {
+    const { employee } = useAuthStore();
+    console.log(employee);
+
     return (
         <nav className="w-full pl-[30%] bg-white pt-8 flex justify-between">
             <div className="w-[60%] relative flex items-center">
@@ -28,8 +31,8 @@ export const Navbar = () => {
 
                 <NavMenuDropdown>
                     <Avatar>
-                        <AvatarImage src="/icons/avatar-icon.svg" />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarImage src={employee?.avatar} />
+                        <AvatarFallback>{employee?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </NavMenuDropdown>
 

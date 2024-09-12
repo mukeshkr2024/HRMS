@@ -38,16 +38,20 @@ export const Tasks = () => {
                 </AddNewTaskPopup>
             </div>
             <div className="mt-5 flex flex-col gap-y-2" style={{
-                height: "400px",
+                height: "350px",
                 overflowY: "auto"
             }}>
-                {isFetched && data.tasks.map((task: any) => (
+                {isFetched && data?.tasks?.length > 0 ? data.tasks.map((task: any) => (
                     <TaskCard
                         _id={task?._id}
                         isDone={task?.isDone}
                         title={task?.title}
                     />
-                ))}
+                )) : (
+                    <div>
+                        <p className="text-center text-muted-foreground text-sm">No task yet</p>
+                    </div>
+                )}
             </div>
         </Card>
     );

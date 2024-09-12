@@ -11,7 +11,7 @@ interface Goal {
     _id: string;
     title: string;
     progress: number;
-    dueDate: string;
+    dueDate: Date;
 }
 
 export const GoalPage = () => {
@@ -70,7 +70,7 @@ export const GoalPage = () => {
                                         key={goal._id}
                                         title={goal.title}
                                         progress={goal.progress}
-                                        dueDate={goal.dueDate}
+                                        dueDate={goal.dueDate!}
                                         onEditClick={() => {
                                             setIsEditing(goal._id);
                                         }}

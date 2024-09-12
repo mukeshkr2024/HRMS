@@ -1,7 +1,8 @@
-import { useState } from "react"
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
-import { RequestAssetModal } from "./request-asset-modal"
+import { AddAssetModel } from "./add-asset-modal"
+import { useGetAssets } from "@/api/assets/use-get-assets"
+import { Loader } from "lucide-react"
 
 export type Asset = {
     id: string
@@ -12,51 +13,21 @@ export type Asset = {
     status: "pending" | "processing" | "success" | "failed"
 }
 
-const assets: Asset[] = [
-    {
-        id: "A001",
-        category: "Laptop",
-        description: "Dell XPS 13 with 16GB RAM and 512GB SSD",
-        serial: "DLX13-2023-001",
-        assignedAt: new Date("2024-07-10T09:00:00Z"),
-        status: "success",
-    },
-    {
-        id: "A002",
-        category: "Monitor",
-        description: "Samsung 27-inch 4K Ultra HD Monitor",
-        serial: "SM27-2023-002",
-        assignedAt: new Date("2024-07-12T14:30:00Z"),
-        status: "pending",
-    },
-    {
-        id: "A003",
-        category: "Printer",
-        description: "HP LaserJet Pro MFP M428fdw",
-        serial: "HP428-2023-003",
-        assignedAt: new Date("2024-07-15T11:15:00Z"),
-        status: "processing",
-    },
-    {
-        id: "A004",
-        category: "Smartphone",
-        description: "Apple iPhone 14 Pro Max - 256GB",
-        serial: "IP14-2023-004",
-        assignedAt: new Date("2024-07-18T16:45:00Z"),
-        status: "failed",
-    },
-    {
-        id: "A005",
-        category: "Headphones",
-        description: "Sony WH-1000XM5 Noise Cancelling Headphones",
-        serial: "SNXM5-2023-005",
-        assignedAt: new Date("2024-07-20T10:00:00Z"),
-        status: "success",
-    },
-];
 
 export const AssetDetails = () => {
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
+    const { data, isLoading } = useGetAssets()
+
+    console.log(data);
+
+
+    if (isLoading) {
+        return <div
+            className="flex h-full w-full items-center justify-center"
+        >
+            <Loader className="animate-spin text-muted-foreground" />
+        </div>
+    }
+
     return (
         <section>
             <div className="flex items-center gap-x-10">
@@ -64,14 +35,12 @@ export const AssetDetails = () => {
                     <img src="/icons/monitor-mobbile.svg" alt="" />
                     <span>Assets</span>
                 </div>
-                <RequestAssetModal
-                    isOpen={isDialogOpen}
-                    setIsOpen={setIsDialogOpen}
+                <AddAssetModel
                 />
             </div>
 
             <div className="mt-6">
-                <DataTable columns={columns} data={assets} />
+                <DataTable columns={columns} data={data} />
             </div>
 
         </section>

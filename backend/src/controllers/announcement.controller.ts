@@ -24,7 +24,10 @@ export const createAnnouncement = CatchAsyncError(
 export const getAllAnnouncements = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const announcements = await Announcement.find().sort({ createdAt: -1 });
+      const announcements = await Announcement.find().sort({ createdAt: -1 }).populate({
+        path: "createdBy",
+        select: "name avatar"
+      });
       return res.status(200).json({ announcements });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
