@@ -8,6 +8,7 @@ interface IFile extends Document {
   size: number;
   createdAt?: Date;
   updatedAt?: Date;
+  url: string
 }
 
 const fileSchema = new Schema<IFile>(
@@ -34,6 +35,9 @@ const fileSchema = new Schema<IFile>(
       type: Number,
       required: true,
     },
+    url: {
+      type: String
+    }
   },
   {
     timestamps: true,

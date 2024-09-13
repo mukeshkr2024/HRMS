@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createFolder,
+  deleteDocuments,
   getAllDocuments,
   uploadFile,
 } from "../../controllers/document.controller";
@@ -17,3 +18,4 @@ documentRouter.post(
   isAuthenticated,
   uploadFile
 );
+documentRouter.delete("/delete", isAuthenticated, deleteDocuments)

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { File } from "../models/file.model";
 import { Folder } from "../models/folder.model";
+import path from "path";
 import { ErrorHandler } from "../utils/ErrorHandler";
 
 export const createFolder = CatchAsyncError(
@@ -89,8 +90,18 @@ export const getAllDocuments = CatchAsyncError(
 // Upload a file
 export const uploadFile = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+
     const file = req.file as Express.Multer.File;
     const folderId = req.query.folderId as string | undefined; // Type assertion
+
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded." });
+    }
+
+    let filePath = path.posix.join("/uploads/documents/", req.file.filename);
+    filePath = filePath.replace(/\\/g, '/');
+
+    const url = `${process.env.API_URL}${filePath}`;
 
     if (!file) {
       return next(new ErrorHandler("File is required", 400));
@@ -104,12 +115,50 @@ export const uploadFile = CatchAsyncError(
         fileType: mimetype,
         size,
         addedBy: req.employee._id,
-        folderId: folderId || null
+        folderId: folderId || null,
+        url: url
       });
+
+      console.log(url);
+      console.log(uploadedFile);
+
 
       return res.status(201).json({ uploadedFile });
     } catch (error) {
       return next(new ErrorHandler("Error uploading file", 500)); // More descriptive message
+    }
+  }
+);
+
+
+export const deleteDocuments = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { files, folders } = req.body;
+
+
+      if (files.length > 0) {
+        const filesToDelete = await File.find({ _id: { $in: files } }).select('folderId');
+        const parentFolderIds = filesToDelete.map(file => file.folderId);
+
+        if (parentFolderIds.length > 0) {
+          await Folder.updateMany(
+            { _id: { $in: parentFolderIds } },
+            { $pull: { files: { $in: files } } }
+          );
+        }
+
+        await File.deleteMany({ _id: { $in: files } });
+      }
+
+      if (folders.length > 0) {
+        await File.deleteMany({ folderId: { $in: folders } });
+        await Folder.deleteMany({ _id: { $in: folders } });
+      }
+
+      return res.status(200).json({ message: "Documents deleted successfully" });
+    } catch (error) {
+      return next(new ErrorHandler(error || 'Internal Server Error', 500));
     }
   }
 );
