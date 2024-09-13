@@ -39,6 +39,7 @@ export const EmployeesPage = () => {
             phone: emp?.contactInformation?.workPhone || "N/A",
             linkedinUrl: emp.linkedinUrl || "#",
             alternativeNumber: emp?.contactInformation?.homePhone || "N/A",
+            avatar: emp?.avatar
         })) || []
     }
 

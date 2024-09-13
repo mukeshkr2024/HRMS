@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom"
 
 export const DashboardLayout = () => {
     return (
-        <>
+        <div className="h-full w-full flex justify-between min-h-screen flex-col">
             <div className="w-full flex h-full">
                 <DashboardSideBar />
                 <div className="w-full ml-[280px]  pl-10 pr-16">
@@ -19,7 +19,7 @@ export const DashboardLayout = () => {
             </div>
 
             <Footer />
-        </>
+        </div>
 
     )
 }   

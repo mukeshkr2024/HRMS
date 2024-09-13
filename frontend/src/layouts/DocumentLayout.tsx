@@ -15,7 +15,6 @@ const folders = [
     { id: 1, name: "All Files" },
     { id: 2, name: "Signature Files" },
     { id: 3, name: "Documents" },
-    { id: 4, name: "Documents" },
 ];
 
 export const DocumentLayout = () => {
