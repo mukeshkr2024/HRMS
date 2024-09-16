@@ -1,13 +1,24 @@
-import { useAuthStore } from "@/context/useAuthStore"
 import { Button } from "../ui/button"
 import { Card } from "../ui/card"
 import { UploadAvatar } from "../my-info/upload-avatar"
 
-export const MyInfoCard = () => {
-
-    const { employee, loading } = useAuthStore()
-
-    if (loading) return <div>Loading...</div>
+export const MyInfoCard = ({ employeeId, employee }: {
+    employeeId?: string, employee: {
+        avatar: string,
+        personalInformation: {
+            firstName: string,
+            middleName: string,
+            lastName: string
+        }
+        contactInformation: {
+            workPhone: string
+        }
+        email: string
+        reportsTo: {
+            name: string
+        }
+    }
+}) => {
 
     return (
         <Card className="flex flex-wrap justify-between items-center px-14 py-8 font-urbanist shadow-md">
@@ -61,9 +72,9 @@ export const MyInfoCard = () => {
                     </div>
                 </div>
             </div>
-            <div>
+            {employeeId && <div>
                 <Button variant="outline" className="shadow-md">Request change</Button>
-            </div>
+            </div>}
 
         </Card>
     )

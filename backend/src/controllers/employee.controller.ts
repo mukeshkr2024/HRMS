@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, query, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { Employee } from "../models/employee.model";
 import { ErrorHandler } from "../utils/ErrorHandler";
@@ -128,29 +128,40 @@ export const getAllEmployees = CatchAsyncError(
 export const getEmployeeInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const { employee } = req.query;
+      const employeeId = employee ? employee : req.employee._id;
 
-      const employeeId = await req.employee._id;
+      if (!employeeId) {
+        throw new Error("Employee ID is required");
+      }
 
-      const employee = await Employee.findById(employeeId).populate({
-        path: "personalInformation"
-      }).populate({
-        path: "address"
-      }).populate({
-        path: "contactInformation"
-      }).populate({
-        path: "reportsTo"
-      }).populate({
-        path: "position"
-      }).populate({
-        path: "department"
-      })
+      let populatePaths = [
+        { path: 'personalInformation', select: 'firstName middleName lastName preferredName dateOfBirth gender maritalStatus ssn' },
+        { path: 'address' },
+        { path: 'contactInformation' },
+        { path: 'reportsTo' },
+        { path: 'position' },
+        { path: 'department' }
+      ];
 
-      return res.status(200).json(employee);
+      if (employee) {
+        populatePaths.push({ path: 'compensation' });
+      }
+
+      const employeeDetails = await Employee.findById(employeeId)
+        .populate(populatePaths);
+
+      if (!employeeDetails) {
+        throw new Error("Employee not found");
+      }
+
+      return res.status(200).json(employeeDetails);
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }
   }
-)
+);
+
 
 export const getEmployeeById = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {

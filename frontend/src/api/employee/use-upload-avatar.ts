@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuthStore } from "@/context/useAuthStore";
 
 export const useUploadAvatar = () => {
     const { toast } = useToast();
-    const queryClient = useQueryClient();
+    // const queryClient = useQueryClient();
+    const { refetchSession } = useAuthStore()
 
     return useMutation({
         mutationFn: async (formData: FormData) => {
@@ -30,7 +32,8 @@ export const useUploadAvatar = () => {
             });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["employeeProfile"] });
+            // queryClient.invalidateQueries({ queryKey: ["employeeProfile"] });
+            refetchSession()
             toast({
                 title: "Profile updated successfully",
                 description: "Your avatar has been updated.",

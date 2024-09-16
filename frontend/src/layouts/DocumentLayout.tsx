@@ -1,8 +1,6 @@
 import { useUploadFile } from "@/api/document/file/use-upload-file";
 import { useCreateFolder } from "@/api/document/folder/use-create-folder";
 import { useDeleteDocument } from "@/api/document/use-delete-document";
-// import { useArchiveDocument } from "@/api/document/file/use-archive-document"; // Add these
-// import { useMoveDocument } from "@/api/document/file/use-move-document"; // Add these
 import { FileUploadDialog } from "@/components/modal/add-new-file";
 import { AddNewDialog } from "@/components/modal/add-new-model";
 import { Button } from "@/components/ui/button";
@@ -22,8 +20,7 @@ export const DocumentLayout = () => {
     const createFolderMutation = useCreateFolder(currentFolderId!);
     const uploadFileMutation = useUploadFile(currentFolderId!);
     const deleteDocumentMutation = useDeleteDocument();
-    // const archiveDocumentMutation = useArchiveDocument();
-    // const moveDocumentMutation = useMoveDocument();
+
 
     const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
     const [isUploadFileDialogOpen, setIsUploadFileDialogOpen] = useState(false);

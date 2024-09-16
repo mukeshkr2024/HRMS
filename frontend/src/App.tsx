@@ -18,7 +18,11 @@ import { DocumentLayout } from "./layouts/DocumentLayout";
 import { NewEmployeePage } from "./pages/employees/NewEmployeePage";
 import { DepartmentPage } from "./pages/department/DepartmentPage";
 import { ProfilesPage } from "./pages/profiles/profiles";
-
+import { EmployeeInfo } from "./pages/empoyeeId/EmployeeIdPage";
+import { EmployeeInfoLayout } from "./layouts/EmployeeInfoLayout";
+import { EmployeeGoalsPage } from "./pages/employeeGoals/EmployeeGoals";
+import { EmployeeAssetsPage } from "./pages/employeeAssets";
+import { EmployeeDocumentPage } from "./pages/employeeDocument";
 
 function App() {
   return (
@@ -41,6 +45,14 @@ function App() {
           <Route path="/departments" element={<DepartmentPage />} />
           <Route path="/profiles" element={<ProfilesPage />} />
           <Route path="/employees/new" element={<NewEmployeePage />} />
+          <Route element={<EmployeeInfoLayout />}>
+            <Route path="/employees/:employeeId" element={<EmployeeInfo />} />
+            <Route path="/employees/:employeeId/assets" element={<EmployeeAssetsPage />} />
+            <Route path="/employees/:employeeId/goals" element={<EmployeeGoalsPage />} />
+            <Route element={<DocumentLayout />}>
+              <Route path="/employees/:employeeId/documents" element={<EmployeeDocumentPage />} />
+            </Route>
+          </Route>
           <Route path="/reports" element={<ReportsPage />} />
           <Route element={<DocumentLayout />}>
             <Route path="/documents" element={<FilesPage />} />

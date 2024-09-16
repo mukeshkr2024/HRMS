@@ -14,8 +14,8 @@ export type Asset = {
 }
 
 
-export const AssetDetails = () => {
-    const { data, isLoading } = useGetAssets()
+export const AssetDetails = ({ employeeId }: { employeeId?: string }) => {
+    const { data, isLoading } = useGetAssets(employeeId)
 
     console.log(data);
 

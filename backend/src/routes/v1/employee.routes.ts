@@ -24,6 +24,7 @@ employeeRouter.post(
 );
 employeeRouter.get("/options", isAuthenticated, getEmployeeOptions)
 employeeRouter.get("/info", isAuthenticated, getEmployeeInfo)
+employeeRouter.get("/short-info", isAuthenticated, getEmployeeInfo) // todo:
 employeeRouter.get("/", isAuthenticated, getAllEmployees); // add authorized roles 
 employeeRouter.get("/:employeeId", isAuthenticated, getEmployeeById);
 employeeRouter.delete(

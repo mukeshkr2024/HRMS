@@ -44,9 +44,14 @@ export const addAsset = CatchAsyncError(async (req: Request, res: Response, next
 
 export const getAssets = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const emloyeeId = req.employee.id;
+
+        const { employee } = req.query;
+        const employeeId = employee ? employee : req.employee._id;
+
+        console.log(employee);
+
         const assets = await Asset.find({
-            employeeId: emloyeeId,
+            employeeId: employeeId,
         })
         return res.status(200).json(assets)
     } catch (error) {

@@ -24,6 +24,7 @@ export type Employee = {
         id: string;
     }[];
     avatar: string
+    _id: string
 };
 
 export const EmployeeColumnData: ColumnDef<Employee>[] = [
@@ -46,27 +47,30 @@ export const EmployeeColumnData: ColumnDef<Employee>[] = [
         accessorKey: "assesment",
         header: '',
         cell: ({ row }) => (
-            <div className="flex gap-5 items-center font-urbanist">
-                {/* <img
+            <Link to={`/employees/${row.original._id}`}>
+                <div className="flex gap-5 items-center font-urbanist">
+                    {/* <img
                     src={row.original.profile}
                     alt={`${row.original.firstName} ${row.original.lastName}`}
                     className="w-10 h-10 rounded-full"
                 /> */}
-                <UserAvatar
-                    avatar={row.original?.avatar}
-                    name={row.original.firstName}
-                />
-                {/* <p>{JSON.stringify(row.original)}</p> */}
-                <div className="flex flex-col text-start">
-                    <h3 className="text-[#297EE2] font-bold text-lg">
-                        {row.original.firstName} {row.original.lastName}
-                    </h3>
-                    <p className="text-[#3F3F3F] font-medium font-urbanist">
-                        {row.original.designation}
-                    </p>
-                    <p>{row.original.location}</p>
+                    <UserAvatar
+                        avatar={row.original?.avatar}
+                        name={row.original.firstName}
+                    />
+                    {/* <p>{JSON.stringify(row.original)}</p> */}
+                    <div className="flex flex-col text-start">
+                        <h3 className="text-[#297EE2] font-bold text-lg">
+                            {row.original.firstName} {row.original.lastName}
+                        </h3>
+                        <p className="text-[#3F3F3F] font-medium font-urbanist">
+                            {row.original.designation}
+                        </p>
+                        <p>{row.original.location}</p>
+                    </div>
                 </div>
-            </div>
+            </Link>
+
         ),
     },
     {

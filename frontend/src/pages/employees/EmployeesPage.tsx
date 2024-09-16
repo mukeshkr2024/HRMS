@@ -23,6 +23,7 @@ export const EmployeesPage = () => {
 
         // Map the real data into the shape expected by Employee type
         employeeData = data?.map((emp: any) => ({
+            _id: emp?._id,
             employeeId: emp.employeeNumber || "N/A",
             firstName: emp.personalInformation.firstName || "N/A",
             lastName: emp.personalInformation.lastName || "N/A",

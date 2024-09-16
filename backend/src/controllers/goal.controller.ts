@@ -42,7 +42,11 @@ export const getGoals = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            const employeeId = req.employee.id;
+            console.log("called", req.query);
+
+            const { employee } = req.query;
+
+            const employeeId = employee ? employee : req.employee.id;
 
             const goals = await Goal.find(
                 {
@@ -52,7 +56,6 @@ export const getGoals = CatchAsyncError(
                 createdAt: -1
             }).select("title dueDate progress status")
 
-            console.log(goals);
 
             return res.status(200).json(
                 goals
