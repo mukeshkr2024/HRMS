@@ -4,6 +4,7 @@ import { File } from "../models/file.model";
 import { Folder } from "../models/folder.model";
 import path from "path";
 import { ErrorHandler } from "../utils/ErrorHandler";
+import { deleteFileFromS3, uploadFileToS3 } from "../utils/file-upload";
 
 export const createFolder = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -87,28 +88,27 @@ export const getAllDocuments = CatchAsyncError(
   }
 );
 
-// Upload a file
+// upload file 
 export const uploadFile = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-
     const file = req.file as Express.Multer.File;
-    const folderId = req.query.folderId as string | undefined; // Type assertion
-
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded." });
-    }
-
-    let filePath = path.posix.join("/uploads/documents/", req.file.filename);
-    filePath = filePath.replace(/\\/g, '/');
-
-    const url = `${process.env.API_URL}${filePath}`;
+    const folderId = req.query.folderId as string | undefined;
 
     if (!file) {
-      return next(new ErrorHandler("File is required", 400));
+      return next(new ErrorHandler('File is required', 400));
     }
 
     try {
       const { originalname, mimetype, size } = file;
+
+      // Upload file to S3
+      const fileUrl = await uploadFileToS3({
+        buffer: file.buffer,
+        mimetype: mimetype,
+      });
+
+      console.log("fileUrl: " + fileUrl);
+
 
       const uploadedFile = await File.create({
         name: originalname,
@@ -116,30 +116,46 @@ export const uploadFile = CatchAsyncError(
         size,
         addedBy: req.employee._id,
         folderId: folderId || null,
-        url: url
+        url: fileUrl,
       });
 
-      console.log(url);
-      console.log(uploadedFile);
+      console.log("uploadedFile", uploadedFile);
 
 
       return res.status(201).json({ uploadedFile });
     } catch (error) {
-      return next(new ErrorHandler("Error uploading file", 500)); // More descriptive message
+      return next(new ErrorHandler('Error uploading file', 500));
     }
   }
 );
-
 
 export const deleteDocuments = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { files, folders } = req.body;
 
-
       if (files.length > 0) {
-        const filesToDelete = await File.find({ _id: { $in: files } }).select('folderId');
+        // Fetch file documents including the 'url' field
+        const filesToDelete = await File.find({ _id: { $in: files } }).select('folderId url fileType');
         const parentFolderIds = filesToDelete.map(file => file.folderId);
+
+        const extractObjectIdFromUrl = (url: string): string | null => {
+          const match = url.match(/\/([^\/]+)$/);
+          return match ? match[1] : null;
+        };
+
+        // Delete files from S3 and handle potential errors
+        await Promise.all(filesToDelete.map(async file => {
+          const fileName = extractObjectIdFromUrl(file.url);
+          if (fileName) {
+            try {
+              // TODO: remove from s3 as well
+              await deleteFileFromS3(fileName, file.fileType);
+            } catch (err) {
+              console.error(`Failed to delete file with URL: ${file.url}`, err);
+            }
+          }
+        }));
 
         if (parentFolderIds.length > 0) {
           await Folder.updateMany(
@@ -148,10 +164,12 @@ export const deleteDocuments = CatchAsyncError(
           );
         }
 
+        // Delete file records from the database
         await File.deleteMany({ _id: { $in: files } });
       }
 
       if (folders.length > 0) {
+        // Delete files and folders from the database
         await File.deleteMany({ folderId: { $in: folders } });
         await Folder.deleteMany({ _id: { $in: folders } });
       }
@@ -162,3 +180,4 @@ export const deleteDocuments = CatchAsyncError(
     }
   }
 );
+
