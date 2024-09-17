@@ -3,11 +3,13 @@ import { DocumentList } from "@/components/documents/document-list";
 import { useDocumentStore } from "@/context/use-document";
 import { CircleArrowLeft, Loader } from "lucide-react";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 export const EmployeeDocumentList = () => {
+    const { employeeId } = useParams()
 
     const { currentFolderId, setCurrentFolderId, setPreviousFolder, previousFolder } = useDocumentStore();
-    const { data, isLoading } = useGetDocuments(currentFolderId || "");
+    const { data, isLoading } = useGetDocuments(currentFolderId || "", employeeId);
 
     useEffect(() => {
         if (data?.documents?.parentFolder) {

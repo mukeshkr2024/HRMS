@@ -23,6 +23,7 @@ export interface IEmployee extends Document {
   languages: string[];
   name: string;
   avatar: string;
+  workLocation: string;
 }
 
 const employeeSchema = new Schema<IEmployee>(
@@ -35,7 +36,7 @@ const employeeSchema = new Schema<IEmployee>(
     position: { type: Schema.Types.ObjectId, ref: "Position" },
     jobTitle: { type: String, required: true },
     reportsTo: { type: Schema.Types.ObjectId, ref: "Employee", required: true },
-    role: { type: String, enum: ["admin", "hr", "employee", "manager"], default: "employee" },
+    role: { type: String, enum: ["admin", "employee", "manager", "lead"], default: "employee" },
     email: {
       type: String,
       unique: true,
@@ -48,6 +49,7 @@ const employeeSchema = new Schema<IEmployee>(
     password: { type: String, required: true, select: false },
     status: { type: String, enum: ["active", "inactive", "on-leave", "terminated"], default: "active" },
     avatar: { type: String },
+    workLocation: { type: String, }, // Todo: add later
     educations: [
       {
         college: {

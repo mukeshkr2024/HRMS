@@ -35,7 +35,6 @@ const formSchema = z.object({
         payType: z.string().nonempty("Pay type is required"),
         payRate: z.string(),
         payRateType: z.string(),
-        ethnicity: z.string().optional(),
     }),
     contactInformation: z.object({
         workPhone: z.string().optional(),
@@ -55,6 +54,8 @@ const formSchema = z.object({
         division: z.string().optional(),
         location: z.string().nonempty("Location is required"),
     }),
+    role: z.string().nonempty("Role is required"),
+    password: z.string().nonempty("Password is required"),
 });
 
 export type EmployeeFormSchemaType = z.infer<typeof formSchema>;
@@ -92,7 +93,6 @@ export const NewEmployeePage = () => {
                 paySchedule: "",
                 payType: "",
                 payRateType: "hourly",
-                ethnicity: "",
             },
             contactInformation: {
                 workPhone: "",
@@ -112,6 +112,7 @@ export const NewEmployeePage = () => {
                 division: "",
                 location: "",
             },
+            role: ""
         }
     });
 
@@ -317,7 +318,6 @@ export const NewEmployeePage = () => {
                                             ]}
                                         />
                                     </div>
-                                    <EmployeeFormFieldWrapper control={form.control} name="compensation.ethnicity" label="Ethnicity" className="max-w-60" />
                                 </div>
                             </EmployeeFormSection>
 
@@ -371,16 +371,29 @@ export const NewEmployeePage = () => {
                                         <EmployeeFormFieldWrapper control={form.control} name="jobInformation.department" label="Department" className="w-64"
                                             options={departmentOptions}
                                         />
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.division" label="Division" className="w-64" />
+                                        <EmployeeFormFieldWrapper control={form.control} name="role" label="Role" className="w-64"
+                                            options={
+                                                [
+                                                    { label: "Employee", value: "employee" },
+                                                    { label: "Manager", value: "manager" },
+                                                    { label: "Lead", value: "lead" },
+                                                    { label: "Admin", value: "admin" },
+                                                ]
+                                            }
+                                        />
                                     </div>
-                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.location" label="Location" className="w-64"
-                                        options={
-                                            [
-                                                { label: "Pune, India", value: "pune, india" },
-                                                { label: "Patna, India", value: "patna, india" },
-                                            ]
-                                        }
-                                    />
+                                    <div className="flex gap-4">
+                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.location" label="Location" className="w-64"
+                                            options={
+                                                [
+                                                    { label: "Pune, India", value: "pune, india" },
+                                                    { label: "Patna, India", value: "patna, india" },
+                                                ]
+                                            }
+                                        />
+                                        <EmployeeFormFieldWrapper control={form.control} name="password" label="Password" className="w-64" />
+
+                                    </div>
                                 </div>
                             </EmployeeFormSection>
 

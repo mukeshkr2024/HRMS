@@ -32,15 +32,15 @@ export const EmployeesPage = () => {
             assesment: emp.assessments || [], // Adjust according to your real data structure
             profile: emp.profileImage || "/images/profile.png", // If profile image available
             designation: emp.designation || "Developer",
-            location: emp.location || "Pune, India",
+            location: emp.location || "pune, India",
             type: emp.type || "Full time", // assuming type field in your data
             joiningDate: new Date(emp.hireDate).toLocaleDateString() || "N/A",
-            dob: new Date(emp.dob).toLocaleDateString() || "N/A",
             email: emp.email || "N/A",
             phone: emp?.contactInformation?.workPhone || "N/A",
             linkedinUrl: emp.linkedinUrl || "#",
             alternativeNumber: emp?.contactInformation?.homePhone || "N/A",
-            avatar: emp?.avatar
+            avatar: emp?.avatar,
+            dob: new Date(emp?.personalInformation?.dateOfBirth).toLocaleDateString() || "N/A",
         })) || []
     }
 

@@ -2,15 +2,15 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { File } from "../models/file.model";
 import { Folder } from "../models/folder.model";
-import path from "path";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import { deleteFileFromS3, uploadFileToS3 } from "../utils/file-upload";
 
 export const createFolder = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.body;
-    const employeeId = req.employee.id;
-    const folderId = req.query.folderId as string | undefined; // Type assertion
+
+    const { folderId, employee } = req.query;
+    const employeeId = employee ? employee : req.employee.id;
 
     if (!name) {
       return next(new ErrorHandler("Folder name is required", 400));
@@ -42,8 +42,8 @@ export const createFolder = CatchAsyncError(
 
 export const getAllDocuments = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const employeeId = req.employee.id;
-    const folderId = req.query.folderId as string | undefined;
+    const { folderId, employee } = req.query;
+    const employeeId = employee ? employee : req.employee.id;
 
     try {
       // Define filters for folders and files
@@ -92,7 +92,9 @@ export const getAllDocuments = CatchAsyncError(
 export const uploadFile = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const file = req.file as Express.Multer.File;
-    const folderId = req.query.folderId as string | undefined;
+    const { folderId, employee } = req.query;
+
+    const employeeId = employee ? employee : req.employee._id
 
     if (!file) {
       return next(new ErrorHandler('File is required', 400));
@@ -107,14 +109,11 @@ export const uploadFile = CatchAsyncError(
         mimetype: mimetype,
       });
 
-      console.log("fileUrl: " + fileUrl);
-
-
       const uploadedFile = await File.create({
         name: originalname,
         fileType: mimetype,
         size,
-        addedBy: req.employee._id,
+        addedBy: employeeId,
         folderId: folderId || null,
         url: fileUrl,
       });

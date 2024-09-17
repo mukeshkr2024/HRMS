@@ -1,14 +1,22 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiClient } from "../api-client"
 
-export const useGetDocuments = (folderId?: string) => {
+export const useGetDocuments = (folderId?: string, employee?: string) => {
     return useQuery({
         queryKey: ["documents", folderId],
         queryFn: async () => {
-            const queryParam = folderId ? `?folderId=${folderId}` : '';
-            const { data } = await apiClient.get(`/documents${queryParam}`);
+            const queryParams = new URLSearchParams();
+            if (folderId) {
+                queryParams.append('folderId', folderId);
+            }
+            if (employee) {
+                queryParams.append('employee', employee);
+            }
+
+            const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+
+            const { data } = await apiClient.get(`/documents${queryString}`);
             return data;
         },
-        // enabled: !!folderId || folderId === undefined, // only fetch if folderId is defined or if it is undefined
     });
 }

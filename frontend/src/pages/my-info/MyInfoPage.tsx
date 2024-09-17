@@ -107,6 +107,11 @@ export const MyInfo = () => {
 
     useEffect(() => {
         if (data) {
+            const formatDate = (dateString: string) => {
+                const date = new Date(dateString);
+                return isNaN(date.getTime()) ? "" : date.toISOString().split("T")[0];
+            };
+
             form.reset({
                 employeeNumber: data?.employeeNumber || "",
                 status: data?.status || "",
@@ -115,7 +120,7 @@ export const MyInfo = () => {
                     middleName: data?.personalInformation?.middleName || "",
                     lastName: data?.personalInformation?.lastName || "",
                     preferredName: data?.personalInformation?.preferredName || "",
-                    birthDate: data?.personalInformation?.dateOfBirth || "",
+                    birthDate: formatDate(data?.personalInformation?.dateOfBirth) || "",
                     gender: data?.personalInformation?.gender || "",
                     maritalStatus: data?.personalInformation?.maritalStatus || "",
                     ssn: data?.personalInformation?.ssn || "",
@@ -140,7 +145,16 @@ export const MyInfo = () => {
                         name: language
                     }
                 }) || [{ name: "" }],
-                educations: data?.educations || [{
+                educations: data?.educations?.map((edu: any) => {
+                    return {
+                        college: edu.college,
+                        degree: edu.degree,
+                        specialization: edu.specialization,
+                        gpa: edu.gpa,
+                        startDate: formatDate(edu.startDate),
+                        endDate: formatDate(edu.endDate),
+                    }
+                }) || [{
                     college: "",
                     degree: "",
                     specialization: "",

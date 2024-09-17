@@ -72,7 +72,7 @@ export const MyInfoCard = ({ employeeId, employee }: {
                     </div>
                 </div>
             </div>
-            {employeeId && <div>
+            {!employeeId && <div>
                 <Button variant="outline" className="shadow-md">Request change</Button>
             </div>}
 

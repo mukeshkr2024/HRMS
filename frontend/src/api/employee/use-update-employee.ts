@@ -1,14 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../api-client";
-import { EmployeeFormSchemaType } from "@/pages/my-info/MyInfoPage";
 import { EditEmployeeFormSchemaType } from "@/pages/empoyeeId/EmployeeIdPage";
 
-export const useUpdateMyInfo = () => {
+export const useUpdateEmployeeInfo = (employeeId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (infoData: EmployeeFormSchemaType | EditEmployeeFormSchemaType) => {
-            const { data } = await apiClient.put(`/employees/my-info`, infoData);
+        mutationFn: async (infoData: EditEmployeeFormSchemaType) => {
+            const { data } = await apiClient.put(`/employees/${employeeId}`, infoData);
             return data;
         },
         onSuccess: () => {

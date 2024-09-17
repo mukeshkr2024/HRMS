@@ -37,7 +37,7 @@ employeeRouter.put("/my-info", isAuthenticated, updateMyInfo)
 employeeRouter.put(
   "/:employeeId",
   isAuthenticated,
-  authorizeRoles("admin", "manager"),
+  authorizeRoles("admin"),
   updateEmployeeById
 );
 employeeRouter.post("/avatar/upload",

@@ -10,100 +10,150 @@ import { Department } from "../models/department.model";
 import { Position } from "../models/position.model";
 import path from "path"
 import { API_URL } from "../config/config";
+import mongoose from "mongoose";
 
 export const createEmployee = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
       const { employeeNumber, jobDetails, jobInformation, contactInformation, personalInformation, address, compensation } = req.body;
 
+      // Check for required fields
       if (!employeeNumber || !jobDetails || !jobInformation || !contactInformation || !personalInformation || !address || !compensation) {
         return res.status(400).json({ message: "All fields are required." });
       }
 
       const { hireDate } = jobDetails;
       const { firstName, middleName, lastName, preferredName, birthDate, gender, maritalStatus, ssn } = personalInformation;
-      const { department, jobTitle, reportsTo } = jobInformation;
+      const { department, jobTitle, reportsTo, location } = jobInformation;
       const { workEmail, workPhone, mobilePhone, homePhone, homeEmail } = contactInformation;
       const { street1, street2, city, state, zipCode, country } = address;
-      const { paySchedule, payType, payRate, payRateType, ethnicity } = compensation;
+      const { paySchedule, payType, payRate, payRateType } = compensation;
 
       // Validate email and employee number uniqueness
       const existingEmployee = await Employee.findOne({
-        $or: [
-          { employeeNumber },
-          { email: workEmail }
-        ]
+        $or: [{ employeeNumber }, { email: workEmail.trim() }],
       });
 
       if (existingEmployee) {
-        return res.status(400).json({
-          message: "Employee already exists with this employee number or email."
-        });
+        return res.status(400).json({ message: "Employee with this number or email already exists." });
       }
 
-      // Create associated documents
+      // Validate department and job title
+      const departmentFound = await Department.findById(department);
+      if (!departmentFound) {
+        return res.status(404).json({ message: "Department not found." });
+      }
+
+      const positionFound = await Position.findById(jobTitle);
+      if (!positionFound) {
+        return res.status(404).json({ message: "Position not found." });
+      }
+
+      // Ensure hire date is a valid date
+      const parsedHireDate = new Date(hireDate);
+      if (isNaN(parsedHireDate.getTime())) {
+        return res.status(400).json({ message: "Invalid hire date format." });
+      }
+
+      // Create related sub-documents
       const [personalInfo, addressInfo, compensationInfo, contactInfo] = await Promise.all([
-        PersonalInformation.create({
-          firstName,
-          middleName,
-          lastName,
-          preferredName,
-          dateOfBirth: birthDate,
-          gender,
-          maritalStatus,
-          ssn,
-        }),
-        Address.create({
-          street1,
-          street2,
-          city,
-          state,
-          zipCode,
-          country,
-        }),
-        Compensation.create({
-          paySchedule,
-          payType,
-          payRate,
-          payRateType,
-          ethnicity,
-        }),
-        ContactInformation.create({
-          workPhone,
-          workEmail,
-          mobilePhone,
-          homePhone,
-          homeEmail,
-        }),
+        PersonalInformation.create(
+          [
+            {
+              firstName: firstName.trim(),
+              middleName: middleName?.trim(),
+              lastName: lastName.trim(),
+              preferredName: preferredName?.trim(),
+              dateOfBirth: new Date(birthDate),
+              gender,
+              maritalStatus,
+              ssn,
+            },
+          ],
+          { session }
+        ),
+        Address.create(
+          [
+            {
+              street1,
+              street2,
+              city,
+              state,
+              zipCode,
+              country,
+            },
+          ],
+          { session }
+        ),
+        Compensation.create(
+          [
+            {
+              paySchedule,
+              payType,
+              payRate,
+              payRateType,
+            },
+          ],
+          { session }
+        ),
+        ContactInformation.create(
+          [
+            {
+              workPhone,
+              workEmail: workEmail.trim(),
+              mobilePhone,
+              homePhone,
+              homeEmail: homeEmail?.trim(),
+            },
+          ],
+          { session }
+        ),
       ]);
 
+      const employee = await Employee.create(
+        [
+          {
+            employeeNumber,
+            hireDate: parsedHireDate,
+            name: `${firstName.trim()} ${middleName?.trim()} ${lastName.trim()}`,
+            department: departmentFound._id,
+            position: positionFound._id,
+            jobTitle: positionFound.name,
+            password: "password", // Ensure to hash the password before use in production
+            email: workEmail.trim(),
+            personalInformation: personalInfo[0]._id,
+            address: addressInfo[0]._id,
+            compensation: compensationInfo[0]._id,
+            contactInformation: contactInfo[0]._id,
+            reportsTo: reportsTo || null,
+            workLocation: location
+          },
+        ],
+        { session }
+      );
 
-      // Create the employee document
-      const employee = await Employee.create({
-        employeeNumber,
-        hireDate: new Date(hireDate), // Ensure hireDate is a Date object
-        name: `${firstName} ${middleName} ${lastName}`,
-        departmentId: department,
-        position: jobTitle,
-        jobTitle,
-        password: "password",
-        email: workEmail,
-        personalInformation: personalInfo._id,
-        address: addressInfo._id,
-        compensation: compensationInfo._id,
-        contactInformation: contactInfo._id,
-        reportsTo: reportsTo
-      });
+      // @ts-ignore
+      departmentFound.employees.push(employee[0]._id);
+      // @ts-ignore
+      positionFound.employees.push(employee[0]._id);
 
-      console.log("Employee created: ", employee);
+      await Promise.all([departmentFound.save({ session }), positionFound.save({ session })]);
 
-      // Return success response
+      await session.commitTransaction();
+      session.endSession();
+
+
       return res.status(201).json({
         success: true,
-        data: employee,
+        data: employee[0],
       });
     } catch (error) {
-      return next(new ErrorHandler(error || "An error occurred while creating the employee.", 400));
+      await session.abortTransaction();
+      session.endSession();
+      return next(new ErrorHandler("An error occurred while creating the employee.", 500));
     }
   }
 );
@@ -136,7 +186,7 @@ export const getEmployeeInfo = CatchAsyncError(
       }
 
       let populatePaths = [
-        { path: 'personalInformation', select: 'firstName middleName lastName preferredName dateOfBirth gender maritalStatus ssn' },
+        { path: 'personalInformation' }, // add later select
         { path: 'address' },
         { path: 'contactInformation' },
         { path: 'reportsTo' },
@@ -150,6 +200,9 @@ export const getEmployeeInfo = CatchAsyncError(
 
       const employeeDetails = await Employee.findById(employeeId)
         .populate(populatePaths);
+
+      console.log("employeeDetails", employeeDetails);
+
 
       if (!employeeDetails) {
         throw new Error("Employee not found");
@@ -200,24 +253,73 @@ export const deleteEmployeeById = CatchAsyncError(
 export const updateEmployeeById = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const employee = await Employee.findByIdAndUpdate(
-        req.params.employeeId,
-        req.body,
+      const {
+        employeeNumber, personalInformation, address, compensation, contactInformation,
+        jobDetails, jobInformation, role, workLocation, password
+      } = req.body;
+
+
+      const employeeId = req.params.employeeId;
+
+      const employee = await Employee.findById(employeeId);
+
+      if (!employee) {
+        return next(new ErrorHandler('Employee not found', 404));
+      }
+
+      const updatedPersonalInfo = await PersonalInformation.findByIdAndUpdate(
+        employee.personalInformation,
+        { ...personalInformation, dateOfBirth: new Date(personalInformation.birthDate) },
         { new: true }
       );
 
-      if (!employee) {
-        return next(new ErrorHandler("Employee not found", 404));
+      const updatedAddress = await Address.findByIdAndUpdate(
+        employee.address,
+        address,
+        { new: true }
+      );
+
+      const updatedCompensation = await Compensation.findByIdAndUpdate(
+        employee.compensation,
+        compensation,
+        { new: true }
+      );
+
+      const updatedContactInfo = await ContactInformation.findByIdAndUpdate(
+        employee.contactInformation,
+        contactInformation,
+        { new: true }
+      );
+
+      const updatedEmployee = await Employee.findByIdAndUpdate(
+        employeeId,
+        {
+          employeeNumber,
+          hireDate: new Date(jobDetails.hireDate),
+          status: jobDetails.employmentStatus,
+          department: jobInformation.department,
+          position: jobInformation.jobTitle,
+          reportsTo: jobInformation.reportsTo,
+          role,
+          workLocation,
+          password,
+        },
+        { new: true }
+      );
+
+      if (!updatedEmployee) {
+        return next(new ErrorHandler('Employee update failed', 400));
       }
 
       return res.status(200).json({
-        employee,
+        employee: updatedEmployee,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 400));
+      return next(new ErrorHandler(error || 'Internal Server Error', 500));
     }
   }
 );
+
 
 export const getEmployeeOptions = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -289,8 +391,6 @@ export const updateMyInfo = CatchAsyncError(async (
   next: NextFunction
 ) => {
   try {
-    console.log(req.body);
-
     const { address, contactInformation, languages, educations } = req.body;
 
     // Find the employee

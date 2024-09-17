@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useDocumentStore } from "@/context/use-document";
 import { CirclePlus, FilePlus, Trash } from "lucide-react";
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
 const folders = [
     { id: 1, name: "All Files" },
@@ -16,9 +16,13 @@ const folders = [
 ];
 
 export const DocumentLayout = () => {
+    const { employeeId } = useParams()
+
+
+
     const { currentFolderId, selectedFolders, selectedFiles } = useDocumentStore();
-    const createFolderMutation = useCreateFolder(currentFolderId!);
-    const uploadFileMutation = useUploadFile(currentFolderId!);
+    const createFolderMutation = useCreateFolder(currentFolderId!, employeeId);
+    const uploadFileMutation = useUploadFile(currentFolderId!, employeeId);
     const deleteDocumentMutation = useDeleteDocument();
 
 
