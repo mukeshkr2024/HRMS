@@ -20,7 +20,7 @@ export const DepartmentColumnData: ColumnDef<Department>[] = [
         ),
         cell: ({ row }) => <>
             <h3 className="font-medium">{row.original.name}</h3>
-            <p className="text-muted-foreground">{row.original.description}</p>
+            <p className="text-muted-foreground line-clamp-2">{row.original.description}</p>
         </>
     },
     {

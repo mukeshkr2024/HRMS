@@ -29,7 +29,7 @@ const formSchema = z.object({
         street2: z.string().optional(),
         city: z.string().nonempty("City is required"),
         state: z.string().nonempty("State is required"),
-        zipCode: z.string().nonempty("Zip code is required").length(5, "Zip code must be 5 digits"),
+        zipCode: z.string().nonempty("Zip code is required").length(6, "Zip code must be 5 digits"),
         country: z.string().nonempty("Country is required"),
     }),
     contactInformation: z.object({
@@ -73,7 +73,6 @@ export const MyInfo = () => {
                 birthDate: "",
                 gender: "",
                 maritalStatus: "",
-                ssn: "",
             },
             address: {
                 street1: "",
@@ -123,7 +122,6 @@ export const MyInfo = () => {
                     birthDate: formatDate(data?.personalInformation?.dateOfBirth) || "",
                     gender: data?.personalInformation?.gender || "",
                     maritalStatus: data?.personalInformation?.maritalStatus || "",
-                    ssn: data?.personalInformation?.ssn || "",
                 },
                 address: {
                     street1: data?.address?.street1 || "",
@@ -192,7 +190,7 @@ export const MyInfo = () => {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="w-full">
                         {/* Personal Information Section */}
                         <EmployeeFormSection title="Basic Information" icon="/icons/profile-circle.svg">
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                                 <EmployeeFormFieldWrapper
                                     control={form.control} name="employeeNumber" label="Employee No."
                                     isReadOnly={true}
@@ -207,13 +205,12 @@ export const MyInfo = () => {
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.birthDate" label="Birth Date" type="date" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.gender" label="Gender" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.maritalStatus" label="Marital Status" isReadOnly={true} />
-                                <EmployeeFormFieldWrapper control={form.control} name="personalInformation.ssn" label="SSN" isReadOnly={true} />
                             </div>
                         </EmployeeFormSection>
 
                         {/* Address Section */}
                         <EmployeeFormSection title="Address" icon="/icons/home-2.svg">
-                            <div className="grid grid-cols-3 gap-6">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                                 <EmployeeFormFieldWrapper control={form.control} name="address.street1" label="Street Address" />
                                 <EmployeeFormFieldWrapper control={form.control} name="address.street2" label="Apt/Suite" />
                                 <EmployeeFormFieldWrapper control={form.control} name="address.city" label="City" />
@@ -225,7 +222,7 @@ export const MyInfo = () => {
 
                         {/* Contact Information Section */}
                         <EmployeeFormSection title="Contact Information" icon="/icons/call-slash.svg">
-                            <div className="grid grid-cols-3 gap-4 max-w-4xl">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl">
                                 <EmployeeFormFieldWrapper control={form.control} name="contactInformation.workPhone" label="Work Phone" />
                                 <EmployeeFormFieldWrapper control={form.control} name="contactInformation.mobilePhone" label="Mobile Phone" />
                                 <EmployeeFormFieldWrapper control={form.control} name="contactInformation.homePhone" label="Home Phone" />
@@ -235,7 +232,7 @@ export const MyInfo = () => {
                         </EmployeeFormSection>
 
                         <EmployeeFormSection title="Social Links" icon="/icons/call-slash.svg">
-                            <div className="grid grid-cols-4 gap-4 max-w-5xl">
+                            <div className="grid lg:grid-cols-4 gap-4 max-w-5xl">
                                 <EmployeeFormFieldWrapper control={form.control} name="socialLinks.linkedin" label="LinkedIn" />
                                 <EmployeeFormFieldWrapper control={form.control} name="socialLinks.twitter" label="Twitter" />
                                 <EmployeeFormFieldWrapper control={form.control} name="socialLinks.instagram" label="Instagram" />
@@ -244,7 +241,7 @@ export const MyInfo = () => {
                         </EmployeeFormSection>
 
                         <EmployeeFormSection title="Education" icon="/icons/book.svg">
-                            <div className="gap-4 grid grid-cols-2">
+                            <div className="gap-4 grid lg:grid-cols-2">
                                 {educationFields.map((item, index) => (
                                     <Card key={item.id} className="space-y-2 p-5 bg-[#F7F8FA]">
                                         <div className="grid grid-cols-2 gap-4">

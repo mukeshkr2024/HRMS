@@ -22,14 +22,13 @@ const formSchema = z.object({
         birthDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" }),
         gender: z.string().nonempty("Gender is required"),
         maritalStatus: z.string().nonempty("Marital status is required"),
-        ssn: z.string().nonempty("SSN is required").length(9, "SSN must be 9 characters"),
     }),
     address: z.object({
         street1: z.string().nonempty("Street address is required"),
         street2: z.string().optional(),
         city: z.string().nonempty("City is required"),
         state: z.string().nonempty("State is required"),
-        zipCode: z.string().nonempty("Zip code is required").length(5, "Zip code must be 5 digits"),
+        zipCode: z.string().nonempty("Zip code is required").length(6, "Zip code must be 5 digits"),
         country: z.string().nonempty("Country is required"),
     }),
     compensation: z.object({
@@ -56,7 +55,9 @@ const formSchema = z.object({
     }),
     role: z.string().nonempty("Role is required"),
     workLocation: z.string().nonempty("Location is required"),
-    password: z.string().nonempty("Password is required"),
+    password: z.string().optional().refine(val => val === undefined || val.length >= 8, {
+        message: "Password must be at least 8 characters long",
+    }),
 });
 
 export type EditEmployeeFormSchemaType = z.infer<typeof formSchema>;
@@ -79,7 +80,6 @@ export const EmployeeInfo = () => {
                 birthDate: "",
                 gender: "",
                 maritalStatus: "",
-                ssn: "",
             },
             address: {
                 street1: "",
@@ -115,8 +115,6 @@ export const EmployeeInfo = () => {
         }
     });
 
-    console.log(employeeData?.personalInformation?.gender);
-
 
     useEffect(() => {
         if (employeeData) {
@@ -135,7 +133,6 @@ export const EmployeeInfo = () => {
                     birthDate: formatDate(employeeData?.personalInformation?.dateOfBirth || ""),
                     gender: employeeData?.personalInformation?.gender || "",
                     maritalStatus: employeeData?.personalInformation?.maritalStatus || "",
-                    ssn: employeeData?.personalInformation?.ssn || "",
                 },
                 address: {
                     street1: employeeData?.address?.street1 || "",
@@ -202,6 +199,9 @@ export const EmployeeInfo = () => {
         label: employee.name
     }))
 
+    console.log(form.formState.errors);
+
+
     return (
         <div>
             <div>
@@ -252,7 +252,6 @@ export const EmployeeInfo = () => {
                                             ]}
                                         />
                                     </div>
-                                    <EmployeeFormFieldWrapper control={form.control} name="personalInformation.ssn" label="SSN" className="max-w-44" />
                                 </div>
                             </EmployeeFormSection>
 
@@ -460,6 +459,9 @@ export const EmployeeInfo = () => {
                                 <Button
                                     variant="saveAction"
                                     className="h-9"
+                                    disabled={
+                                        mutation.isPending
+                                    }
                                 >Update</Button>
                                 <Button
                                     variant="outline"

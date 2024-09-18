@@ -60,7 +60,9 @@ export const AddNewDialog = ({
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent
+                className="w-[90%]"
+            >
                 <DialogHeader>
                     <DialogTitle className="my-2">{label}</DialogTitle>
                 </DialogHeader>

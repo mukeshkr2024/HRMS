@@ -68,7 +68,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ data }) => {
                         )}
                     </div>
                 ) : (
-                    <div>No Documents</div>
+                    <div className="flex items-center justify-center h-20 w-full text-muted-foreground text-center">No Documents</div>
                 )}
             </div>
         </div>

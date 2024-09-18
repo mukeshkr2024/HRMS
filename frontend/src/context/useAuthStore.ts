@@ -16,7 +16,9 @@ type IEmployee = {
   avatar: string;
   reportsTo: {
     name: string;
+    avatar: string;
   };
+  role: string;
 };
 
 type AuthState = {

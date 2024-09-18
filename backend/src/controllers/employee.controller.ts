@@ -14,11 +14,9 @@ import mongoose from "mongoose";
 
 export const createEmployee = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    const session = await mongoose.startSession();
-    session.startTransaction();
 
     try {
-      const { employeeNumber, jobDetails, jobInformation, contactInformation, personalInformation, address, compensation } = req.body;
+      const { employeeNumber, jobDetails, jobInformation, contactInformation, personalInformation, address, compensation, password } = req.body;
 
       // Check for required fields
       if (!employeeNumber || !jobDetails || !jobInformation || !contactInformation || !personalInformation || !address || !compensation) {
@@ -26,7 +24,7 @@ export const createEmployee = CatchAsyncError(
       }
 
       const { hireDate } = jobDetails;
-      const { firstName, middleName, lastName, preferredName, birthDate, gender, maritalStatus, ssn } = personalInformation;
+      const { firstName, middleName, lastName, preferredName, birthDate, gender, maritalStatus } = personalInformation;
       const { department, jobTitle, reportsTo, location } = jobInformation;
       const { workEmail, workPhone, mobilePhone, homePhone, homeEmail } = contactInformation;
       const { street1, street2, city, state, zipCode, country } = address;
@@ -70,10 +68,8 @@ export const createEmployee = CatchAsyncError(
               dateOfBirth: new Date(birthDate),
               gender,
               maritalStatus,
-              ssn,
             },
           ],
-          { session }
         ),
         Address.create(
           [
@@ -86,7 +82,6 @@ export const createEmployee = CatchAsyncError(
               country,
             },
           ],
-          { session }
         ),
         Compensation.create(
           [
@@ -97,7 +92,6 @@ export const createEmployee = CatchAsyncError(
               payRateType,
             },
           ],
-          { session }
         ),
         ContactInformation.create(
           [
@@ -109,7 +103,6 @@ export const createEmployee = CatchAsyncError(
               homeEmail: homeEmail?.trim(),
             },
           ],
-          { session }
         ),
       ]);
 
@@ -122,7 +115,7 @@ export const createEmployee = CatchAsyncError(
             department: departmentFound._id,
             position: positionFound._id,
             jobTitle: positionFound.name,
-            password: "password", // Ensure to hash the password before use in production
+            password: password, // Ensure to hash the password before use in production
             email: workEmail.trim(),
             personalInformation: personalInfo[0]._id,
             address: addressInfo[0]._id,
@@ -132,7 +125,6 @@ export const createEmployee = CatchAsyncError(
             workLocation: location
           },
         ],
-        { session }
       );
 
       // @ts-ignore
@@ -140,10 +132,7 @@ export const createEmployee = CatchAsyncError(
       // @ts-ignore
       positionFound.employees.push(employee[0]._id);
 
-      await Promise.all([departmentFound.save({ session }), positionFound.save({ session })]);
-
-      await session.commitTransaction();
-      session.endSession();
+      await Promise.all([departmentFound.save(), positionFound.save()]);
 
 
       return res.status(201).json({
@@ -151,9 +140,7 @@ export const createEmployee = CatchAsyncError(
         data: employee[0],
       });
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      return next(new ErrorHandler("An error occurred while creating the employee.", 500));
+      return next(new ErrorHandler(error, 400));
     }
   }
 );
@@ -258,7 +245,6 @@ export const updateEmployeeById = CatchAsyncError(
         jobDetails, jobInformation, role, workLocation, password
       } = req.body;
 
-
       const employeeId = req.params.employeeId;
 
       const employee = await Employee.findById(employeeId);
@@ -291,7 +277,7 @@ export const updateEmployeeById = CatchAsyncError(
         { new: true }
       );
 
-      const updatedEmployee = await Employee.findByIdAndUpdate(
+      const updatedEmployee: any = await Employee.findByIdAndUpdate(
         employeeId,
         {
           employeeNumber,
@@ -302,10 +288,19 @@ export const updateEmployeeById = CatchAsyncError(
           reportsTo: jobInformation.reportsTo,
           role,
           workLocation,
-          password,
         },
         { new: true }
       );
+
+      // Manually handle password update
+      if (password) {
+        updatedEmployee.password = password;
+        // Call save() so pre('save') middleware is triggered for hashing
+        await updatedEmployee.save();
+
+        console.log(updatedEmployee);
+
+      }
 
       if (!updatedEmployee) {
         return next(new ErrorHandler('Employee update failed', 400));
@@ -319,7 +314,6 @@ export const updateEmployeeById = CatchAsyncError(
     }
   }
 );
-
 
 export const getEmployeeOptions = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {

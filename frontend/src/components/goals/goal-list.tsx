@@ -64,7 +64,7 @@ export const GoalList = ({ employeeId }: { employeeId?: string }) => {
                     </div>
 
                     {goals.length > 0 ? (
-                        <div className="mt-3 gap-4 grid grid-cols-3">
+                        <div className="mt-3 gap-4 grid lg:grid-cols-2 xl:grid-cols-3">
                             {goals.map((goal: Goal) => (
                                 <GoalCard
                                     key={goal._id}
@@ -78,7 +78,7 @@ export const GoalList = ({ employeeId }: { employeeId?: string }) => {
                             ))}
                         </div>
                     ) : (
-                        <div>No goals found</div>
+                        <div className="flex items-center justify-center h-20 text-muted-foreground">No goals found</div>
                     )}
                 </>
             )}

@@ -6,7 +6,7 @@ import { UserAvatar } from "../shared/user-avatar"
 export const Profile = () => {
     const { employee } = useAuthStore()
     return (
-        <Card className="p-5">
+        <Card className="p-5 hidden lg:block">
             <div className="flex items-center gap-x-12">
 
                 <UserAvatar

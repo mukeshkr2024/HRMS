@@ -1,18 +1,18 @@
-import { Input } from "../ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
-import React from "react"
-import { LogOut } from "lucide-react"
 import { useAuthStore } from "@/context/useAuthStore"
+import React from "react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { MobileSidebar } from "./mobile-sidebar"
+import { LogOut } from "lucide-react"
 
 export const Navbar = () => {
     const { employee } = useAuthStore();
-    console.log(employee);
 
     return (
-        <nav className="w-full pl-[30%] bg-white pt-8 flex justify-between">
-            <div className="w-[60%] relative flex items-center">
+        <nav className="w-full md:pl-[30%] h-16 bg-white flex justify-between items-center px-5">
+            <MobileSidebar />
+            {/* <div className="w-[60%] relative md:flex items-center hidden">
                 <div className="absolute left-4 flex items-center">
                     <img src="/icons/search-icon.svg" className="w-5 h-5" alt="Search Icon" />
                 </div>
@@ -20,15 +20,14 @@ export const Navbar = () => {
                     placeholder="Search..."
                     className="px-5 pl-10 rounded-[28px] w-full placeholder:text-end placeholder:text-[#808080] bg-[#F2F2F2]"
                 />
-            </div>
-            <div className="flex gap-x-3">
+            </div> */}
+            <div className="flex gap-x-3 ml-auto">
                 <div className="size-[38px] rounded-full flex items-center justify-center bg-[#E5E5E5]">
                     <img src="/icons/setting-icon.svg" className="size-[20px]" />
                 </div>
                 <div className="size-[38px] rounded-full flex items-center justify-center bg-[#E5E5E5]">
                     <img src="/icons/notification-icon.svg" className="size-[20px]" />
                 </div>
-
                 <NavMenuDropdown>
                     <Avatar>
                         <AvatarImage src={employee?.avatar} />
@@ -51,7 +50,8 @@ const NavMenuDropdown = ({ children }: { children: React.ReactNode }) => {
 
     }
     return (
-        <DropdownMenu>
+        <DropdownMenu
+            modal={false}>
             <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem className="flex items-center gap-2 cursor-pointer" onClick={handleLogout}><LogOut className="size-6" /> LogOut</DropdownMenuItem>

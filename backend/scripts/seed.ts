@@ -35,7 +35,6 @@ export const SeedData = async () => {
             preferredName: "Mukesh",
             dateOfBirth: new Date('1990-05-15'),
             gender: 'Male',
-            ssn: "123456789",
             maritalStatus: "Single"
         });
 

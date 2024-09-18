@@ -25,6 +25,7 @@ interface FileUploadDialogProps {
     children: React.ReactNode;
     isOpen: boolean
     setIsOpen: (isOpen: boolean) => void
+    isPending: boolean
 }
 
 const fileSchema = z.object({
@@ -36,7 +37,8 @@ export const FileUploadDialog = ({
     onSubmit,
     children,
     isOpen,
-    setIsOpen
+    setIsOpen,
+    isPending
 }: FileUploadDialogProps) => {
 
     const form = useForm<{ file: File | null }>({
@@ -53,7 +55,9 @@ export const FileUploadDialog = ({
             <DialogTrigger asChild>
                 {children}
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent
+                className="w-[90%]"
+            >
                 <DialogHeader>
                     <DialogTitle className="my-2">{label}</DialogTitle>
                 </DialogHeader>
@@ -89,7 +93,7 @@ export const FileUploadDialog = ({
                                 </Button>
                                 <Button
                                     className="w-28"
-                                    disabled={isSubmitting || !isValid}
+                                    disabled={isSubmitting || !isValid || isPending}
                                     type="submit"
                                 >
                                     Upload

@@ -16,11 +16,6 @@ export const Announcements = () => {
 
     const handleDeleteMutation = useDeleteAnnouncement()
 
-    console.log(data);
-
-
-    console.log(employee);
-
     const handleDelete = (id: string) => {
         handleDeleteMutation.mutate(id);
     }
@@ -30,16 +25,16 @@ export const Announcements = () => {
     return (
         <section className="flex-1">
             <Card style={{ height: '400px', overflowY: 'auto' }}>
-                <div className="sticky top-0 z-10 bg-[#EBEBEB] px-6 py-1.5 flex justify-between items-center">
+                <div className="sticky top-0 z-10 bg-[#EBEBEB] px-6 py-1.5 min-h-14 flex justify-between items-center">
                     <h3 className="text-lg font-medium">What’s happening at CloudPrism</h3>
-                    <AddNewAnnouncementPopup>
+                    {employee?.role === "admin" && <AddNewAnnouncementPopup>
                         <Button
                             className=" font-normal flex items-center justify-center gap-x-2 text-[#313131] h-9  shadow-sm"
                             variant="outline"
                         >
                             <CirclePlus size={18} /> Add new announcements
                         </Button>
-                    </AddNewAnnouncementPopup>
+                    </AddNewAnnouncementPopup>}
 
                 </div>
 

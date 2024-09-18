@@ -14,7 +14,7 @@ const addressSchema = new Schema<IAddress>({
     street2: { type: String },
     city: { type: String, required: true },
     state: { type: String, required: true },
-    zipCode: { type: String, required: true, length: 5 },
+    zipCode: { type: String, required: true, length: 6 },
     country: { type: String, required: true },
 });
 

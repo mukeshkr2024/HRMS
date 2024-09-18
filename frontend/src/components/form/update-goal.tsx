@@ -35,7 +35,6 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
 
     const handleUpdateProgress = () => {
         console.log('Updated progress:', progress)
-        // You can add mutation logic here to persist the updated progress to the backend
         updateGoalProgressMutation.mutate({
             progress
         }, {
@@ -68,21 +67,21 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
                 <CardDescription>{goal?.description}</CardDescription>
                 <CardContent className='p-0'>
                     <div className='mt-4'>
-                        <div className="flex items-end w-full justify-between">
-                            <div>
-                                <span className="text-[#404040] font-bold text-5xl">{progress}%</span>
+                        <div className="flex flex-col sm:flex-row items-end w-full justify-between">
+                            <div className="mb-4 sm:mb-0">
+                                <span className="text-[#404040] font-bold text-3xl sm:text-5xl">{progress}%</span>
                                 <span className="text-[#404040] text-sm pl-2">COMPLETE</span>
                             </div>
-                            <div className='flex items-center gap-4 mb-2'>
+                            <div className='flex flex-col sm:flex-row items-center gap-4 mb-2'>
                                 <span>Status:</span>
                                 <div className='flex items-center gap-2.5'>
                                     <Input
-                                        className='w-20 h-9'
+                                        className='w-full sm:w-20 h-9'
                                         type='number'
                                         value={progress}
                                         onChange={(e) => setProgress(Number(e.target.value))}
                                     />
-                                    <Button className='h-9' onClick={handleUpdateProgress}>
+                                    <Button className='h-9 w-full sm:w-auto' onClick={handleUpdateProgress}>
                                         Update
                                     </Button>
                                 </div>
@@ -119,7 +118,7 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
                         <AddNewPopup
                             label='New Comment'
                             buttonLabel='Add Comment'
-                            className='w-[450px]'
+                            className='w-[320px] sm:w-[450px]'
                             onSubmit={handleAddComment}
                         />
                     </div>

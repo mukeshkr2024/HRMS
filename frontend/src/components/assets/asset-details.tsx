@@ -3,6 +3,7 @@ import { DataTable } from "./data-table"
 import { AddAssetModel } from "./add-asset-modal"
 import { useGetAssets } from "@/api/assets/use-get-assets"
 import { Loader } from "lucide-react"
+import { useAuthStore } from "@/context/useAuthStore"
 
 export type Asset = {
     id: string
@@ -16,7 +17,7 @@ export type Asset = {
 
 export const AssetDetails = ({ employeeId }: { employeeId?: string }) => {
     const { data, isLoading } = useGetAssets(employeeId)
-
+    const { employee } = useAuthStore()
     console.log(data);
 
 
@@ -35,8 +36,8 @@ export const AssetDetails = ({ employeeId }: { employeeId?: string }) => {
                     <img src="/icons/monitor-mobbile.svg" alt="" />
                     <span>Assets</span>
                 </div>
-                <AddAssetModel
-                />
+                {employee?.role === "admin" && <AddAssetModel
+                />}
             </div>
 
             <div className="mt-6">

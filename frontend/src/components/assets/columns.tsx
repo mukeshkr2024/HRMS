@@ -4,8 +4,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Asset } from "./asset-details"
 import { formatDate } from "@/utils";
 
-
-
 export const columns: ColumnDef<Asset>[] = [
     {
         accessorKey: "name",

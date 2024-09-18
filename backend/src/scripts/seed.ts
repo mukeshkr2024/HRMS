@@ -46,7 +46,6 @@ async function createRelatedDocuments() {
       preferredName: "Mukesh",
       dateOfBirth: new Date('1990-05-15'),
       gender: 'Male',
-      ssn: "123456789",
       maritalStatus: "single"
     }).save();
     const personalInfoId = personalInfo._id;

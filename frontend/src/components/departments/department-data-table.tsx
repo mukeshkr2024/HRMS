@@ -76,7 +76,7 @@ export function DepartmentDataTable({ columns, data }: DepartmentDataProps) {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={columns.length} className="h-24 text-center">
+                                <TableCell colSpan={columns.length} className="h-24 text-center text-muted-foreground">
                                     No results.
                                 </TableCell>
                             </TableRow>

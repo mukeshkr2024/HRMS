@@ -8,7 +8,6 @@ export interface IPersonalInformation extends Document {
     dateOfBirth: Date;
     gender: string;
     maritalStatus: string;
-    ssn: string;
 }
 
 const personalInformationSchema = new Schema<IPersonalInformation>(
@@ -20,7 +19,6 @@ const personalInformationSchema = new Schema<IPersonalInformation>(
         dateOfBirth: { type: Date, required: true },
         gender: { type: String, required: true },
         maritalStatus: { type: String, required: true },
-        ssn: { type: String, required: true, minlength: 9, maxlength: 9 },
     },
 );
 

@@ -2,10 +2,13 @@ import { API_URL } from "@/utils/config";
 import axios from "axios";
 import Cookies from "js-cookie";
 
+export const baseURL = API_URL + "/api/v1"
+
 export const apiClient = axios.create({
-  baseURL: API_URL + "/api/v1",
+  baseURL: baseURL,
   withCredentials: true,
 })
+
 
 apiClient.interceptors.request.use(
   (config) => {

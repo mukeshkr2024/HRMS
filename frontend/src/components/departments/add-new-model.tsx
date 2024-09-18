@@ -61,7 +61,9 @@ export const AddNewDepartment = () => {
                     className="h-9 gap-2"
                 ><PlusCircle size={17} />Add New Department</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent
+                className="w-[90%] rounded-md"
+            >
                 <DialogHeader>
                     <DialogTitle className="my-2">Add new Department</DialogTitle>
                 </DialogHeader>

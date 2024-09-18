@@ -1,4 +1,3 @@
-import { useAddAsset } from "@/api/assets/use-add-depatment";
 import {
     Dialog,
     DialogContent,
@@ -6,6 +5,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "../ui/button";
 import {
     Form,
     FormControl,
@@ -14,41 +14,37 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusCircle } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../ui/input";
+import { useState } from "react";
+import { PlusCircle } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import { useAddIssue } from "@/api/assets/use-add-issue";
 
 const formSchema = z.object({
-    category: z.string(),
-    description: z.string(),
-    serialno: z.string(),
-    assignedDate: z.string()
+    title: z.string().min(4,),
+    description: z.string().min(4),
 });
 
-export type AddAssetFormSchemaType = z.infer<typeof formSchema>;
+export type AddIssueFormSchemaType = z.infer<typeof formSchema>;
 
-export const AddAssetModel = () => {
+export const AddIssueModal = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useAddAsset()
+    const mutation = useAddIssue()
 
-    const form = useForm<AddAssetFormSchemaType>({
+    const form = useForm<AddIssueFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            category: "",
+            title: "",
             description: "",
-            serialno: "",
-            assignedDate: "",
         },
     });
 
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = (values: AddAssetFormSchemaType) => {
+    const onSubmit = (values: AddIssueFormSchemaType) => {
         mutation.mutate(values, {
             onSettled: () => {
                 setIsOpen(false);
@@ -63,28 +59,28 @@ export const AddAssetModel = () => {
                 <Button
                     variant="addAction"
                     className="h-9 gap-2"
-                ><PlusCircle size={17} />Add New Asset</Button>
+                ><PlusCircle size={17} />New Issue</Button>
             </DialogTrigger>
             <DialogContent
-                className="w-full max-w-lg p-6 md:p-8 lg:p-10"
+                className="w-full max-w-lg p-6 md:p-8"
                 style={{
                     overflowY: "auto",
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle className="my-2">Add new Asset</DialogTitle>
+                    <DialogTitle className="my-2">Add new Issue</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-y-4">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-y-2.5">
                             <FormField
                                 control={form.control}
-                                name="category"
+                                name="title"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Category</FormLabel>
+                                        <FormLabel>Issue Title</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter category" {...field} />
+                                            <Input placeholder="Enter title" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -98,32 +94,6 @@ export const AddAssetModel = () => {
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
                                             <Textarea placeholder="Enter description" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="serialno"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Serial Number</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Enter serial number" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="assignedDate"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Assigned Date</FormLabel>
-                                        <FormControl>
-                                            <Input type="date" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

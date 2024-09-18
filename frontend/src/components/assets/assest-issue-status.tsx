@@ -1,53 +1,52 @@
-import { AssetIssueCard } from "../card/asset-issue-card"
+import { AddIssueModal } from "./add-issue-model"
+import { DataTable } from "./data-table"
+import { columns } from "./isssue-colums"
 
-
-const issues = [
-    {
-        id: "A001",
-        category: "Laptop",
-        description: "Dell XPS 13",
-        serial: "DLX13-2023-001",
-        assignedAt: "2024-07-10T09:00:00Z",
-        status: "success",
-        raisedDescriptions: "Lorem ipsum dolor, sit amet consectetur adipisicing elit.",
-        ticketStatus: "Under Review",
-        approvedByLead: false,
-        raisedAt: "2026-07-10T09:00:00"
-    },
-    {
-        id: "A002",
-        category: "Laptop",
-        description: "Dell XPS 13 ",
-        serial: "DLX13-2023-001",
-        assignedAt: "2024-07-10T09:00:00Z",
-        status: "success",
-        raisedDescriptions: "Lorem ipsum dolor, sit amet consectetur adipisicing elit!",
-        ticketStatus: "Under Review",
-        approvedByLead: true,
-        raisedAt: "2026-07-10T09:00:00"
-    },
-
-]
-
+export type Issue = {
+    _id: string
+    title: string
+    description: string
+    status: "pending" | "processing" | "success" | "failed",
+    approval: "pending" | "processing" | "success" | "failed",
+    createdAt: string
+}
 
 export const AssetIssueStatus = () => {
+
+    const data: Issue[] = [
+        {
+            "_id": "66eaa26a9126bade0526345b",
+            "description": "Assest description 1",
+            "createdAt": "2024-09-18T09:50:34.496Z",
+            "status": "pending",
+            "approval": "pending",
+            "title": "Assest description"
+        },
+        {
+            "_id": "66eaa26a9126bade0526345b",
+            "description": "Assest description 1",
+            "createdAt": "2024-09-18T09:50:34.496Z",
+            "status": "pending",
+            "approval": "pending",
+            "title": "Assest description"
+        },
+    ]
+
     return (
         <section className="w-full">
             <div className="flex items-center gap-x-10">
                 <div className="flex items-center gap-x-2.5">
                     <img src="/icons/monitor-mobbile.svg" alt="" />
-                    <span>Issue Status</span>
+                    <span>Raise Issue</span>
                 </div>
+                <AddIssueModal />
             </div>
 
-            <div className="flex w-full gap-x-8 mt-6">
-                {
-                    issues.map((issue) => (
-                        // @ts-ignore
-                        <AssetIssueCard key={issue.id}  {...issue} />
-                    ))
-                }
+            <div className="mt-6">
+                <DataTable columns={columns} data={data} />
             </div>
+
+
         </section>
     )
 }

@@ -18,8 +18,6 @@ const folders = [
 export const DocumentLayout = () => {
     const { employeeId } = useParams()
 
-
-
     const { currentFolderId, selectedFolders, selectedFiles } = useDocumentStore();
     const createFolderMutation = useCreateFolder(currentFolderId!, employeeId);
     const uploadFileMutation = useUploadFile(currentFolderId!, employeeId);
@@ -57,17 +55,7 @@ export const DocumentLayout = () => {
             }
         )
     };
-
-    // const handleArchive = () => {
-
-    // };
-
-    // const handleMove = () => {
-
-    // };
-
     const totalSelectedFiles = selectedFiles.length + selectedFolders.length
-
 
     return (
         <div className="w-full flex flex-col gap-y-4 relative">
@@ -83,6 +71,9 @@ export const DocumentLayout = () => {
                         onSubmit={handleFileUpload}
                         isOpen={isUploadFileDialogOpen}
                         setIsOpen={setIsUploadFileDialogOpen}
+                        isPending={
+                            uploadFileMutation.isPending
+                        }
                     >
                         <Button variant="addAction" className="h-8 gap-2.5">
                             <CirclePlus size={18} /> Add a File
@@ -118,7 +109,7 @@ export const DocumentLayout = () => {
                 </div>
             </div>
             <div className="flex gap-8 w-full">
-                <div className="bg-[#F7F8FA] rounded-md w-[280px] min-h-[400px]">
+                <div className="bg-[#F7F8FA] rounded-md w-[280px] min-h-[400px] hidden lg:block">
                     <div className="p-6 flex flex-col gap-y-4">
                         {folders.map(folder => (
                             <div key={folder.id} className="flex items-center gap-4">

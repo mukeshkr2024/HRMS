@@ -23,12 +23,10 @@ const s3Client = new S3Client({
     },
 });
 
-// Define types for file upload options
 interface UploadOptions {
     video?: boolean;
 }
 
-// Upload file function
 async function UploadFile(
     fileBuffer: Buffer | Readable,
     fileName: string,
@@ -51,7 +49,6 @@ async function UploadFile(
     }
 }
 
-// Get signed URL for the object
 async function getObjectSignedUrl(
     fileName: string,
     type: UploadOptions = {}
@@ -74,7 +71,6 @@ async function getObjectSignedUrl(
     }
 }
 
-// Get object URL directly
 async function getObjectUrl(
     fileName: string,
     type: UploadOptions = {}
@@ -83,7 +79,6 @@ async function getObjectUrl(
     return objectUrl;
 }
 
-// Delete file function
 async function deleteFile(fileName: string, type: UploadOptions = {}): Promise<void> {
     try {
         const deleteParams: DeleteObjectCommandInput = {

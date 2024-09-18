@@ -1,5 +1,5 @@
-import bcrypt from "bcryptjs";
 import { Document, Schema, model } from "mongoose";
+import bcrypt from "bcryptjs";
 
 const saltRounds = 10;
 
@@ -15,11 +15,18 @@ export interface IEmployee extends Document {
   department: Schema.Types.ObjectId;
   position: Schema.Types.ObjectId;
   jobTitle: string;
-  reportsTo: Schema.Types.ObjectId,
+  reportsTo: Schema.Types.ObjectId;
   role: string;
   comparePassword(enteredPassword: string): Promise<boolean>;
   email: string;
-  educations: Schema.Types.ObjectId[];
+  educations: {
+    college: string;
+    degree: string;
+    specialization: string;
+    gpa: string;
+    startDate: Date;
+    endDate: Date;
+  }[];
   languages: string[];
   name: string;
   avatar: string;
@@ -28,7 +35,6 @@ export interface IEmployee extends Document {
 
 const employeeSchema = new Schema<IEmployee>(
   {
-
     employeeNumber: { type: String, unique: true },
     name: { type: String, required: true },
     hireDate: { type: Date },
@@ -40,56 +46,43 @@ const employeeSchema = new Schema<IEmployee>(
     email: {
       type: String,
       unique: true,
-      match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+      match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
     },
     personalInformation: { type: Schema.Types.ObjectId, ref: "PersonalInformation", required: true },
     address: { type: Schema.Types.ObjectId, ref: "Address", required: true },
     compensation: { type: Schema.Types.ObjectId, ref: "Compensation" },
     contactInformation: { type: Schema.Types.ObjectId, ref: "ContactInformation" },
-    password: { type: String, required: true, select: false },
+    password: { type: String, required: true },
     status: { type: String, enum: ["active", "inactive", "on-leave", "terminated"], default: "active" },
     avatar: { type: String },
-    workLocation: { type: String, }, // Todo: add later
+    workLocation: { type: String }, // Todo: add later
     educations: [
       {
-        college: {
-          type: String,
-        },
-        degree: {
-          type: String,
-        },
-        specialization: {
-          type: String,
-        },
-        gpa: {
-          type: String,
-        },
-        startDate: {
-          type: Date,
-        },
-        endDate: {
-          type: Date,
-        }
-      }
+        college: { type: String },
+        degree: { type: String },
+        specialization: { type: String },
+        gpa: { type: String },
+        startDate: { type: Date },
+        endDate: { type: Date },
+      },
     ],
-    languages: [
-      {
-        type: String,
-      }
-    ]
+    languages: [{ type: String }],
   },
   { timestamps: true }
 );
 
+// Hash password before saving
 employeeSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  const hash = await bcrypt.hash(this.password, saltRounds);
-  this.password = hash;
-  next();
+  if (!this.isModified("password")) {
+    return next();
+  }
+  this.password = await bcrypt.hash(this.password, saltRounds);
+  return next();
 });
 
-employeeSchema.methods.comparePassword = async function (enteredPassword: string): Promise<boolean> {
-  return bcrypt.compare(enteredPassword, this.password);
+// compare password
+employeeSchema.methods.comparePassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
 };
 
 export const Employee = model<IEmployee>("Employee", employeeSchema);

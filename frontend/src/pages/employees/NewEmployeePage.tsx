@@ -20,14 +20,13 @@ const formSchema = z.object({
         birthDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" }),
         gender: z.string().nonempty("Gender is required"),
         maritalStatus: z.string().nonempty("Marital status is required"),
-        ssn: z.string().nonempty("SSN is required").length(9, "SSN must be 9 characters"),
     }),
     address: z.object({
         street1: z.string().nonempty("Street address is required"),
         street2: z.string().optional(),
         city: z.string().nonempty("City is required"),
         state: z.string().nonempty("State is required"),
-        zipCode: z.string().nonempty("Zip code is required").length(5, "Zip code must be 5 digits"),
+        zipCode: z.string().nonempty("Zip code is required").length(6, "Zip code must be 5 digits"),
         country: z.string().nonempty("Country is required"),
     }),
     compensation: z.object({
@@ -55,7 +54,7 @@ const formSchema = z.object({
         location: z.string().nonempty("Location is required"),
     }),
     role: z.string().nonempty("Role is required"),
-    password: z.string().nonempty("Password is required"),
+    password: z.string().min(8, "Password must be at least 8 characters long",),
 });
 
 export type EmployeeFormSchemaType = z.infer<typeof formSchema>;
@@ -79,7 +78,6 @@ export const NewEmployeePage = () => {
                 birthDate: "",
                 gender: "",
                 maritalStatus: "",
-                ssn: "",
             },
             address: {
                 street1: "",
@@ -118,7 +116,11 @@ export const NewEmployeePage = () => {
 
     const onSubmit = (values: EmployeeFormSchemaType) => {
         console.log(values);
-        mutation.mutate(values)
+        mutation.mutate(values, {
+            onSuccess: () => {
+                navigate("/employees")
+            }
+        })
     };
 
     if (isLoading) {
@@ -155,7 +157,7 @@ export const NewEmployeePage = () => {
                                     <div className="flex">
                                         <EmployeeFormFieldWrapper control={form.control} name="employeeNumber" label="Employee #" />
                                     </div>
-                                    <div className="flex w-full gap-4">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-4xl lg:grid-cols-4">
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.firstName" label="First Name" />
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.middleName" label="Middle Name" />
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.lastName" label="Last Name" />
@@ -193,7 +195,6 @@ export const NewEmployeePage = () => {
                                             ]}
                                         />
                                     </div>
-                                    <EmployeeFormFieldWrapper control={form.control} name="personalInformation.ssn" label="SSN" className="max-w-44" />
                                 </div>
                             </EmployeeFormSection>
 
@@ -357,43 +358,37 @@ export const NewEmployeePage = () => {
 
                             {/* Job Information */}
                             <EmployeeFormSection title="Job Information" icon="/icons/call-slash.svg">
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex gap-4">
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.jobTitle" label="Job Title" className="w-64"
-                                            options={profileOptions}
-                                        />
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.reportsTo" label="Reports To" className="w-64"
-                                            useCombobox
-                                            options={employeeOptions}
-                                        />
-                                    </div>
-                                    <div className="flex gap-4">
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.department" label="Department" className="w-64"
-                                            options={departmentOptions}
-                                        />
-                                        <EmployeeFormFieldWrapper control={form.control} name="role" label="Role" className="w-64"
-                                            options={
-                                                [
-                                                    { label: "Employee", value: "employee" },
-                                                    { label: "Manager", value: "manager" },
-                                                    { label: "Lead", value: "lead" },
-                                                    { label: "Admin", value: "admin" },
-                                                ]
-                                            }
-                                        />
-                                    </div>
-                                    <div className="flex gap-4">
-                                        <EmployeeFormFieldWrapper control={form.control} name="jobInformation.location" label="Location" className="w-64"
-                                            options={
-                                                [
-                                                    { label: "Pune, India", value: "pune, india" },
-                                                    { label: "Patna, India", value: "patna, india" },
-                                                ]
-                                            }
-                                        />
-                                        <EmployeeFormFieldWrapper control={form.control} name="password" label="Password" className="w-64" />
+                                <div className="grid gap-4 md:grid-cols-2 max-w-xl">
+                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.jobTitle" label="Job Title" className="w-64"
+                                        options={profileOptions}
+                                    />
+                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.reportsTo" label="Reports To" className="w-64"
+                                        useCombobox
+                                        options={employeeOptions}
+                                    />
+                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.department" label="Department" className="w-64"
+                                        options={departmentOptions}
+                                    />
+                                    <EmployeeFormFieldWrapper control={form.control} name="role" label="Role" className="w-64"
+                                        options={
+                                            [
+                                                { label: "Employee", value: "employee" },
+                                                { label: "Manager", value: "manager" },
+                                                { label: "Lead", value: "lead" },
+                                                { label: "Admin", value: "admin" },
+                                            ]
+                                        }
+                                    />
+                                    <EmployeeFormFieldWrapper control={form.control} name="jobInformation.location" label="Location" className="w-64"
+                                        options={
+                                            [
+                                                { label: "Pune, India", value: "pune, india" },
+                                                { label: "Patna, India", value: "patna, india" },
+                                            ]
+                                        }
+                                    />
+                                    <EmployeeFormFieldWrapper control={form.control} name="password" label="Password" className="w-64" />
 
-                                    </div>
                                 </div>
                             </EmployeeFormSection>
 
@@ -402,6 +397,9 @@ export const NewEmployeePage = () => {
                                 <Button
                                     variant="saveAction"
                                     className="h-9"
+                                    disabled={
+                                        mutation.isPending
+                                    }
                                 >Add Employee</Button>
                                 <Button
                                     variant="outline"
