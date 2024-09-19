@@ -1,5 +1,7 @@
 import { apiClient } from "@/api/api-client";
 import { create, SetState } from "zustand";
+import Cookies from 'js-cookie';
+
 
 type IEmployee = {
   _id: string;
@@ -70,6 +72,7 @@ export const useAuthStore = create<AuthState>((set: SetState<AuthState>) => ({
 
   logout: async () => {
     try {
+      Cookies.remove('access_token');
       await apiClient.post("/auth/logout");
       set({ employee: null });
     } catch (error) {
