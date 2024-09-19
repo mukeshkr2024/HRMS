@@ -6,6 +6,7 @@ interface IIssue extends Document {
     employeeId: Types.ObjectId;
     status: "pending" | "resolved";
     approval: "pending" | "approved";
+    type: "asset"
 }
 
 const issueSchema = new Schema<IIssue>(
@@ -33,6 +34,11 @@ const issueSchema = new Schema<IIssue>(
             default: "pending",
             enum: ["pending", "approved"],
         },
+        type: {
+            type: String,
+            default: "asset",
+            enum: ["asset"]
+        }
     },
     {
         timestamps: true,

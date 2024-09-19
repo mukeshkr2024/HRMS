@@ -5,50 +5,21 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import { cn } from "@/utils/cn";
-import { Briefcase, FileBarChart, LayoutGrid, Menu, Monitor, User, Users } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
-export const MobileSidebar = () => {
-    const sidebarRoutes = [
-        {
-            label: "Dashboard",
-            route: "/",
-            icon: LayoutGrid,
-        },
-        {
-            label: "My Info",
-            route: "/my-info",
-            icon: Monitor,
-        },
-        {
-            label: "People",
-            route: "/employees",
-            icon: User,
-        },
-        {
-            label: "Departments",
-            route: "/departments",
-            icon: Briefcase,
-        },
-        {
-            label: "Profiles",
-            route: "/profiles",
-            icon: Users,
-        },
-        // {
-        //     label: "Reports",
-        //     route: "/reports",
-        //     icon: BarChart3,
-        // },
-        {
-            label: "Documents",
-            route: "/documents",
-            icon: FileBarChart,
-        },
-    ];
+interface Route {
+    label: string;
+    route: string;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
 
+interface DashboardSideBarProps {
+    routes: Route[];
+}
+
+export const MobileSidebar = ({ routes }: DashboardSideBarProps) => {
     const { pathname } = useLocation()
-
 
     return (
         <Sheet
@@ -70,7 +41,7 @@ export const MobileSidebar = () => {
                         </Link>
                     </SheetClose>
                     {
-                        sidebarRoutes.map(route => (
+                        routes.map(route => (
                             <SheetClose asChild key={route.label}>
                                 <Link to={route.route} className={cn("flex gap-x-4 items-center px-5 py-2 rounded-[37px]", pathname === route.route ? "bg-[#FFFFFF]" : "")}>
                                     <route.icon className={cn("", pathname === route.route ? "text-brand-green" : "")}

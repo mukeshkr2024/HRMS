@@ -58,7 +58,7 @@ const goalSchema = new Schema<IGoal>({
     },
     status: {
         type: String,
-        enum: ["pending", "in-progress", "completed"],
+        enum: ["pending", "progress", "completed"],
         default: "pending",
     },
     comments: [commentSchema],

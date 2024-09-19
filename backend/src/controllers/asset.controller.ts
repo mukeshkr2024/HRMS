@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import { Asset } from "../models/assets.models";
+import { Issue } from "../models/issue.model";
 
 export const addAsset = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -58,3 +59,41 @@ export const getAssets = CatchAsyncError(async (req: Request, res: Response, nex
         return next(new ErrorHandler(error, 400));
     }
 })
+
+export const createAssetIssue = CatchAsyncError(async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+
+        const { title, description } = req.body;
+
+        if (!title || !description) {
+            return res.status(400).json({ message: "Title and description are required." });
+        }
+
+        const issue = await Issue.create({
+            title,
+            description,
+            employeeId: req.employee.id
+        })
+
+        return res.status(201).json(issue);
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+export const getIssues = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const issues = await Issue.find({
+                employeeId: req.employee.id,
+            });
+            return res.status(200).json(issues);
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+        }
+    }
+)

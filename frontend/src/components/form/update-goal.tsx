@@ -34,14 +34,24 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
     }
 
     const handleUpdateProgress = () => {
-        console.log('Updated progress:', progress)
+        // Ensure progress is within 0-100 range
+        const clampedProgress = Math.min(Math.max(progress, 0), 100)
+        console.log('Updated progress:', clampedProgress)
         updateGoalProgressMutation.mutate({
-            progress
+            progress: clampedProgress
         }, {
             onSuccess: () => {
                 setIsEditing(null)
             }
         })
+    }
+
+    const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(e.target.value)
+        // Ensure value is within 0-100 range
+        if (value >= 0 && value <= 100) {
+            setProgress(value)
+        }
     }
 
     if (isLoading) {
@@ -79,7 +89,7 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
                                         className='w-full sm:w-20 h-9'
                                         type='number'
                                         value={progress}
-                                        onChange={(e) => setProgress(Number(e.target.value))}
+                                        onChange={handleProgressChange}
                                     />
                                     <Button className='h-9 w-full sm:w-auto' onClick={handleUpdateProgress}>
                                         Update

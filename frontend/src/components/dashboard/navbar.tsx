@@ -6,12 +6,24 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MobileSidebar } from "./mobile-sidebar"
 import { LogOut } from "lucide-react"
 
-export const Navbar = () => {
+interface Route {
+    label: string;
+    route: string;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
+
+interface DashboardSideBarProps {
+    routes: Route[];
+}
+
+export const Navbar = ({ routes }: DashboardSideBarProps) => {
     const { employee } = useAuthStore();
 
     return (
         <nav className="w-full md:pl-[30%] h-16 bg-white flex justify-between items-center px-5">
-            <MobileSidebar />
+            <MobileSidebar
+                routes={routes}
+            />
             {/* <div className="w-[60%] relative md:flex items-center hidden">
                 <div className="absolute left-4 flex items-center">
                     <img src="/icons/search-icon.svg" className="w-5 h-5" alt="Search Icon" />

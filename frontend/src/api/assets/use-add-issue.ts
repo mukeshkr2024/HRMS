@@ -9,7 +9,7 @@ export const useAddIssue = () => {
 
     return useMutation({
         mutationFn: async (data: AddIssueFormSchemaType) => {
-            await apiClient.post("/empolyees/issues", data)
+            await apiClient.post("/assets/issues", data)
         },
         onError: (error) => {
             console.log("error", error);

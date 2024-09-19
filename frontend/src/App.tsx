@@ -23,6 +23,7 @@ import { EmployeeInfoLayout } from "./layouts/EmployeeInfoLayout";
 import { EmployeeGoalsPage } from "./pages/employeeGoals/EmployeeGoals";
 import { EmployeeAssetsPage } from "./pages/employeeAssets";
 import { EmployeeDocumentPage } from "./pages/employeeDocument";
+import { TeamMembersPage } from "./pages/members/members";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/departments" element={<DepartmentPage />} />
           <Route path="/profiles" element={<ProfilesPage />} />
           <Route path="/employees/new" element={<NewEmployeePage />} />
+          <Route path="/members" element={<TeamMembersPage />} />
           <Route element={<EmployeeInfoLayout />}>
             <Route path="/employees/:employeeId" element={<EmployeeInfo />} />
             <Route path="/employees/:employeeId/assets" element={<EmployeeAssetsPage />} />

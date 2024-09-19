@@ -11,6 +11,7 @@ import { Position } from "../models/position.model";
 import path from "path"
 import { API_URL } from "../config/config";
 import mongoose from "mongoose";
+import { Issue } from "../models/issue.model";
 
 export const createEmployee = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -428,3 +429,4 @@ export const updateMyInfo = CatchAsyncError(async (
     return next(new ErrorHandler(error, 400));
   }
 });
+

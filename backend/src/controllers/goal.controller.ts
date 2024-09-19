@@ -41,31 +41,35 @@ export const createGoal = CatchAsyncError(
 export const getGoals = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-
             console.log("called", req.query);
 
-            const { employee } = req.query;
+            const { employee, status } = req.query;
 
+            console.log("status", status);
+
+            // Get the employee ID
             const employeeId = employee ? employee : req.employee.id;
 
-            const goals = await Goal.find(
-                {
-                    createdBy: employeeId
-                }
-            ).sort({
-                createdAt: -1
-            }).select("title dueDate progress status")
+            // Build the query object
+            const query: any = { createdBy: employeeId };
 
+            // Add status to the query if it's provided
+            if (status) {
+                query.status = status;
+            }
 
-            return res.status(200).json(
-                goals
-            )
+            // Find goals with the constructed query
+            const goals = await Goal.find(query)
+                .sort({ createdAt: -1 })
+                .select("title dueDate progress status");
+
+            return res.status(200).json(goals);
 
         } catch (error) {
             return next(new ErrorHandler(error, 400));
         }
     }
-)
+);
 
 export const getGoal = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
@@ -144,13 +148,21 @@ export const updateGoal = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { goalId } = req.params;
+            const { progress } = req.body;
 
-            console.log("Goal ID:", goalId);
-            console.log("Request Body:", req.body);
+            if (typeof progress !== 'number') {
+                return next(new ErrorHandler("Invalid progress value", 400));
+            }
+
+            const status = progress === 0
+                ? "pending"
+                : progress === 100
+                    ? "completed"
+                    : "progress";
 
             const updatedGoal = await Goal.findByIdAndUpdate(
                 goalId,
-                { $set: req.body },
+                { progress, status },
                 { new: true, runValidators: true }
             );
 
@@ -160,12 +172,12 @@ export const updateGoal = CatchAsyncError(
 
             return res.status(200).json({
                 message: "Goal updated successfully",
-                goal: updatedGoal
+                goal: updatedGoal,
             });
 
         } catch (error) {
             console.error("Error updating goal:", error);
-            return next(new ErrorHandler("Failed to update goal", 400));
+            return next(new ErrorHandler("Failed to update goal", 500));
         }
     }
 );
