@@ -31,6 +31,10 @@ export const createEmployee = CatchAsyncError(
       const { street1, street2, city, state, zipCode, country } = address;
       const { paySchedule, payType, payRate, payRateType } = compensation;
 
+      const workEmailLower = workEmail.trim().toLowerCase();
+      const homeEmailLower = homeEmail?.trim().toLowerCase();
+
+
       // Validate email and employee number uniqueness
       const existingEmployee = await Employee.findOne({
         $or: [{ employeeNumber }, { email: workEmail.trim() }],
@@ -98,10 +102,10 @@ export const createEmployee = CatchAsyncError(
           [
             {
               workPhone,
-              workEmail: workEmail.trim(),
+              workEmail: workEmailLower,
               mobilePhone,
               homePhone,
-              homeEmail: homeEmail?.trim(),
+              homeEmail: homeEmailLower,
             },
           ],
         ),
@@ -117,7 +121,7 @@ export const createEmployee = CatchAsyncError(
             position: positionFound._id,
             jobTitle: positionFound.name,
             password: password, // Ensure to hash the password before use in production
-            email: workEmail.trim(),
+            email: workEmailLower,
             personalInformation: personalInfo[0]._id,
             address: addressInfo[0]._id,
             compensation: compensationInfo[0]._id,
@@ -248,59 +252,68 @@ export const updateEmployeeById = CatchAsyncError(
 
       const employeeId = req.params.employeeId;
 
+      // Find employee by ID
       const employee = await Employee.findById(employeeId);
-
       if (!employee) {
         return next(new ErrorHandler('Employee not found', 404));
       }
 
+      // Update Personal Information
       const updatedPersonalInfo = await PersonalInformation.findByIdAndUpdate(
         employee.personalInformation,
         { ...personalInformation, dateOfBirth: new Date(personalInformation.birthDate) },
         { new: true }
       );
 
-      const updatedAddress = await Address.findByIdAndUpdate(
+      // Update Address
+      const updatedAddress = address && await Address.findByIdAndUpdate(
         employee.address,
         address,
         { new: true }
       );
 
-      const updatedCompensation = await Compensation.findByIdAndUpdate(
+      // Update Compensation
+      const updatedCompensation = compensation && await Compensation.findByIdAndUpdate(
         employee.compensation,
         compensation,
         { new: true }
       );
 
-      const updatedContactInfo = await ContactInformation.findByIdAndUpdate(
+      // Convert email to lowercase before updating contact information
+      const updatedContactInfo = contactInformation && await ContactInformation.findByIdAndUpdate(
         employee.contactInformation,
-        contactInformation,
-        { new: true }
-      );
-
-      const updatedEmployee: any = await Employee.findByIdAndUpdate(
-        employeeId,
         {
-          employeeNumber,
-          hireDate: new Date(jobDetails.hireDate),
-          status: jobDetails.employmentStatus,
-          department: jobInformation.department,
-          position: jobInformation.jobTitle,
-          reportsTo: jobInformation.reportsTo,
-          role,
-          workLocation,
+          ...contactInformation,
+          workEmail: contactInformation?.workEmail?.trim().toLowerCase() || employee.contactInformation.workEmail,
+          homeEmail: contactInformation?.homeEmail?.trim().toLowerCase() || employee.contactInformation.homeEmail,
         },
         { new: true }
       );
 
-      // Manually handle password update
+      // Update Employee details
+      const updatedEmployee = await Employee.findByIdAndUpdate(
+        employeeId,
+        {
+          employeeNumber: employeeNumber || employee.employeeNumber,
+          hireDate: jobDetails?.hireDate ? new Date(jobDetails.hireDate) : employee.hireDate,
+          status: jobDetails?.employmentStatus || employee.status,
+          department: jobInformation?.department || employee.department,
+          position: jobInformation?.jobTitle || employee.position,
+          reportsTo: jobInformation?.reportsTo || employee.reportsTo,
+          role: role || employee.role,
+          email: contactInformation?.workEmail?.trim().toLowerCase() || employee.email,
+          name: personalInformation
+            ? `${personalInformation?.firstName?.trim()} ${personalInformation?.middleName?.trim()} ${personalInformation?.lastName?.trim()}`
+            : employee.name,
+          workLocation: workLocation || employee.workLocation,
+        },
+        { new: true }
+      );
+
+      // Handle password update, ensure password is hashed
       if (password) {
         updatedEmployee.password = password;
-        // Call save() so pre('save') middleware is triggered for hashing
-        await updatedEmployee.save();
-
-        console.log(updatedEmployee);
-
+        await updatedEmployee.save(); // Save to trigger pre-save middleware for hashing
       }
 
       if (!updatedEmployee) {
@@ -311,10 +324,12 @@ export const updateEmployeeById = CatchAsyncError(
         employee: updatedEmployee,
       });
     } catch (error) {
-      return next(new ErrorHandler(error || 'Internal Server Error', 500));
+      return next(new ErrorHandler(error.message || 'Internal Server Error', 500));
     }
   }
 );
+
+
 
 export const getEmployeeOptions = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {

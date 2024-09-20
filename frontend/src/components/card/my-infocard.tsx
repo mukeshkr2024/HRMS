@@ -18,10 +18,13 @@ export const MyInfoCard = ({ employee }: {
         reportsTo: {
             name: string
             avatar: string
-        }
+        },
+        department: {
+            name: string
+        },
+        workLocation: string
     }
 }) => {
-
     return (
         <Card className="flex flex-wrap lg:justify-between lg:items-center px-4 py-6 lg:px-14 lg:py-8 font-urbanist shadow-md relative">
             <div className="items-center absolute right-10 justify-center lg:hidden ">
@@ -50,17 +53,17 @@ export const MyInfoCard = ({ employee }: {
                                 </div>
                                 <div className="flex items-center gap-x-2">
                                     <img src="/icons/people.svg" alt="" className="h-4 w-4" />
-                                    <p>Marketing</p>
+                                    <p>{employee?.department?.name}</p>
                                 </div>
                                 <div className="flex items-center gap-x-2">
                                     <img src="/icons/location.svg" alt="" className="h-4 w-4" />
-                                    <p>Pune</p>
+                                    <p className="capitalize">{employee?.workLocation}</p>
                                 </div>
                             </div>
                             <div className="flex gap-y-1 flex-col">
                                 <div className="flex items-center gap-x-2">
                                     <img src="/icons/sms-notification.svg" alt="" className="h-4 w-4" />
-                                    <p>{employee?.email}</p>
+                                    <p className="capitalize">{employee?.email}</p>
                                 </div>
                                 <div className="flex items-center gap-x-2">
                                     <img src="/icons/call-slash.svg" alt="" className="h-4 w-4" />
@@ -68,7 +71,6 @@ export const MyInfoCard = ({ employee }: {
                                 </div>
                             </div>
                         </div>
-
                         <div className="flex">
                             <div className="bg-[#E6E6E6] h-full w-[1.5px] rounded-md hidden lg:block" />
                             <div className="flex flex-col gap-y-2.5 ml-0 lg:ml-4">

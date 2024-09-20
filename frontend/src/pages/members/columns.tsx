@@ -1,65 +1,47 @@
 import { UserAvatar } from "@/components/shared/user-avatar";
+import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 import { Link } from "react-router-dom";
 
-export type Employee = {
-    serialNumber: string;
-    firstName: string;
-    lastName: string;
-    positionName: string;
-    createdAt: string;
-    profile: string;
-    designation: string;
-    location: string;
-    type: string;
-    joiningDate: string;
-    dob: string;
+export type Member = {
+    _id: string;
+    name: string;
+    avatar: string;
     email: string;
-    phone: string;
-    linkedinUrl: string;
-    alternativeNumber: string;
-    assesment: {
-        id: string;
-    }[];
-    avatar: string
-    _id: string
 };
 
-export const memberColumns: ColumnDef<Employee>[] = [
+export const memberColumns: ColumnDef<Member>[] = [
     {
-        accessorKey: "serialNumber",
-        header: "",
-        // header: ({ column }) => (
-        //     <Button
-        //         variant="ghost"
-        //         onClick={() =>
-        //             column.toggleSorting(column.getIsSorted() === "asc")
-        //         }
-        //     >
-        //         Employee ID
-        //         <ArrowUpDown className="ml-2 h-4 w-4" />
-        //     </Button>
-        // ),
-        cell: ({ row }) => <div>{row.original.serialNumber}</div>,
+        accessorKey: "_id",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() =>
+                    column.toggleSorting(column.getIsSorted() === "asc")
+                }
+            >
+                Serial No
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+        ),
+        cell: ({ row }) => <div>{row.index + 1}</div>,
     },
     {
         accessorKey: "assesment",
-        header: '',
+        header: "",
         cell: ({ row }) => (
-            <Link to={`/employees/${row.original._id}`}>
+            <Link to={`/members/${row.original._id}`}>
                 <div className="flex gap-5 items-center font-urbanist">
 
                     <UserAvatar
                         avatar={row.original?.avatar}
-                        name={row.original.firstName}
+                        name={row.original?.name}
                     />
                     <div className="flex flex-col text-start">
                         <h3 className="text-[#297EE2] font-bold text-lg">
-                            {row.original.firstName} {row.original.lastName}
+                            {row.original?.name}
                         </h3>
-                        <p className="text-[#3F3F3F] font-medium font-urbanist">
-                            {row.original.designation}
-                        </p>
                     </div>
                 </div>
             </Link>

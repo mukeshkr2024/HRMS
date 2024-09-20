@@ -13,7 +13,7 @@ export const createAnnouncement = CatchAsyncError(
       await announcement.save();
 
       return res.status(201).json({
-        announcement,
+        message: "Announcement saved successfully"
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
@@ -27,48 +27,8 @@ export const getAllAnnouncements = CatchAsyncError(
       const announcements = await Announcement.find().sort({ createdAt: -1 }).populate({
         path: "createdBy",
         select: "name avatar"
-      });
+      }).select("description createdBy");
       return res.status(200).json({ announcements });
-    } catch (error) {
-      return next(new ErrorHandler(error, 400));
-    }
-  }
-);
-
-export const getAnnouncementById = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const announcement = await Announcement.findById(
-        req.params.announcementId
-      );
-
-      if (!announcement) {
-        return next(new ErrorHandler("Announcement not found", 404));
-      }
-
-      return res.status(200).json({ announcement });
-    } catch (error) {
-      return next(new ErrorHandler(error, 400));
-    }
-  }
-);
-
-export const updateAnnouncement = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const announcement = await Announcement.findByIdAndUpdate(
-        req.params.announcementId,
-        req.body,
-        {
-          new: true,
-        }
-      );
-
-      if (!announcement) {
-        return next(new ErrorHandler("Announcement not found", 404));
-      }
-
-      return res.status(200).json({ announcement });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }
@@ -81,7 +41,9 @@ export const deleteAnnouncement = CatchAsyncError(
       const announcement = await Announcement.findByIdAndDelete(
         req.params.announcementId
       );
-      return res.status(200).json({ announcement });
+      return res.status(200).json({
+        message: "Announcement deleted successfully"
+      });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }

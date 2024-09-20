@@ -11,12 +11,14 @@ export const createTask = CatchAsyncError(async (req: Request, res: Response, ne
             return next(new ErrorHandler("Title is required", 400));
         }
 
-        const task = await Task.create({
+        await Task.create({
             title,
             employeeId: req.employee._id
         })
 
-        return res.status(200).json({ task })
+        return res.status(200).json({
+            message: "Task created successfully",
+        })
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }
@@ -26,7 +28,7 @@ export const getAllTasks = CatchAsyncError(async (req: Request, res: Response, n
     try {
 
         const tasks = await Task.find({ employeeId: req.employee.id })
-            .sort({ isDone: 1, createdAt: -1 })
+            .sort({ isDone: 1, createdAt: -1 }).select("title isDone")
 
         return res.status(200).json({ tasks })
     } catch (error) {
@@ -42,7 +44,9 @@ export const updateTask = CatchAsyncError(async (req: Request, res: Response, ne
         if (!task) {
             return next(new ErrorHandler("Task not found", 404));
         }
-        return res.status(200).json({ task })
+        return res.status(200).json({
+            message: "Task updated successfully"
+        })
     } catch (error) {
         return next(new ErrorHandler(error, 400));
     }

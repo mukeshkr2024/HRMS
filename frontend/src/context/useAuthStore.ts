@@ -5,11 +5,6 @@ import Cookies from 'js-cookie';
 
 type IEmployee = {
   _id: string;
-  personalInformation: {
-    firstName: string;
-    middleName: string;
-    lastName: string;
-  };
   name: string;
   email: string;
   contactInformation: {

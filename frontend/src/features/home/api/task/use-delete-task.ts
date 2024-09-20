@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiClient } from "../api-client"
 import { useToast } from "@/components/ui/use-toast"
+import { apiClient } from "@/api/api-client"
 
 export const useDeleteTask = () => {
     const queryClient = useQueryClient()
@@ -16,9 +16,13 @@ export const useDeleteTask = () => {
                     title: "Task deleted successfully"
                 })
             },
-            onError: (error) => {
-                console.log("Error deleting task", error)
-            }
+            onError: () => {
+                toast({
+                    title: "Error",
+                    description: "Failed to delete task. Please try again.",
+                    variant: "destructive",
+                });
+            },
         }
     )
 }

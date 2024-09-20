@@ -42,6 +42,7 @@ export const MyInfoLayout = () => {
             />
             <div className="mt-7">
                 <MyInfoCard
+                    // @ts-ignore
                     employee={employee!}
                 />
             </div>

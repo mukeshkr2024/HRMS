@@ -1,9 +1,9 @@
 import { Navbar } from "@/components/dashboard/navbar";
 import { DashboardSideBar } from "@/components/dashboard/sidebar";
 import { Footer } from "@/components/footer";
-import { Outlet } from "react-router-dom";
-import { Briefcase, FileBarChart, LayoutGrid, Monitor, User, UserPen } from "lucide-react";
 import { useAuthStore } from "@/context/useAuthStore";
+import { Briefcase, FileBarChart, LayoutGrid, Monitor, User, UserPen, Users } from "lucide-react";
+import { Outlet } from "react-router-dom";
 
 interface Route {
     label: string;
@@ -20,7 +20,7 @@ export const DashboardLayout = () => {
         { label: "Dashboard", route: "/", icon: LayoutGrid },
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "People", route: "/employees", icon: User },
-        // { label: "Team Members", route: "/members", icon: Users },
+        { label: "Team Members", route: "/members", icon: Users },
         { label: "Departments", route: "/departments", icon: Briefcase },
         { label: "Profiles", route: "/profiles", icon: UserPen },
         { label: "Documents", route: "/documents", icon: FileBarChart },

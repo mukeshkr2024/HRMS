@@ -22,7 +22,8 @@ const formSchema = z.object({
         birthDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" }),
         gender: z.string().nonempty("Gender is required"),
         maritalStatus: z.string().nonempty("Marital status is required"),
-        ssn: z.string().nonempty("SSN is required").length(9, "SSN must be 9 characters"),
+        uan: z.string().min(12, "UAN must be 12-25 characters").optional(),
+        pan: z.string().min(10, "Pan must be 10 characters").optional(),
     }),
     address: z.object({
         street1: z.string().nonempty("Street address is required"),
@@ -73,6 +74,8 @@ export const MyInfo = () => {
                 birthDate: "",
                 gender: "",
                 maritalStatus: "",
+                uan: "",
+                pan: "",
             },
             address: {
                 street1: "",
@@ -122,6 +125,8 @@ export const MyInfo = () => {
                     birthDate: formatDate(data?.personalInformation?.dateOfBirth) || "",
                     gender: data?.personalInformation?.gender || "",
                     maritalStatus: data?.personalInformation?.maritalStatus || "",
+                    uan: data?.personalInformation?.uan || "",
+                    pan: data?.personalInformation?.pan || "",
                 },
                 address: {
                     street1: data?.address?.street1 || "",
@@ -205,6 +210,8 @@ export const MyInfo = () => {
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.birthDate" label="Birth Date" type="date" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.gender" label="Gender" isReadOnly={true} />
                                 <EmployeeFormFieldWrapper control={form.control} name="personalInformation.maritalStatus" label="Marital Status" isReadOnly={true} />
+                                <EmployeeFormFieldWrapper control={form.control} name="personalInformation.uan" label="UAN" />
+                                <EmployeeFormFieldWrapper control={form.control} name="personalInformation.pan" label="PAN" />
                             </div>
                         </EmployeeFormSection>
 

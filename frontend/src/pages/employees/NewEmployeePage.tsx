@@ -20,6 +20,8 @@ const formSchema = z.object({
         birthDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" }),
         gender: z.string().nonempty("Gender is required"),
         maritalStatus: z.string().nonempty("Marital status is required"),
+        uan: z.string().min(12, "UAN must be 12-25 characters").optional(),
+        pan: z.string().min(10, "Pan must be 10 characters").optional(),
     }),
     address: z.object({
         street1: z.string().nonempty("Street address is required"),
@@ -78,6 +80,8 @@ export const NewEmployeePage = () => {
                 birthDate: "",
                 gender: "",
                 maritalStatus: "",
+                uan: "",
+                pan: "",
             },
             address: {
                 street1: "",
@@ -163,9 +167,14 @@ export const NewEmployeePage = () => {
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.lastName" label="Last Name" />
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.preferredName" label="Preferred Name" />
                                     </div>
-                                    <EmployeeFormFieldWrapper control={form.control} name="personalInformation.birthDate" label="Birth Date" type="date"
-                                        className="max-w-44"
-                                    />
+                                    <div className="grid grid-cols-1 md:grid-cols-3 max-w-2xl gap-4">
+                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.birthDate" label="Birth Date" type="date"
+                                            className="max-w-44"
+                                        />
+                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.uan" label="UAN" />
+                                        <EmployeeFormFieldWrapper control={form.control} name="personalInformation.pan" label="PAN" />
+                                    </div>
+
                                     <div className="flex gap-4">
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.gender" label="Gender"
                                             className="w-40"

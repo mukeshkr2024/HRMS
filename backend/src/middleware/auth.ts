@@ -13,6 +13,7 @@ const Roles = {
   ADMIN: "admin",
   MANAGER: "manager",
   EMPLOYEE: "employee",
+  LEAD: "lead"
 } as const;
 
 type Role = (typeof Roles)[keyof typeof Roles];
