@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
-import { apiClient } from "@/api/api-client";
+import { apiClient } from "@/api-client";
 
 type TaskData = {
     title: string;

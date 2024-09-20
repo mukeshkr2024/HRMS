@@ -26,3 +26,7 @@ export function formatDate(dateString: Date): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Intl.DateTimeFormat('en-GB', options).format(date);
 }
+
+export const getErrorMessage = (error: any, defaultMessage: string = "An error occurred") => {
+    return error?.response?.data?.message || defaultMessage;
+};

@@ -18,14 +18,14 @@ export const employeeRouter = express.Router();
 
 employeeRouter.post(
   "/create",
-  // isAuthenticated,
-  // authorizeRoles("admin", "manager"),
+  isAuthenticated,
+  authorizeRoles("admin"),
   createEmployee
 );
-employeeRouter.get("/options", isAuthenticated, getEmployeeOptions)
+employeeRouter.get("/options", isAuthenticated, authorizeRoles("admin"), getEmployeeOptions)
 employeeRouter.get("/info", isAuthenticated, getEmployeeInfo)
 employeeRouter.get("/short-info", isAuthenticated, getEmployeeInfo) // todo:
-employeeRouter.get("/", isAuthenticated, getAllEmployees); // add authorized roles 
+employeeRouter.get("/", isAuthenticated, authorizeRoles("admin"), getAllEmployees); // add authorized roles 
 employeeRouter.get("/:employeeId", isAuthenticated, getEmployeeById);
 employeeRouter.delete(
   "/:employeeId",
@@ -37,7 +37,7 @@ employeeRouter.put("/my-info", isAuthenticated, updateMyInfo)
 employeeRouter.put(
   "/:employeeId",
   isAuthenticated,
-  // authorizeRoles("admin"),
+  authorizeRoles("admin"),
   updateEmployeeById
 );
 employeeRouter.post("/avatar/upload",

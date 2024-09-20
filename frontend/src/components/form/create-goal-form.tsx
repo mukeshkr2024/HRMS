@@ -1,4 +1,4 @@
-import { useCreateGoal } from "@/api/goals/use-create-goals"
+import { useCreateGoal } from "@/features/goals/api/use-create-goals"
 import {
     Form,
     FormControl,

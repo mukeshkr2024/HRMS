@@ -1,4 +1,4 @@
-import { apiClient } from "@/api/api-client";
+import { apiClient } from "@/api-client";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

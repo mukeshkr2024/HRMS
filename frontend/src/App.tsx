@@ -1,30 +1,27 @@
-import { Route, Routes } from "react-router-dom";
-import { LoginPage } from "@/pages/login/LoginPage";
+import { DashboardLayout } from "@/components/layouts/DashboardLayout";
+import { DocumentLayout } from "@/components/layouts/DocumentLayout";
+import { EmployeeInfoLayout } from "@/components/layouts/EmployeeInfoLayout";
+import { MyInfoLayout } from "@/components/layouts/MyInfoLayout";
+import { NotFound } from "@/components/not-found";
 import { PrivateRoutes } from "@/routes/private-routes";
 import { UnprotectedRoutes } from "@/routes/unprotect-routes";
-import { NotFound } from "@/pages/not-found/NotFound";
-import { MyInfo } from "@/pages/my-info/MyInfoPage";
-import { EmployeesPage } from "@/pages/employees/EmployeesPage";
-import { ReportsPage } from "@/pages/reports/ReportsPage";
-import { FilesPage } from "@/pages/files/FilesPage";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
-import { MyInfoLayout } from "@/layouts/MyInfoLayout";
-import { AssetsPage } from "@/pages/assets/AssetsPage";
-import { TrainingPage } from "@/pages/training/TrainingPage";
-import { TasksPage } from "@/pages/tasks/TasksPage";
-import { GoalPage } from "@/pages/goals/goals";
-import { DocumentLayout } from "@/layouts/DocumentLayout";
-import { NewEmployeePage } from "@/pages/employees/NewEmployeePage";
-import { DepartmentPage } from "@/pages/department/DepartmentPage";
-import { ProfilesPage } from "@/pages/profiles/profiles";
-import { EmployeeInfo } from "@/pages/empoyeeId/EmployeeIdPage";
-import { EmployeeInfoLayout } from "@/layouts/EmployeeInfoLayout";
-import { EmployeeGoalsPage } from "@/pages/employeeGoals/EmployeeGoals";
-import { EmployeeAssetsPage } from "@/pages/employeeAssets";
-import { EmployeeDocumentPage } from "@/pages/employeeDocument";
-import { TeamMembersPage } from "@/pages/members/members";
-import { MemberDetail } from "@/pages/member-detail/page";
+import { Route, Routes } from "react-router-dom";
+import { AssetsPage } from "./features/assets";
+import { DepartmentPage } from "./features/departments";
+import { EmployeeAssetsPage } from "./features/employee/assets";
+import { EmployeeDocumentPage } from "./features/employee/document";
+import { EmployeeGoalsPage } from "./features/employee/goals";
+import { EmployeeInfo } from "./features/employee/info";
+import { EmployeesPage } from "./features/employees";
+import { NewEmployeePage } from "./features/employees/new";
+import { FilesPage } from "./features/documents";
+import { GoalPage } from "./features/goals";
 import { HomePage } from "./features/home";
+import LoginPage from "./features/login";
+import { TeamMembersPage } from "./features/members";
+import { MemberDetail } from "./features/members/detail";
+import { MyInfo } from "./features/my-info";
+import { ProfilesPage } from "./features/profiles";
 
 function App() {
   return (
@@ -44,8 +41,6 @@ function App() {
           <Route element={<MyInfoLayout />}>
             <Route path="/my-info" element={<MyInfo />} />
             <Route path="/assets" element={<AssetsPage />} />
-            <Route path="/training" element={<TrainingPage />} />
-            <Route path="/tasks" element={<TasksPage />} />
             <Route path="/goals" element={<GoalPage />} />
           </Route>
 
@@ -68,7 +63,6 @@ function App() {
           <Route path="/members/:memberId" element={<MemberDetail />} />
 
           {/* Reports and Documents */}
-          <Route path="/reports" element={<ReportsPage />} />
           <Route element={<DocumentLayout />}>
             <Route path="/documents" element={<FilesPage />} />
           </Route>

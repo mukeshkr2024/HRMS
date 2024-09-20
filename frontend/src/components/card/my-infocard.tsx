@@ -1,4 +1,4 @@
-import { UploadAvatar } from "../my-info/upload-avatar";
+import { UploadAvatar } from "../../features/my-info/components/upload-avatar";
 import { UserAvatar } from "../shared/user-avatar";
 import { Card } from "../ui/card";
 

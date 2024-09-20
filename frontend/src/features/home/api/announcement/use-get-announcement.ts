@@ -1,4 +1,4 @@
-import { apiClient } from "@/api/api-client";
+import { apiClient } from "@/api-client";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetAnnouncements = () => {

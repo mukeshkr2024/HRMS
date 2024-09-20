@@ -1,4 +1,4 @@
-import { apiClient } from "@/api/api-client";
+import { apiClient } from "@/api-client";
 import { create, SetState } from "zustand";
 import Cookies from 'js-cookie';
 
