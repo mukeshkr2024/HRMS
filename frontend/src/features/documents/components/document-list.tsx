@@ -1,5 +1,5 @@
 import { useDocumentStore } from "@/context/use-document";
-import { File as FileIcon } from "lucide-react";
+import { File as FileIcon, Folder } from "lucide-react";
 import { DocumentItem } from "./document-item";
 
 interface Folder {
@@ -41,7 +41,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ data }) => {
                                         createdAt={folder.createdAt}
                                         isSelected={selectedFolders.includes(folder._id)}
                                         onCheckboxChange={() => toggleFolderSelection(folder._id)}
-                                        icon={<img src="/icons/folder-2.svg" alt="Folder icon" />}
+                                        icon={<Folder />}
                                         itemType="folder"
                                     />
                                 ))}

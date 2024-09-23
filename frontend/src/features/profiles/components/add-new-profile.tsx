@@ -5,7 +5,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "../../../components/ui/button";
 import {
     Form,
     FormControl,
@@ -14,31 +13,40 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "../../../components/ui/input";
-import { useState } from "react";
-import { PlusCircle } from "lucide-react";
-import { Textarea } from "../../../components/ui/textarea";
 import { useCreateProfile } from "@/features/profiles/api/use-create-profile";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusCircle } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Textarea } from "../../../components/ui/textarea";
+import { useUpdateProfile } from "../api/use-update-profile";
 
 const formSchema = z.object({
     name: z.string().min(1, "This field is required").max(255, "Name must be at most 255 characters long"),
     description: z.string().optional(),
 });
 
+
+interface AddProfileModalProps {
+    existingProfile?: { name: string; description: string; _id: string };
+    children?: React.ReactNode;
+}
+
+
 export type ProfileFormSchemaType = z.infer<typeof formSchema>;
 
-export const AddNewProfile = () => {
+export const AddNewProfile = ({ children, existingProfile }: AddProfileModalProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useCreateProfile()
+    const mutation = existingProfile ? useUpdateProfile(existingProfile?._id) : useCreateProfile()
 
     const form = useForm<ProfileFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            description: "",
+            name: existingProfile?.name || "",
+            description: existingProfile?.description || "",
         },
     });
 
@@ -46,20 +54,20 @@ export const AddNewProfile = () => {
 
     const onSubmit = (values: ProfileFormSchemaType) => {
         mutation.mutate(values, {
-            onSettled: () => {
+            onSuccess: () => {
                 setIsOpen(false);
                 form.reset();
             }
         })
-    };
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(prev => !prev)}>
             <DialogTrigger asChild>
-                <Button
+                {children || <Button
                     variant="addAction"
                     className="h-9 gap-2"
-                ><PlusCircle size={17} />Add New Profile</Button>
+                ><PlusCircle size={17} />Add New Profile</Button>}
             </DialogTrigger>
             <DialogContent
                 className="w-[90%] rounded-md"
@@ -113,7 +121,7 @@ export const AddNewProfile = () => {
                                     disabled={isSubmitting || !isValid}
                                     type="submit"
                                 >
-                                    Submit
+                                    {existingProfile ? "Update" : "Submit"}
                                 </Button>
                             </div>
                         </form>

@@ -38,11 +38,11 @@ const formSchema = z.object({
         payRateType: z.string(),
     }),
     contactInformation: z.object({
-        workPhone: z.string().optional(),
-        mobilePhone: z.string().optional(),
-        homePhone: z.string().optional(),
-        workEmail: z.string().optional(),
-        homeEmail: z.string().optional(),
+        workPhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid work phone number"),
+        mobilePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile phone number").optional(),
+        homePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid home phone number").optional(),
+        workEmail: z.string().email("Invalid work email address"),
+        homeEmail: z.string().email("Invalid home email address").optional(),
     }),
     jobDetails: z.object({
         hireDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid hire date format" }),

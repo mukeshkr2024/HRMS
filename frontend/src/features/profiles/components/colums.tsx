@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Department } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Trash } from "lucide-react";
-import { AddNewDepartment } from "./add-new-model";
+import { AddNewProfile } from "./add-new-profile";
 
-export const departmentColumnData: ColumnDef<Department>[] = [
+export const profileColumnData: ColumnDef<Department>[] = [
     {
         accessorKey: "name",
         header: ({ column }) => (
@@ -72,9 +72,9 @@ export const departmentColumnData: ColumnDef<Department>[] = [
             }
 
             return (<div className="flex gap-x-2 w-full items-center ">
-                <AddNewDepartment existingDepartement={row.original}>
+                <AddNewProfile existingProfile={row.original}>
                     <Edit size={18} />
-                </AddNewDepartment>
+                </AddNewProfile>
                 <ConfirmDialog
                     onConfirm={() => onDelete(row.original._id)}
                 >

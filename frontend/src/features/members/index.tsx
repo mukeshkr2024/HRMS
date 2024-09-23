@@ -1,6 +1,7 @@
 import { EmployeeDataData } from "@/features/employees/components/employee-data";
 import { CustomLoader } from "@/components/shared/custom-loader";
 import { useGetMembers } from "./api/use-get-members";
+import { memberColumns } from "./columns";
 
 export const TeamMembersPage = () => {
     const { data: members, isLoading } = useGetMembers()

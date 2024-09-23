@@ -1,4 +1,3 @@
-import { useCreateDepartment } from "@/features/departments/api/use-create-depatment";
 import {
     Dialog,
     DialogContent,
@@ -14,6 +13,8 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import { useCreateDepartment } from "@/features/departments/api/use-create-depatment";
+import { useUpdateDepartment } from "@/features/departments/api/use-update-issue";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
 import { useState } from "react";
@@ -28,38 +29,57 @@ const formSchema = z.object({
     description: z.string().optional(),
 });
 
+
 export type DepartMentFormSchemaType = z.infer<typeof formSchema>;
 
-export const AddNewDepartment = () => {
+interface AddDepartementModalProps {
+    existingDepartement?: { name: string; description: string; _id: string };
+    children?: React.ReactNode;
+}
+
+export const AddNewDepartment = ({ existingDepartement, children }: AddDepartementModalProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useCreateDepartment()
+    const mutation = existingDepartement ? useUpdateDepartment(existingDepartement?._id) : useCreateDepartment()
+
+    console.log(existingDepartement);
+
 
     const form = useForm<DepartMentFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            name: "",
-            description: "",
+            name: existingDepartement?.name || "",
+            description: existingDepartement?.description || "",
         },
     });
 
     const { isSubmitting, isValid } = form.formState;
 
     const onSubmit = (values: DepartMentFormSchemaType) => {
-        mutation.mutate(values, {
-            onSettled: () => {
-                setIsOpen(false);
-                form.reset();
-            }
-        })
+        if (existingDepartement) {
+            mutation.mutate(values, {
+                onSuccess: () => {
+                    setIsOpen(false);
+                    form.reset();
+                }
+            })
+
+        } else {
+            mutation.mutate(values, {
+                onSuccess: () => {
+                    setIsOpen(false);
+                    form.reset();
+                }
+            })
+        }
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(prev => !prev)}>
             <DialogTrigger asChild>
-                <Button
+                {children || <Button
                     variant="addAction"
                     className="h-9 gap-2"
-                ><PlusCircle size={17} />Add New Department</Button>
+                ><PlusCircle size={17} />Add New Department</Button>}
             </DialogTrigger>
             <DialogContent
                 className="w-[90%] rounded-md"
@@ -113,7 +133,8 @@ export const AddNewDepartment = () => {
                                     disabled={isSubmitting || !isValid}
                                     type="submit"
                                 >
-                                    Submit
+                                    {existingDepartement ? "Update" : "Submit"}
+
                                 </Button>
                             </div>
                         </form>

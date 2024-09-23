@@ -20,7 +20,7 @@ export const useUpdateEmployeeInfo = (employeeId: string) => {
             });
         },
         onError: (error) => {
-            const message = getErrorMessage(error, "Something went wrong, please try again");
+            const message = getErrorMessage(error);
             toast({
                 variant: "destructive",
                 title: message,

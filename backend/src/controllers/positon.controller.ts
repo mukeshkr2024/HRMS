@@ -67,3 +67,24 @@ export const deletePosition = CatchAsyncError(
         }
     }
 )
+
+export const updatePosition = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const positionId = await req.params.positionId;
+            const { name, description } = req.body;
+            const position = await Position.findByIdAndUpdate(positionId, {
+                name,
+                description
+            });
+            if (!position) {
+                throw new ErrorHandler("Position not found", 404);
+            }
+            return res.status(200).json({
+                message: "Position updated successfully"
+            })
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+        }
+    }
+)

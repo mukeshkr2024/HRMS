@@ -1,6 +1,7 @@
 import { apiClient } from "@/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "@/utils";
 
 export const useUpdateTask = () => {
     const queryClient = useQueryClient();
@@ -17,10 +18,12 @@ export const useUpdateTask = () => {
                 title: "Task updated successfully",
             });
         },
-        onError: () => {
+        onError: (error) => {
+            const message = getErrorMessage(error)
+
             toast({
                 title: "Update failed",
-                description: "There was an error updating the task. Please try again.",
+                description: message
             });
         },
     });

@@ -25,6 +25,7 @@ export const AssetDetails = ({ employeeId }: { employeeId?: string }) => {
                     <span>Assets</span>
                 </div>
                 {employee?.role === "admin" && <AddAssetModel
+                    employeeId={employeeId}
                 />}
             </div>
             {isLoading ? <CustomLoader className="min-h-20" /> : <div className="mt-6">

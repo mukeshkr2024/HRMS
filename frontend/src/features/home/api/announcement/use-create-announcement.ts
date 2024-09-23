@@ -1,5 +1,6 @@
 import { apiClient } from "@/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type AnnouncementData = {
@@ -15,8 +16,8 @@ export const useCreateAnnouncement = () => {
             await apiClient.post("/announcements", announcementData);
         },
         onError: (error: unknown) => {
-            const message =
-                error instanceof Error ? error.message : "Error creating announcement";
+            const message = getErrorMessage(error)
+
             toast({
                 title: "Error",
                 description: message,

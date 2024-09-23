@@ -1,5 +1,6 @@
 import { apiClient } from "@/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useAddComment = (goaId: string) => {
@@ -16,9 +17,13 @@ export const useAddComment = (goaId: string) => {
                 title: "Comment added successfully"
             })
         },
-        onError: () => {
+        onError: (error) => {
+            const message = getErrorMessage(error)
+
             toast({
-                title: "Something went wrong , please try again",
+                variant: "destructive",
+                title: message,
+
             })
         }
     });

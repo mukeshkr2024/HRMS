@@ -18,7 +18,7 @@ interface AddNewPopupProps {
     label: string,
     buttonLabel: string
     className?: string
-    onSubmit: (value: any) => void
+    onSubmit: (value: any, onSuccess: () => void) => void
     isDisabled?: boolean
 }
 
@@ -38,6 +38,11 @@ export function AddNewPopup({ buttonLabel, isDisabled, label, className, onSubmi
             title: "",
         },
     });
+
+    const handleSuccess = () => {
+        setIsOpen(false);
+        form.reset();
+    };
 
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -60,7 +65,7 @@ export function AddNewPopup({ buttonLabel, isDisabled, label, className, onSubmi
                 />
                 <div className="w-full flex flex-col gap-y-2.5">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <form onSubmit={form.handleSubmit((values) => onSubmit(values, handleSuccess))}>
                             <FormField
                                 control={form.control}
                                 name="title"
@@ -76,7 +81,7 @@ export function AddNewPopup({ buttonLabel, isDisabled, label, className, onSubmi
                                 )}
                             />
                             <Button
-                                disabled={isDisabled}
+                                disabled={isDisabled || form.formState.isSubmitting}
                                 className="w-full mt-2" type="submit">
                                 {buttonLabel}
                             </Button>

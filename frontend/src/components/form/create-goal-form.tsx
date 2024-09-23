@@ -29,13 +29,14 @@ export type GoalFormSchemaType = z.infer<typeof formSchema>;
 
 interface CreateGoalFormProps {
     setIsCreating: (value: boolean) => void
+    employeeId?: string
 }
 
-export const CreateGoalForm = ({ setIsCreating }: CreateGoalFormProps) => {
+export const CreateGoalForm = ({ setIsCreating, employeeId }: CreateGoalFormProps) => {
     const {
         mutate,
         isPending,
-    } = useCreateGoal()
+    } = useCreateGoal(employeeId)
 
     const form = useForm<GoalFormSchemaType>({
         resolver: zodResolver(formSchema),

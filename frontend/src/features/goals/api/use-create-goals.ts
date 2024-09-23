@@ -2,17 +2,27 @@ import { GoalFormSchemaType } from "@/components/form/create-goal-form";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "../../../api-client";
+import { getErrorMessage } from "@/utils";
 
-export const useCreateGoal = () => {
+export const useCreateGoal = (employee?: string) => {
     const { toast } = useToast()
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: async (values: GoalFormSchemaType) => {
-            await apiClient.post("/employee/goals", values)
+            const queryParams = new URLSearchParams();
+
+            if (employee) {
+                queryParams.append('employee', employee);
+            }
+            const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+            await apiClient.post(`/employee/goals${queryString}`, values)
         },
-        onError: () => {
+        onError: (error) => {
+            const message = getErrorMessage(error)
+
             toast({
-                title: "Something went wrong , please try again"
+                variant: "destructive",
+                title: message,
             })
         },
         onSuccess: () => {

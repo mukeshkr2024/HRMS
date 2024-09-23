@@ -1,8 +1,8 @@
 import { AddNewProfile } from "@/features/profiles/components/add-new-profile";
 import { DepartmentDataTable } from "@/features/profiles/components/department-data-table";
 import { Loader } from "lucide-react";
-import { departmentColumnData } from "./components/department-data-coloums";
 import { useGetProfiles } from "./api/use-get-profiles";
+import { profileColumnData } from "./components/colums";
 
 export const ProfilesPage = () => {
     const { data, isLoading } = useGetProfiles()
@@ -23,7 +23,7 @@ export const ProfilesPage = () => {
             </div>
             <div>
                 <DepartmentDataTable
-                    columns={departmentColumnData}
+                    columns={profileColumnData}
                     data={data}
                 />
             </div>

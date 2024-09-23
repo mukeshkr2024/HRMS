@@ -2,15 +2,29 @@ import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '../../../components/ui/avatar';
 import { CameraIcon } from 'lucide-react';
 import { useUploadAvatar } from '@/features/my-info/api/use-upload-avatar';
+import { useToast } from '@/components/ui/use-toast';
 
 export const UploadAvatar = ({ name, avatar }: { name: string, avatar: string }) => {
     const [hover, setHover] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const { mutate: uploadAvatar } = useUploadAvatar();
+    const { toast } = useToast()
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            setSelectedFile(event.target.files[0]);
+            const file = event.target.files[0];
+
+            // Validate file size (2MB = 2 * 1024 * 1024 bytes)
+            if (file.size > 2 * 1024 * 1024) {
+                toast({
+                    title: 'Error',
+                    description: 'Please upload an image smaller than 2MB.',
+                    variant: 'destructive',
+                });
+                return;
+            }
+
+            setSelectedFile(file);
         }
     };
 

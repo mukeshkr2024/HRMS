@@ -3,26 +3,27 @@ import { useToast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const useDeleteDepartment = () => {
+export const useDeleteIssue = (id: string) => {
+
     const { toast } = useToast()
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (departmentId: string) => {
-            await apiClient.delete(`/departments/${departmentId}`)
+        mutationFn: async () => {
+            await apiClient.delete(`/assets/issues/${id}`)
         },
         onError: (error) => {
             const message = getErrorMessage(error)
             toast({
                 variant: "destructive",
-                title: message,
+                title: message
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["departments"] })
+            queryClient.invalidateQueries({ queryKey: ["issues"] })
             toast({
-                title: "Department deleted successfully"
+                title: "Issue deleted successfully"
             })
         }
     })
-}  
+}

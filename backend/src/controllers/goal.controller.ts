@@ -5,7 +5,10 @@ import { Goal } from "../models/goal.model";
 
 export const createGoal = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
+
         try {
+
+            const { employee } = req.query;
             const {
                 title,
                 description,
@@ -18,7 +21,7 @@ export const createGoal = CatchAsyncError(
                 throw new ErrorHandler("All fields are required", 400);
             }
 
-            const employeeId = req.employee.id
+            const employeeId = employee ? employee : req.employee.id
 
             await Goal.create({
                 title,
@@ -75,8 +78,12 @@ export const getGoal = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            const employeeId = req.employee.id;
+            const { employee } = req.query;
+
             const goalId = req.params.goalId;
+
+            const employeeId = employee ? employee : req.employee.id
+
 
             console.log(goalId);
 

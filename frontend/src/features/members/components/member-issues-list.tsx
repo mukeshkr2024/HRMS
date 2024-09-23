@@ -16,9 +16,6 @@ export type Issue = {
 export const MemberIssuesList = () => {
     const { data, isLoading } = useGetAssetIssues()
 
-    console.log(data);
-
-
     if (isLoading) {
         return (<div className="h-full pt-20 w-full flex items-center justify-center">
             <Loader

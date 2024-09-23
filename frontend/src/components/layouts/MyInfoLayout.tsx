@@ -2,12 +2,13 @@ import { MyInfoCard } from "@/components/card/my-infocard"
 import TopBar from "@/features/my-info/components/TopBar"
 import { useAuthStore } from "@/context/useAuthStore"
 import { Outlet } from "react-router-dom"
+import { CustomLoader } from "../shared/custom-loader"
 
 export const MyInfoLayout = () => {
 
     const { employee, loading } = useAuthStore()
 
-    if (loading) return <div>Loading...</div>
+    if (loading) return <CustomLoader />
 
     const TopBarRoutes = [
         {

@@ -60,7 +60,7 @@ export const Announcements = () => {
                                     </span>
                                     {employee?._id === announcement.createdBy._id && (
                                         <ConfirmDialog onConfirm={() => handleDelete(announcement._id)}>
-                                            <Trash className="w-4 h-4 text-red-400 cursor-pointer" />
+                                            <Trash className="w-4 h-4 text-red-500 cursor-pointer" />
                                         </ConfirmDialog>
                                     )}
                                 </div>

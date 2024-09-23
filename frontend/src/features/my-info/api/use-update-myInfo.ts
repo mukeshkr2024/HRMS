@@ -21,7 +21,7 @@ export const useUpdateMyInfo = () => {
             });
         },
         onError: (error) => {
-            const message = getErrorMessage(error, "Failed to update your information. Please try again.");
+            const message = getErrorMessage(error);
             toast({
                 variant: "destructive",
                 title: message,

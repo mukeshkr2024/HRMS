@@ -13,7 +13,7 @@ export const useCreateEmployee = () => {
             await apiClient.post("/employees/create", values);
         },
         onError: (error) => {
-            const message = getErrorMessage(error, "Something went wrong, please try again"); // Use the utility function
+            const message = getErrorMessage(error);
             toast({
                 variant: "destructive",
                 title: message,

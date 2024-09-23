@@ -376,7 +376,7 @@ export const updateMyInfo = CatchAsyncError(async (
   next: NextFunction
 ) => {
   try {
-    const { address, contactInformation, languages, educations } = req.body;
+    const { address, contactInformation, languages, educations, personalInformation } = req.body;
 
     // Find the employee
     const employee = await Employee.findById(req.employee.id).exec();
@@ -384,6 +384,12 @@ export const updateMyInfo = CatchAsyncError(async (
     if (!employee) {
       return next(new ErrorHandler("Employee not found", 404));
     }
+
+    const updatedPersonalInfo = await PersonalInformation.findByIdAndUpdate(
+      employee.personalInformation,
+      { ...personalInformation, dateOfBirth: new Date(personalInformation.birthDate) },
+      { new: true }
+    ).exec();
 
     // Update address if provided
     if (address) {

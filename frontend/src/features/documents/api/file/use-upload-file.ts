@@ -1,5 +1,6 @@
 import { apiClient } from "@/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface UploadFileData {
@@ -33,10 +34,11 @@ export const useUploadFile = (folderId?: string, employee?: string) => {
             });
         },
         onError: (error: any) => {
-            console.error("Upload error:", error);
+            const message = getErrorMessage(error)
+
             toast({
                 variant: "destructive",
-                title: typeof error.message === "string" ? error.message : "An error occurred",
+                title: message
             });
         },
         onSuccess: () => {

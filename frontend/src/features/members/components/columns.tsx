@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Issue } from "@/features/assets/components/assest-issue-status";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useUpdateMemberIssue } from "../api/use-update-member-issue";
 
 export const memberColumnData: ColumnDef<Issue>[] = [
     {
@@ -75,8 +76,17 @@ export const memberColumnData: ColumnDef<Issue>[] = [
         ),
         cell: ({ row }) => {
             const [selected, setSelected] = useState<string>(row.original?.approval)
+
+            const mutation = useUpdateMemberIssue(row.original._id)
+
+            const onChange = (value: string) => {
+                console.log(value);
+                setSelected(value)
+                mutation.mutate({ value })
+            }
+
             return (
-                <Select value={selected} onValueChange={setSelected}>
+                <Select value={selected} onValueChange={onChange}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>

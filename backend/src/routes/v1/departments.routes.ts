@@ -3,6 +3,7 @@ import {
   createDepartment,
   deleteDepartment,
   getAllDepartments,
+  updateDepartment,
 
 } from "../../controllers/departments.controller";
 import { isAuthenticated } from "../../middleware/auth";
@@ -16,3 +17,4 @@ departmentRouter.post(
 );
 departmentRouter.get("/", isAuthenticated, getAllDepartments)
 departmentRouter.delete("/:departmentId", isAuthenticated, deleteDepartment)
+departmentRouter.put("/:departmentId", isAuthenticated, updateDepartment)

@@ -19,7 +19,7 @@ export const Profile = () => {
                 <div>
                     <h3 className="text-black font-semibold text-xl">{employee.name}</h3>
                     <Link className="text-brand-green font-normal" to="/my-info">
-                        View Bio
+                        View Profile
                     </Link>
                 </div>
             </div>

@@ -18,7 +18,7 @@ interface Goal {
 export const GoalList = ({ employeeId }: { employeeId?: string }) => {
     const [isEditing, setIsEditing] = useState<string | null>(null);
     const [isCreating, setIsCreating] = useState<boolean>(false);
-    const [selectedStatus, setSelectedStatus] = useState<string>("");
+    const [selectedStatus, setSelectedStatus] = useState<string>("all");
 
     const { data: goals = [], isLoading } = useGetGoals(employeeId, selectedStatus);
 
@@ -39,9 +39,9 @@ export const GoalList = ({ employeeId }: { employeeId?: string }) => {
             </div>
 
             {isEditing ? (
-                <UpdateGoal goalId={isEditing} setIsEditing={setIsEditing} />
+                <UpdateGoal goalId={isEditing} setIsEditing={setIsEditing} employeeId={employeeId} />
             ) : isCreating ? (
-                <CreateGoalForm setIsCreating={setIsCreating} />
+                <CreateGoalForm setIsCreating={setIsCreating} employeeId={employeeId} />
             ) : (
                 <>
                     <div className="mt-3 w-full flex justify-between">
@@ -53,7 +53,7 @@ export const GoalList = ({ employeeId }: { employeeId?: string }) => {
                         </Button>
                         <div className="mr-2 flex items-center gap-4">
                             <span className="text-[#313131] font-medium">Status</span>
-                            <Select onValueChange={handleStatusChange}>
+                            <Select value={selectedStatus} onValueChange={handleStatusChange}>
                                 <SelectTrigger className="w-[180px] h-9">
                                     <SelectValue placeholder="Status" />
                                 </SelectTrigger>

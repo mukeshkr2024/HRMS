@@ -1,5 +1,6 @@
 import { apiClient } from "@/api-client";
 import { useToast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateFolder = (folderId?: string, employee?: string) => {
@@ -21,10 +22,10 @@ export const useCreateFolder = (folderId?: string, employee?: string) => {
             await apiClient.post(`/documents/folder/create${queryString}`, data);
         },
         onError: (error) => {
-            console.log("error", error);
+            const message = getErrorMessage(error);
             toast({
                 variant: "destructive",
-                title: error.message
+                title: message
             })
         },
         onSuccess: () => {

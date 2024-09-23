@@ -13,12 +13,13 @@ import { UserAvatar } from '../shared/user-avatar'
 
 interface UpdateGoalProps {
     goalId: string
-    setIsEditing: (value: string | null) => void
+    setIsEditing: (value: string | null) => void,
+    employeeId?: string
 }
 
-export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
+export const UpdateGoal = ({ goalId, setIsEditing, employeeId }: UpdateGoalProps) => {
     const [progress, setProgress] = useState<number>(0)
-    const { data: goal, isLoading } = useGetGoal(goalId)
+    const { data: goal, isLoading } = useGetGoal(goalId, employeeId)
 
     useEffect(() => {
         if (goal?.progress) {
@@ -29,8 +30,12 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
     const addCommentMutation = useAddComment(goalId)
     const updateGoalProgressMutation = useUpdateGoalProgress(goalId)
 
-    const handleAddComment = (values: { title: string }) => {
-        addCommentMutation.mutate(values)
+    const handleAddComment = (values: { title: string }, onSuccess: () => void) => {
+        addCommentMutation.mutate(values, {
+            onSuccess: () => {
+                onSuccess();
+            }
+        })
     }
 
     const handleUpdateProgress = () => {
@@ -63,7 +68,7 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
     }
 
     return (
-        <Card className='mt-4'>
+        <Card className='mt-4 overflow-hidden'>
             <CardHeader className='space-y-4'>
                 <div className='flex w-full justify-between items-center'>
                     <p className='text-sm text-red-500 font-semibold'>Created: {formatDate(goal?.createdAt)} - Due: {formatDate(goal?.dueDate)}</p>
@@ -74,7 +79,7 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
                     >Close</Button>
                 </div>
                 <CardTitle>{goal?.title}</CardTitle>
-                <CardDescription>{goal?.description}</CardDescription>
+                <CardDescription className='break-words max-w-5xl'>{goal?.description}</CardDescription>
                 <CardContent className='p-0'>
                     <div className='mt-4'>
                         <div className="flex flex-col sm:flex-row items-end w-full justify-between">
@@ -129,6 +134,7 @@ export const UpdateGoal = ({ goalId, setIsEditing }: UpdateGoalProps) => {
                             label='New Comment'
                             buttonLabel='Add Comment'
                             className='w-[320px] sm:w-[450px]'
+                            isDisabled={addCommentMutation.isPending}
                             onSubmit={handleAddComment}
                         />
                     </div>

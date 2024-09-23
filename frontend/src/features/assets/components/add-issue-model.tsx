@@ -18,48 +18,64 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../../components/ui/input";
-import { useState } from "react";
+import React, { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { Textarea } from "../../../components/ui/textarea";
-import { useAddIssue } from "@/features/assets/api/use-add-issue";
+import { useAddIssue } from "../api/use-add-issue";
+import { useUpdateIssue } from "../api/issues/use-update-issue";
 
 const formSchema = z.object({
-    title: z.string().min(4,),
+    title: z.string().min(4),
     description: z.string().min(4),
 });
 
-export type AddIssueFormSchemaType = z.infer<typeof formSchema>;
+export type IssueFormSchemaType = z.infer<typeof formSchema>;
 
-export const AddIssueModal = () => {
+interface AddIssueModalProps {
+    existingIssue?: { title: string; description: string; _id: string };
+    children?: React.ReactNode;
+}
+
+export const AddIssueModal = ({ existingIssue, children }: AddIssueModalProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useAddIssue()
+    const mutation = existingIssue ? useUpdateIssue(existingIssue?._id) : useAddIssue();
 
-    const form = useForm<AddIssueFormSchemaType>({
+    const form = useForm<IssueFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            title: "",
-            description: "",
+            title: existingIssue?.title || "",
+            description: existingIssue?.description || "",
         },
     });
 
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = (values: AddIssueFormSchemaType) => {
-        mutation.mutate(values, {
-            onSettled: () => {
-                setIsOpen(false);
-                form.reset();
-            }
-        });
+    const onSubmit = (values: IssueFormSchemaType) => {
+        if (existingIssue) {
+            mutation.mutate({ ...values }, {
+                onSettled: () => {
+                    setIsOpen(false);
+                    form.reset();
+                }
+            });
+        } else {
+            mutation.mutate(values, {
+                onSettled: () => {
+                    setIsOpen(false);
+                    form.reset();
+                }
+            });
+        }
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(prev => !prev)}>
             <DialogTrigger asChild>
-                <Button
-                    variant="addAction"
-                    className="h-9 gap-2"
-                ><PlusCircle size={17} />New Issue</Button>
+                {children || (
+                    <Button variant="addAction" className="h-9 gap-2">
+                        <PlusCircle size={17} />{existingIssue ? "Edit Issue" : "New Issue"}
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent
                 className="w-full max-w-lg p-6 md:p-8"
@@ -68,7 +84,7 @@ export const AddIssueModal = () => {
                 }}
             >
                 <DialogHeader>
-                    <DialogTitle className="my-2">Add new Issue</DialogTitle>
+                    <DialogTitle className="my-2">{existingIssue ? "Edit Issue" : "Add New Issue"}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-y-4">
                     <Form {...form}>
@@ -93,7 +109,8 @@ export const AddIssueModal = () => {
                                     <FormItem>
                                         <FormLabel>Description</FormLabel>
                                         <FormControl>
-                                            <Textarea placeholder="Enter description" {...field} />
+                                            <Textarea placeholder="Enter description" {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -104,7 +121,7 @@ export const AddIssueModal = () => {
                                     variant="outline"
                                     className="w-28"
                                     onClick={() => {
-                                        setIsOpen(prev => !prev);
+                                        setIsOpen(false);
                                         form.reset();
                                     }}
                                     type="button"
@@ -116,7 +133,7 @@ export const AddIssueModal = () => {
                                     disabled={isSubmitting || !isValid}
                                     type="submit"
                                 >
-                                    Submit
+                                    {existingIssue ? "Update" : "Submit"}
                                 </Button>
                             </div>
                         </form>

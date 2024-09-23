@@ -2,27 +2,29 @@ import { apiClient } from "@/api-client";
 import { useToast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "@/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { IssueFormSchemaType } from "../../components/add-issue-model";
 
-export const useDeleteDepartment = () => {
+export const useUpdateIssue = (id: string) => {
+
     const { toast } = useToast()
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (departmentId: string) => {
-            await apiClient.delete(`/departments/${departmentId}`)
+        mutationFn: async (data: IssueFormSchemaType) => {
+            await apiClient.put(`/assets/issues/${id}`, data)
         },
         onError: (error) => {
             const message = getErrorMessage(error)
             toast({
                 variant: "destructive",
-                title: message,
+                title: message
             })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["departments"] })
+            queryClient.invalidateQueries({ queryKey: ["issues"] })
             toast({
-                title: "Department deleted successfully"
+                title: "Issue updated successfully"
             })
         }
     })
-}  
+}

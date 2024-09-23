@@ -7,9 +7,13 @@ import { z } from "zod";
 import { useEmployeeLogin } from "./api/use-login";
 
 const formSchema = z.object({
-    email: z.string().email("Invalid Email"),
-    password: z.string().min(8, { message: "Invalid password" }),
-})
+    email: z
+        .string()
+        .email({ message: "Please enter a valid email address." }),
+    password: z
+        .string()
+        .min(8, { message: "Password must be at least 8 characters long." })
+});
 
 export const LoginPage = () => {
     const { mutate } = useEmployeeLogin();
@@ -30,9 +34,7 @@ export const LoginPage = () => {
         })
     };
 
-
     return (
-
         <div className="h-screen w-full overflow-hidden">
             <div className="w-full h-full flex ">
                 <div className="w-[500px] flex h-full  justify-center items-center">
@@ -79,31 +81,6 @@ export const LoginPage = () => {
                                             </FormItem>
                                         )}
                                     />
-
-                                    <div className="flex justify-between mt-3">
-                                        <div className="flex">
-                                            <input
-                                                id="remember-me"
-                                                name="remember-me"
-                                                type="checkbox"
-                                                className="mr-2"
-                                            />
-                                            <label
-                                                htmlFor="remember-me"
-                                                className="font-urbanist font-normal text-xs leading-5 text-[#1A1A1A]"
-                                            >
-                                                Remember me
-                                            </label>
-                                        </div>
-                                        <div className="flex">
-                                            <a
-                                                href="#"
-                                                className="flex justify-end font-urbanist font-normal text-xs leading-5 text-[#007AFF]"
-                                            >
-                                                Forgot your password?
-                                            </a>
-                                        </div>
-                                    </div>
                                     <Button type="submit"
                                         className="flex justify-center w-full px-4 py-3 font-urbanist font-bold text-sm leading-5 text-[#FFFFFF] bg-[#1FBE8E] hover:bg-[#1FBE8E] rounded-md mt-4 pb-5">Sign in</Button>
                                 </form>

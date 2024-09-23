@@ -4,7 +4,7 @@ import { FileViewer } from "./file-viewer";
 
 interface DocumentItemProps {
     id: string;
-    name: string;
+    name?: string;
     createdAt: string;
     isSelected: boolean;
     onCheckboxChange: () => void;
@@ -60,7 +60,7 @@ export const DocumentItem: React.FC<DocumentItemProps> = ({
                         className="mr-2 cursor-pointer"
                     />
                     {icon}
-                    <FileViewer url={url!} fileType={fileType!}>
+                    <FileViewer url={url!} fileType={fileType!} name={name!}>
                         <div className="cursor-pointer">
                             <h3 className="text-black font-medium text-base">{name}</h3>
                             <p className="text-[#1FBE8E] text-xs font-normal">

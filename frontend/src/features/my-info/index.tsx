@@ -34,11 +34,11 @@ const formSchema = z.object({
         country: z.string().nonempty("Country is required"),
     }),
     contactInformation: z.object({
-        workPhone: z.string().optional(),
-        mobilePhone: z.string().optional(),
-        homePhone: z.string().optional(),
-        workEmail: z.string().optional(),
-        homeEmail: z.string().optional(),
+        workPhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid work phone number"),
+        mobilePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile phone number").optional(),
+        homePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid home phone number").optional(),
+        workEmail: z.string().email("Invalid work email address"),
+        homeEmail: z.string().email("Invalid home email address").optional(),
     }),
     languages: z.array(z.object({
         name: z.string().nonempty("Language is required"),
@@ -49,8 +49,10 @@ const formSchema = z.object({
         specialization: z.string().optional(),
         gpa: z.string().optional(),
         startDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid start date format" }),
-        endDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid end date format" }),
-    })).optional(),
+        endDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid end date format" })
+    }).refine(data => new Date(data.startDate) < new Date(data.endDate), {
+        message: "Start date must be before end date",
+    })).optional(), // TODO: fix validation error not showing 
     position: z.string().nonempty("Job title is required"),
     department: z.string().nonempty("Job title is required"),
 });
@@ -97,12 +99,12 @@ export const MyInfo = () => {
         }
     });
 
-    const { fields, append } = useFieldArray({
+    const { fields, append, remove: removeLanguage } = useFieldArray({
         control: form.control,
         name: "languages",
     });
 
-    const { fields: educationFields, append: appendEducation } = useFieldArray({
+    const { fields: educationFields, append: appendEducation, remove: removeEducation } = useFieldArray({
         control: form.control,
         name: "educations",
     });
@@ -284,11 +286,20 @@ export const MyInfo = () => {
                                                 label="End Date"
                                                 type="date"
                                             />
+                                            <Button
+                                                type="button"
+                                                onClick={() => removeEducation(index)}
+                                                variant="destructive"
+                                                className="mt-2 max-w-24 pl-auto h-9"
+                                            >
+                                                Delete
+                                            </Button>
                                         </div>
                                     </Card>
                                 ))}
                             </div>
                             <div className="w-full flex  mt-4 items-center justify-end">
+
                                 <Button
                                     variant="saveAction"
                                     type="button"
@@ -311,14 +322,25 @@ export const MyInfo = () => {
                         <EmployeeFormSection title="Languages" icon="/icons/book.svg">
                             <div className="flex items-end gap-4 flex-wrap">
                                 {fields.map((item, index) => (
-                                    <div key={item.id} className="">
+                                    <div key={item.id} className="relative">
                                         <EmployeeFormFieldWrapper
                                             control={form.control}
                                             name={`languages.${index}.name`}
                                             label={`Language ${index + 1}`}
                                         />
+
                                     </div>
                                 ))}
+
+                                {fields.length && (<Button
+                                    type="button"
+                                    onClick={() => removeLanguage(fields?.length - 1)}
+                                    disabled={!fields.length}
+                                    variant="destructive"
+                                    className="ml-2 h-9"
+                                >
+                                    Delete
+                                </Button>)}
                                 <Button
                                     type="button"
                                     onClick={() => append({ name: "" })}

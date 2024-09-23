@@ -17,7 +17,9 @@ const formSchema = z.object({
     description: z
         .string()
         .min(3, { message: "Description is required" })
-        .max(255),
+        .max(255, {
+            message: "Description must be at most 255 characters"
+        }),
 });
 
 interface AddNewAnnouncementPopupProps {

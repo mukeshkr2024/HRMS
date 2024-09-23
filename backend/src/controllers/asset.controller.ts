@@ -8,6 +8,8 @@ export const addAsset = CatchAsyncError(async (req: Request, res: Response, next
     try {
 
         const { category, description, serialno, assignedDate } = req.body;
+        const { employee } = req.query;
+        const employeeId = employee ? employee : req.employee._id;
 
         const trimmedCategory = category.trim();
         const trimmedDescription = description.trim();
@@ -17,14 +19,14 @@ export const addAsset = CatchAsyncError(async (req: Request, res: Response, next
             throw new ErrorHandler('All fields are required', 400);
         }
 
-        const authEmployeeId = req.employee.id
+        const authEmployeeId = req.employee._id
 
-        if (!authEmployeeId) {
+        if (!employeeId) {
             throw new ErrorHandler('Unauthorized access', 401);
         }
 
         const asset = await Asset.create({
-            employeeId: authEmployeeId,
+            employeeId: employeeId,
             name: trimmedCategory,
             description: trimmedDescription,
             serialNo: trimmedSerialno,
@@ -97,3 +99,46 @@ export const getIssues = CatchAsyncError(
         }
     }
 )
+
+export const updateIssue = CatchAsyncError(async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const issueId = req.params.id;
+
+        const { title, description } = req.body;
+
+        if (!title || !description) {
+            return res.status(400).json({ message: "Title and description are required." });
+        }
+
+        const issue = await Issue.findByIdAndUpdate(issueId, {
+            title,
+            description,
+        })
+
+        return res.status(201).json(issue);
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})
+
+export const deleteIssue = CatchAsyncError(async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const issueId = req.params.id;
+
+        await Issue.findByIdAndDelete(issueId)
+
+        return res.status(201).json({
+            message: "Issue deleted successfully"
+        });
+    } catch (error) {
+        return next(new ErrorHandler(error, 400));
+    }
+})

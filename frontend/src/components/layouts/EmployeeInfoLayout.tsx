@@ -1,6 +1,7 @@
 import TopBar from "@/features/my-info/components/TopBar";
 import { useAuthStore } from "@/context/useAuthStore";
 import { Outlet, useParams } from "react-router-dom";
+import { CustomLoader } from "../shared/custom-loader";
 
 export const EmployeeInfoLayout = () => {
 
@@ -8,7 +9,7 @@ export const EmployeeInfoLayout = () => {
 
     const { loading } = useAuthStore()
 
-    if (loading) return <div>Loading...</div>
+    if (loading) return <CustomLoader />
 
     const TopBarRoutes = [
         {

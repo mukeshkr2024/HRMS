@@ -11,8 +11,11 @@ export const UserAvatar = ({
 }) => {
     return (
         <Avatar className={className}>
-            <AvatarImage src={avatar} />
+            <AvatarImage
+                src={avatar}
+                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+            />
             <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
         </Avatar>
-    )
+    );
 }

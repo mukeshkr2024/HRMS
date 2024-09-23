@@ -8,7 +8,7 @@ export const statusColor = (status: string) => {
         case "processing":
             color = "#00BFFF"; // Deep Sky Blue
             break;
-        case "success":
+        case "approved":
             color = "#28A745"; // Green
             break;
         case "failed":
@@ -27,6 +27,6 @@ export function formatDate(dateString: Date): string {
     return new Intl.DateTimeFormat('en-GB', options).format(date);
 }
 
-export const getErrorMessage = (error: any, defaultMessage: string = "An error occurred") => {
+export const getErrorMessage = (error: any, defaultMessage: string = "Some went wrong, please try again later") => {
     return error?.response?.data?.message || defaultMessage;
 };

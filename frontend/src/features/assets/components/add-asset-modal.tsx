@@ -32,9 +32,9 @@ const formSchema = z.object({
 
 export type AddAssetFormSchemaType = z.infer<typeof formSchema>;
 
-export const AddAssetModel = () => {
+export const AddAssetModel = ({ employeeId }: { employeeId?: string }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useAddAsset()
+    const mutation = useAddAsset(employeeId)
 
     const form = useForm<AddAssetFormSchemaType>({
         resolver: zodResolver(formSchema),

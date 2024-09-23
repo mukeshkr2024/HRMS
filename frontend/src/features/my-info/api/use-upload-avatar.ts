@@ -17,7 +17,7 @@ export const useUploadAvatar = () => {
             });
         },
         onError: (error: any) => {
-            const message = getErrorMessage(error, "Upload failed. Please try again."); // Use the utility function
+            const message = getErrorMessage(error);
             toast({
                 title: "Upload Failed",
                 description: message,

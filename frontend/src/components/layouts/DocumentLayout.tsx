@@ -5,7 +5,7 @@ import { FileUploadDialog } from "@/components/modal/add-new-file";
 import { AddNewDialog } from "@/components/modal/add-new-model";
 import { Button } from "@/components/ui/button";
 import { useDocumentStore } from "@/context/use-document";
-import { CirclePlus, FilePlus, Trash } from "lucide-react";
+import { CirclePlus, FilePlus, Folder, Trash } from "lucide-react";
 import { useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 
@@ -113,7 +113,7 @@ export const DocumentLayout = () => {
                     <div className="p-6 flex flex-col gap-y-4">
                         {folders.map(folder => (
                             <div key={folder.id} className="flex items-center gap-4">
-                                <img src="/icons/folder-2.svg" alt="" />
+                                <Folder />
                                 <h4 className="text-[#313131] font-normal text-base">{folder.name}</h4>
                             </div>
                         ))}

@@ -2,6 +2,7 @@ import { apiClient } from "@/api-client";
 import { DepartMentFormSchemaType } from "@/features/profiles/components/add-new-model";
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getErrorMessage } from "@/utils";
 
 export const useCreateDepartment = () => {
     const { toast } = useToast()
@@ -12,10 +13,10 @@ export const useCreateDepartment = () => {
             await apiClient.post("/departments/create", data)
         },
         onError: (error) => {
-            console.log("error", error);
+            const message = getErrorMessage(error)
             toast({
                 variant: "destructive",
-                title: error.message || "Something went wrong"
+                title: message
             })
         },
         onSuccess: () => {

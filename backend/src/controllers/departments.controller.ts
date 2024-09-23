@@ -41,7 +41,8 @@ export const getAllDepartments = CatchAsyncError(
                     _id: department._id,
                     name: department.name,
                     description: department.description,
-                    employees: department.employees.length
+                    employees: department.employees.length,
+                    createdAt: department?.createdAt
                 }
             })
             return res.status(200).json(formattedDepartments)
@@ -61,6 +62,29 @@ export const deleteDepartment = CatchAsyncError(
             }
             return res.status(200).json({
                 message: "Department deleted successfully"
+            })
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+        }
+    }
+)
+
+export const updateDepartment = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const departmentId = await req.params.departmentId;
+
+            const { name, description } = req.body;
+
+            const department = await Department.findByIdAndUpdate(departmentId, {
+                name,
+                description
+            });
+            if (!department) {
+                throw new ErrorHandler("Department not found", 404);
+            }
+            return res.status(200).json({
+                message: "Department updated successfully"
             })
         } catch (error) {
             return next(new ErrorHandler(error, 400));
