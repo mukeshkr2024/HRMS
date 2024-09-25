@@ -40,10 +40,6 @@ interface AddDepartementModalProps {
 export const AddNewDepartment = ({ existingDepartement, children }: AddDepartementModalProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const mutation = existingDepartement ? useUpdateDepartment(existingDepartement?._id) : useCreateDepartment()
-
-    console.log(existingDepartement);
-
-
     const form = useForm<DepartMentFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -85,7 +81,7 @@ export const AddNewDepartment = ({ existingDepartement, children }: AddDeparteme
                 className="w-[90%] rounded-md"
             >
                 <DialogHeader>
-                    <DialogTitle className="my-2">Add new Department</DialogTitle>
+                    <DialogTitle className="my-2">{existingDepartement ? "Update Departement" : "Add New Department"}</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-y-4">
                     <Form {...form}>

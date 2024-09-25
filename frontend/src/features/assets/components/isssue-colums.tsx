@@ -54,8 +54,6 @@ export const columns: ColumnDef<Issue>[] = [
         header: "Options",
         cell: ({ row }) => {
 
-
-
             const deleteMutation = useDeleteIssue(row.original._id)
 
             const handleDeleteConfirm = () => {
@@ -67,10 +65,10 @@ export const columns: ColumnDef<Issue>[] = [
                     <AddIssueModal
                         existingIssue={row.original}
                     >
-                        <Edit className="size-5 cursor-pointer" />
+                        <Edit className="cursor-pointer" size={18} />
                     </AddIssueModal>
                     <ConfirmDialog onConfirm={handleDeleteConfirm}>
-                        <Trash className="size-5 text-red-500 cursor-pointer" />
+                        <Trash className="text-red-500 cursor-pointer" size={18} />
                     </ConfirmDialog>
                 </div>
             );

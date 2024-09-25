@@ -1,4 +1,4 @@
-import { columns } from "./columns"
+import { columns as baseColumns } from "./columns"
 import { DataTable } from "./data-table"
 import { AddAssetModel } from "./add-asset-modal"
 import { useGetAssets } from "@/features/assets/api/use-get-assets"
@@ -6,17 +6,22 @@ import { useAuthStore } from "@/context/useAuthStore"
 import { CustomLoader } from "@/components/shared/custom-loader"
 
 export type Asset = {
-    id: string
-    category: string
+    _id: string
+    name: string
     description: string
-    serial: string
-    assignedAt: Date
+    serialNo: string
+    assignedAt: string
     status: "pending" | "processing" | "success" | "failed"
 }
 
 export const AssetDetails = ({ employeeId }: { employeeId?: string }) => {
     const { data, isLoading } = useGetAssets(employeeId)
     const { employee } = useAuthStore()
+
+    const columns = employee?.role === "admin"
+        ? baseColumns
+        : baseColumns.filter(col => col.id !== "actions")
+
     return (
         <section>
             <div className="flex items-center gap-x-10">

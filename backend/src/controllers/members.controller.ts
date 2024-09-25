@@ -7,12 +7,20 @@ import { Issue } from "../models/issue.model";
 export const getMembers = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-
             const employeeId = req.employee.id;
+            const role = req.employee.role;
 
-            const employees = await Employee.find({
-                reportsTo: employeeId
-            }).select("name email avatar")
+            console.log(role);
+
+            let employees;
+
+            if (role === "admin") {
+                employees = await Employee.find();
+            } else {
+                employees = await Employee.find({
+                    reportsTo: employeeId
+                }).select("name email avatar")
+            }
 
             return res.json(employees)
         } catch (error) {

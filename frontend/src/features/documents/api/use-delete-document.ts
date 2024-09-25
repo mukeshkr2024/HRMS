@@ -9,7 +9,6 @@ export const useDeleteDocument = () => {
 
     return useMutation({
         mutationFn: async (data: any) => {
-            console.log(data);
             await apiClient.delete(`/documents/delete`, { data })
         },
         onError: (error: any) => {

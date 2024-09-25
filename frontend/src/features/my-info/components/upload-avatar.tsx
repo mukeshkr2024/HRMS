@@ -49,7 +49,7 @@ export const UploadAvatar = ({ name, avatar }: { name: string, avatar: string })
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
-            <Avatar className="w-[124px] h-[124px]">
+            <Avatar className="size-24">
                 <AvatarImage src={avatar} alt={`${name}'s avatar`} />
                 <AvatarFallback>{name}</AvatarFallback>
             </Avatar>

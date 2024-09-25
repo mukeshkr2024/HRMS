@@ -22,23 +22,47 @@ const formSchema = z.object({
         birthDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" }),
         gender: z.string().nonempty("Gender is required"),
         maritalStatus: z.string().nonempty("Marital status is required"),
-        uan: z.string().min(12, "UAN must be 12-25 characters").optional(),
-        pan: z.string().min(10, "Pan must be 10 characters").optional(),
+        uan: z.string()
+            .min(12, "UAN must be at least 12 characters long")
+            .max(25, "UAN must be at most 25 characters long")
+            .regex(/^[0-9]{12,25}$/, "UAN must be a numeric string of 12 to 25 digits")
+            .optional(),
+        pan: z.string()
+            .length(10, "PAN must be exactly 10 characters")
+            .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "PAN must be in the format: 5 letters, 4 digits, and 1 letter")
+            .optional(),
     }),
     address: z.object({
         street1: z.string().nonempty("Street address is required"),
         street2: z.string().optional(),
         city: z.string().nonempty("City is required"),
         state: z.string().nonempty("State is required"),
-        zipCode: z.string().nonempty("Zip code is required").length(6, "Zip code must be 6 digits"),
-        country: z.string().nonempty("Country is required"),
+        zipCode: z.string()
+            .nonempty("Zip code is required")
+            .length(6, "Zip code must be exactly 6 digits")
+            .regex(/^[0-9]{6}$/, "Zip code must be a 6-digit number"),
+        country: z.string()
+            .nonempty("Country is required")
+            .regex(/^[A-Za-z\s\-]+$/, "Country name must only contain letters, spaces, or hyphens"),
     }),
     contactInformation: z.object({
-        workPhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid work phone number"),
-        mobilePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile phone number").optional(),
-        homePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid home phone number").optional(),
-        workEmail: z.string().email("Invalid work email address"),
-        homeEmail: z.string().email("Invalid home email address").optional(),
+        workPhone: z.string()
+            .nonempty("Work phone number is required")
+            .regex(/^\+?[1-9]\d{1,14}$/, "Invalid work phone number. It must be a valid international format."),
+        mobilePhone: z.string()
+            .regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile phone number. It must be a valid international format.")
+            .optional(),
+        homePhone: z.string()
+            .regex(/^\+?[1-9]\d{1,14}$/, "Invalid home phone number. It must be a valid international format.")
+            .optional(),
+        workEmail: z.string()
+            .nonempty("Work email address is required")
+            .email("Invalid work email address")
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid work email format."),
+        homeEmail: z.string()
+            .email("Invalid home email address")
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid home email format.")
+            .optional()
     }),
     languages: z.array(z.object({
         name: z.string().nonempty("Language is required"),
@@ -174,12 +198,8 @@ export const MyInfo = () => {
     }, [data, form]);
 
     const onSubmit = (values: EmployeeFormSchemaType) => {
-        console.log(values);
         mutation.mutate(values)
     };
-
-    console.log(form.formState.errors);
-
 
     if (isLoading) {
         return (
@@ -356,6 +376,7 @@ export const MyInfo = () => {
                             type="submit"
                             variant={"saveAction"}
                             className="h-9 px-8 mt-6"
+                            disabled={form.formState.isSubmitting || !form.formState.isDirty}
                         >
                             Save
                         </Button>

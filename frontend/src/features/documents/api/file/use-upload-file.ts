@@ -13,8 +13,6 @@ export const useUploadFile = (folderId?: string, employee?: string) => {
 
     return useMutation({
         mutationFn: async (data: UploadFileData) => {
-            console.log(data);
-
             const queryParams = new URLSearchParams();
             if (folderId) {
                 queryParams.append('folderId', folderId);

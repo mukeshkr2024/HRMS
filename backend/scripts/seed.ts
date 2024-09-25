@@ -108,9 +108,6 @@ export const SeedData = async () => {
         await Position.updateOne({ _id: position._id }, { $push: { employees: createdEmployee._id } });
         await Department.updateOne({ _id: department._id }, { $push: { employees: createdEmployee._id } });
 
-        console.log(employee);
-
-
     } catch (error) {
         console.error("Error in seeding data:", error);
     }

@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
-import { ErrorHandler } from "../utils/ErrorHandler";
 import { Asset } from "../models/assets.models";
 import { Issue } from "../models/issue.model";
+import { ErrorHandler } from "../utils/ErrorHandler";
 
 export const addAsset = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -34,8 +34,6 @@ export const addAsset = CatchAsyncError(async (req: Request, res: Response, next
             addedBy: authEmployeeId
         })
 
-        console.log(asset);
-
         return res.status(200).json({
             message: 'Asset added successfully',
             asset
@@ -51,8 +49,6 @@ export const getAssets = CatchAsyncError(async (req: Request, res: Response, nex
         const { employee } = req.query;
         const employeeId = employee ? employee : req.employee._id;
 
-        console.log(employee);
-
         const assets = await Asset.find({
             employeeId: employeeId,
         })
@@ -61,6 +57,57 @@ export const getAssets = CatchAsyncError(async (req: Request, res: Response, nex
         return next(new ErrorHandler(error, 400));
     }
 })
+
+export const updateAsset = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { category, description, serialno, assignedDate } = req.body;
+            const { employee } = req.query;
+            const employeeId = employee ? employee : req.employee._id;
+
+            const trimmedCategory = category.trim();
+            const trimmedDescription = description.trim();
+            const trimmedSerialno = serialno.trim();
+
+            if (!category || !description || !assignedDate) {
+                throw new ErrorHandler('All fields are required', 400);
+            }
+            const assetId = req.params.assetId;
+
+            const sesset = await Asset.findByIdAndUpdate(assetId, {
+                name: trimmedCategory,
+                description: trimmedDescription,
+                serialNo: trimmedSerialno,
+                assignedAt: new Date(assignedDate),
+            })
+
+            return res.status(200).json({
+                message: 'Asset updated successfully',
+            })
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+        }
+    }
+)
+
+export const deleteAsset = CatchAsyncError(
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { assetId } = req.params;
+            const asset = await Asset.findByIdAndDelete(assetId);
+            if (!asset) {
+                throw new ErrorHandler("Asset not found", 404);
+            }
+            return res.status(200).json({
+                message: "Asset deleted successfully"
+            })
+
+        } catch (error) {
+            return next(new ErrorHandler(error, 400));
+
+        }
+    }
+)
 
 export const createAssetIssue = CatchAsyncError(async (
     req: Request,

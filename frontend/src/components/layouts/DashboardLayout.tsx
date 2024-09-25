@@ -13,9 +13,6 @@ interface Route {
 
 export const DashboardLayout = () => {
     const { employee } = useAuthStore();
-
-    console.log(employee?.role);
-
     const adminRoutes: Route[] = [
         { label: "Dashboard", route: "/", icon: LayoutGrid },
         { label: "My Info", route: "/my-info", icon: Monitor },
@@ -25,17 +22,12 @@ export const DashboardLayout = () => {
         { label: "Profiles", route: "/profiles", icon: UserPen },
         { label: "Documents", route: "/documents", icon: FileBarChart },
     ];
-
     const publicRoutes: Route[] = [
         { label: "Dashboard", route: "/", icon: LayoutGrid },
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "Documents", route: "/documents", icon: FileBarChart },
     ];
-
     const routes = employee?.role === "admin" ? adminRoutes : publicRoutes;
-
-    console.log(routes);
-
     return (
         <div className="h-full w-full flex justify-between min-h-screen flex-col">
             <div className="w-full flex h-full">

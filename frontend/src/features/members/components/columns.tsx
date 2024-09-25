@@ -48,7 +48,7 @@ export const memberColumnData: ColumnDef<Issue>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => <p>{row.original?.description}</p>,
+        cell: ({ row }) => <p className="max-w-sm break-words">{row.original?.description}</p>,
     },
     {
         accessorKey: "description",
@@ -80,7 +80,6 @@ export const memberColumnData: ColumnDef<Issue>[] = [
             const mutation = useUpdateMemberIssue(row.original._id)
 
             const onChange = (value: string) => {
-                console.log(value);
                 setSelected(value)
                 mutation.mutate({ value })
             }

@@ -59,9 +59,6 @@ export const getAllDocuments = CatchAsyncError(
         }
       }
 
-      console.log(parentFolder);
-
-
       // Create the query for folders with optional population of parentId
       const foldersQuery = Folder.find(folderFilter);
       if (folderId) {
@@ -117,9 +114,6 @@ export const uploadFile = CatchAsyncError(
         folderId: folderId || null,
         url: fileUrl,
       });
-
-      console.log("uploadedFile", uploadedFile);
-
 
       return res.status(201).json({ uploadedFile });
     } catch (error) {

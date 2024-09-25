@@ -22,8 +22,6 @@ export const createDepartment = CatchAsyncError(
                 description: description
             })
 
-            console.log(department);
-
             res.status(201).json(department)
 
         } catch (error) {

@@ -44,11 +44,8 @@ export const createGoal = CatchAsyncError(
 export const getGoals = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log("called", req.query);
 
             const { employee, status } = req.query;
-
-            console.log("status", status);
 
             // Get the employee ID
             const employeeId = employee ? employee : req.employee.id;
@@ -83,9 +80,6 @@ export const getGoal = CatchAsyncError(
             const goalId = req.params.goalId;
 
             const employeeId = employee ? employee : req.employee.id
-
-
-            console.log(goalId);
 
             const goal = await Goal.findOne({
                 createdBy: employeeId,
@@ -188,7 +182,4 @@ export const updateGoal = CatchAsyncError(
         }
     }
 );
-
-
-
 

@@ -12,42 +12,108 @@ import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
 
+export const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+
 const formSchema = z.object({
-    employeeNumber: z.string().nonempty("Employee number is required"),
+    employeeNumber: z
+        .string()
+        .nonempty("Employee number is required")
+        .min(5, "Employee number must be at least 5 characters long")
+        .max(10, "Employee number must not exceed 10 characters")
+        .regex(/^[A-Za-z0-9]+$/, "Employee number must contain only alphanumeric characters"),
     personalInformation: z.object({
-        firstName: z.string().nonempty("First name is required"),
-        middleName: z.string().optional(),
-        lastName: z.string().nonempty("Last name is required"),
-        preferredName: z.string().optional(),
-        birthDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" }),
-        gender: z.string().nonempty("Gender is required"),
-        maritalStatus: z.string().nonempty("Marital status is required"),
-        uan: z.string().min(12, "UAN must be 12-25 characters").optional(),
-        pan: z.string().min(10, "Pan must be 10 characters").optional(),
+        firstName: z
+            .string()
+            .nonempty("First name is required")
+            .min(2, "First name must be at least 2 characters long")
+            .max(50, "First name must be at most 50 characters long")
+            .regex(/^[a-zA-Z]+$/, "First name must only contain letters"),
+        middleName: z
+            .string()
+            .regex(/^[a-zA-Z]*$/, "Middle name must only contain letters")
+            .optional(),
+        lastName: z
+            .string()
+            .nonempty("Last name is required")
+            .min(2, "Last name must be at least 2 characters long")
+            .max(50, "Last name must be at most 50 characters long")
+            .regex(/^[a-zA-Z]+$/, "Last name must only contain letters"),
+        preferredName: z.string().regex(/^[a-zA-Z]*$/, "Middle name must only contain letters")
+            .optional(),
+        birthDate: z.string()
+            .refine(date => !isNaN(Date.parse(date)), { message: "Invalid date format" })
+            .refine(date => new Date(date) < new Date(), { message: "Birth date must be in the past" }),
+        gender: z.enum(["male", "female", "other"], {
+            required_error: "Gender is required",
+            invalid_type_error: "Gender must be one of the valid options (male, female, other)"
+        }),
+        maritalStatus: z.enum(["single", "married", "divorced", "widowed"], {
+            required_error: "Marital status is required",
+            invalid_type_error: "Marital status must be one of the valid options (single, married, divorced, widowed)"
+        }),
+        uan: z.string()
+            .min(12, "UAN must be at least 12 characters long")
+            .max(25, "UAN must be at most 25 characters long")
+            .regex(/^[0-9]{12,25}$/, "UAN must be a numeric string of 12 to 25 digits")
+            .optional(),
+        pan: z.string()
+            .length(10, "PAN must be exactly 10 characters")
+            .regex(/^[A-Z]{5}[0-9]{4}[A-Z]$/, "PAN must be in the format: 5 letters, 4 digits, and 1 letter")
+            .optional(),
     }),
     address: z.object({
         street1: z.string().nonempty("Street address is required"),
         street2: z.string().optional(),
         city: z.string().nonempty("City is required"),
         state: z.string().nonempty("State is required"),
-        zipCode: z.string().nonempty("Zip code is required").length(6, "Zip code must be 6 digits"),
-        country: z.string().nonempty("Country is required"),
+        zipCode: z.string()
+            .nonempty("Zip code is required")
+            .length(6, "Zip code must be exactly 6 digits")
+            .regex(/^[0-9]{6}$/, "Zip code must be a 6-digit number"),
+        country: z.string()
+            .nonempty("Country is required")
+            .regex(/^[A-Za-z\s\-]+$/, "Country name must only contain letters, spaces, or hyphens"),
     }),
     compensation: z.object({
         paySchedule: z.string().nonempty("Pay schedule is required"),
         payType: z.string().nonempty("Pay type is required"),
-        payRate: z.number(),
+        payRate: z.string()
+            .transform((val) => {
+                const num = parseFloat(val);
+                if (isNaN(num)) {
+                    throw new Error("Pay rate must be a valid number");
+                }
+                return num;
+            })
+            .refine((val) => val > 0, { message: "Pay rate must be a positive number" })
+            .refine((val) => val >= 1, { message: "Pay rate must be at least $1" }),
         payRateType: z.string(),
     }),
     contactInformation: z.object({
-        workPhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid work phone number"),
-        mobilePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile phone number").optional(),
-        homePhone: z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid home phone number").optional(),
-        workEmail: z.string().email("Invalid work email address"),
-        homeEmail: z.string().email("Invalid home email address").optional(),
+        workPhone: z.string()
+            .nonempty("Work phone number is required")
+            .regex(/^\+?[1-9]\d{1,14}$/, "Invalid work phone number. It must be a valid international format."),
+        mobilePhone: z.string()
+            .regex(/^\+?[1-9]\d{1,14}$/, "Invalid mobile phone number. It must be a valid international format.")
+            .optional(),
+        homePhone: z.string()
+            .regex(/^\+?[1-9]\d{1,14}$/, "Invalid home phone number. It must be a valid international format.")
+            .optional(),
+        workEmail: z.string()
+            .nonempty("Work email address is required")
+            .email("Invalid work email address")
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid work email format."),
+        homeEmail: z.string()
+            .email("Invalid home email address")
+            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid home email format.")
+            .optional()
     }),
     jobDetails: z.object({
-        hireDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid hire date format" }),
+        hireDate: z.string()
+            .refine(date => dateRegex.test(date), { message: "Invalid hire date format. Use YYYY-MM-DD." })
+            .refine(date => !isNaN(Date.parse(date)), { message: "Invalid hire date." })
+            .refine(date => new Date(date) <= new Date(), { message: "Hire date cannot be in the future." })
+            .refine(date => new Date(date).getFullYear() > 2000, { message: "Hire date must be after the year 2000." }),
         employmentStatus: z.string().nonempty("Employment status is required"),
     }),
     jobInformation: z.object({
@@ -57,9 +123,22 @@ const formSchema = z.object({
     }),
     role: z.string().nonempty("Role is required"),
     workLocation: z.string().nonempty("Location is required"),
-    password: z.string().optional().refine(val => val === undefined || val.length >= 8, {
-        message: "Password must be at least 8 characters long",
-    }),
+    password: z.string().optional()
+        .refine(val => val === undefined || val.length >= 8, {
+            message: "Password must be at least 8 characters long",
+        })
+        .refine(val => val === undefined || /[A-Z]/.test(val), {
+            message: "Password must contain at least one uppercase letter",
+        })
+        .refine(val => val === undefined || /[a-z]/.test(val), {
+            message: "Password must contain at least one lowercase letter",
+        })
+        .refine(val => val === undefined || /\d/.test(val), {
+            message: "Password must contain at least one digit",
+        })
+        .refine(val => val === undefined || /[!@#$%^&*(),.?":{}|<>]/.test(val), {
+            message: "Password must contain at least one special character",
+        })
 });
 
 export type EditEmployeeFormSchemaType = z.infer<typeof formSchema>;
@@ -80,8 +159,6 @@ export const EmployeeInfo = () => {
                 lastName: "",
                 preferredName: "",
                 birthDate: "",
-                gender: "",
-                maritalStatus: "",
                 uan: "",
                 pan: "",
             },
@@ -177,7 +254,6 @@ export const EmployeeInfo = () => {
     }, [employeeData, form]);
 
     const onSubmit = (values: EditEmployeeFormSchemaType) => {
-        console.log(values);
         mutation.mutate(values)
     };
 
@@ -201,6 +277,9 @@ export const EmployeeInfo = () => {
         value: employee._id,
         label: employee.name
     }))
+
+    console.log(form.formState.isDirty);
+
 
     return (
         <div>
@@ -460,7 +539,7 @@ export const EmployeeInfo = () => {
                                     variant="saveAction"
                                     className="h-9"
                                     disabled={
-                                        mutation.isPending
+                                        mutation.isPending || !form.formState.isDirty
                                     }
                                 >Update</Button>
                                 <Button

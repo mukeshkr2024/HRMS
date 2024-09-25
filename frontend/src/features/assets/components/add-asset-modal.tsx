@@ -1,4 +1,4 @@
-import { useAddAsset } from "@/features/assets/api/use-add-depatment";
+import { useAddAsset } from "@/features/assets/api/use-add-asset";
 import {
     Dialog,
     DialogContent,
@@ -16,12 +16,14 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { Textarea } from "../../../components/ui/textarea";
+import { Asset } from "./asset-details";
+import { useUpdateAsset } from "../api/use-update-asset";
 
 const formSchema = z.object({
     category: z.string(),
@@ -30,40 +32,56 @@ const formSchema = z.object({
     assignedDate: z.string()
 });
 
+interface AssetModelProps {
+    children?: React.ReactNode;
+    existingAsset?: Asset
+    employeeId?: string
+}
+
 export type AddAssetFormSchemaType = z.infer<typeof formSchema>;
 
-export const AddAssetModel = ({ employeeId }: { employeeId?: string }) => {
+export const AddAssetModel = ({ employeeId, children, existingAsset }: AssetModelProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = useAddAsset(employeeId)
+    const mutation = existingAsset ? useUpdateAsset(existingAsset._id) : useAddAsset(employeeId)
+
 
     const form = useForm<AddAssetFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            category: "",
-            description: "",
-            serialno: "",
-            assignedDate: "",
+            category: existingAsset?.name || "",
+            description: existingAsset?.description || "",
+            serialno: existingAsset?.serialNo || "",
+            assignedDate: existingAsset?.assignedAt ? existingAsset.assignedAt?.slice(0, 10) : "",
         },
     });
 
     const { isSubmitting, isValid } = form.formState;
 
     const onSubmit = (values: AddAssetFormSchemaType) => {
-        mutation.mutate(values, {
-            onSettled: () => {
-                setIsOpen(false);
-                form.reset();
-            }
-        });
+        if (existingAsset) {
+            mutation.mutate({ ...values }, {
+                onSettled: () => {
+                    setIsOpen(false);
+                    form.reset();
+                }
+            });
+        } else {
+            mutation.mutate(values, {
+                onSettled: () => {
+                    setIsOpen(false);
+                    form.reset();
+                }
+            });
+        }
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(prev => !prev)}>
             <DialogTrigger asChild>
-                <Button
+                {children || <Button
                     variant="addAction"
                     className="h-9 gap-2"
-                ><PlusCircle size={17} />Add New Asset</Button>
+                ><PlusCircle size={17} />Add New Asset</Button>}
             </DialogTrigger>
             <DialogContent
                 className="w-full max-w-lg p-6 md:p-8 lg:p-10"
@@ -146,7 +164,7 @@ export const AddAssetModel = ({ employeeId }: { employeeId?: string }) => {
                                     disabled={isSubmitting || !isValid}
                                     type="submit"
                                 >
-                                    Submit
+                                    {existingAsset ? "Update" : "Submit"}
                                 </Button>
                             </div>
                         </form>

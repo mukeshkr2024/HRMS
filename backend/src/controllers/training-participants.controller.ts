@@ -12,11 +12,6 @@ export const createTrainingParticipant = CatchAsyncError(
         return next(new ErrorHandler("All fields are required", 400));
       }
 
-      console.log("Creating Training Participant with:", {
-        trainingId,
-        employeeId,
-      });
-
       const trainingParticipant = await TrainingParticipant.create({
         trainingId,
         employeeId,

@@ -3,6 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Asset } from "./asset-details"
 import { formatDate } from "@/utils";
+import { useAuthStore } from "@/context/useAuthStore";
+import { Edit, Trash } from "lucide-react";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { AddAssetModel } from "./add-asset-modal";
+import { useDeleteAsset } from "../api/use-delete-assets";
+import { useParams } from "react-router-dom";
 
 export const columns: ColumnDef<Asset>[] = [
     {
@@ -23,37 +29,48 @@ export const columns: ColumnDef<Asset>[] = [
         cell: ({ row }) => {
             return (
                 <div>
+                    {/* @ts-ignore */}
                     {formatDate(row.original.assignedAt)}
                 </div>
             )
         }
     },
-    // {
-    //     accessorKey: "status",
-    //     header: "Status",
-    //     cell: ({ row }) => {
-    //         const status: string = row.getValue("status");
-    //         const color = statusColor(status)
-    //         return (
-    //             <div className="flex items-center">
-    //                 <span
-    //                     style={{
-    //                         backgroundColor: color,
-    //                     }}
-    //                     className="inline-block size-[10px] rounded-full mr-[8px]"
-    //                 ></span>
-    //                 <p style={{ margin: 0 }}>{status}</p>
-    //             </div>
-    //         );
-    //     }
-    // },
-    // {
-    //     accessorKey: "actions",
-    //     header: "Tickets",
-    //     cell: () => (
-    //         <div>
-    //             Tickets
-    //         </div>
-    //     ),
-    // }
+    {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+            const { employee } = useAuthStore();
+            const { employeeId } = useParams()
+
+            const mutation = useDeleteAsset(employeeId);
+
+            const handleDelete = () => {
+                mutation.mutate(row.original._id);
+            }
+
+            // TODO: add api for update and delete
+
+            if (employee?.role === "admin") {
+                return (
+                    <div className="flex gap-x-2">
+                        <AddAssetModel
+                            existingAsset={row.original}
+                        >
+                            <Edit
+                                size={18}
+                                className="cursor-pointer"
+                            />
+                        </AddAssetModel>
+                        <ConfirmDialog onConfirm={() => handleDelete()}>
+                            <Trash
+                                size={18}
+                                className="cursor-pointer text-red-500"
+                            />
+                        </ConfirmDialog>
+                    </div>
+                );
+            }
+            return null;
+        }
+    }
 ]

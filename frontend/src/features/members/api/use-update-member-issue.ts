@@ -22,7 +22,7 @@ export const useUpdateMemberIssue = (id: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["issues"] })
             toast({
-                title: "Issue updated successfully"
+                title: "Issue status updated successfully"
             })
         }
     })

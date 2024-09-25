@@ -15,7 +15,7 @@ export const DashboardSideBar = ({ routes }: DashboardSideBarProps) => {
     const { pathname } = useLocation();
 
     return (
-        <div className="w-[280px] bg-secondary px-8 py-8 h-full fixed top-0 left-0 hidden md:block">
+        <div className="w-[280px] bg-secondary px-8 py-8 h-full fixed top-0 left-0 hidden md:block z-50">
             <div className="w-full flex items-center justify-center mt-4">
                 <Link to="/">
                     <img src="/logo.svg" alt="Logo" />

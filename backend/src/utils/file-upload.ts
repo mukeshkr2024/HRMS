@@ -36,9 +36,6 @@ const uploadFileToS3 = async (file: File, type?: UploadOptions): Promise<string>
   try {
     await UploadFile(file.buffer, fileName, file.mimetype, type);
     const fileUrl = await getObjectUrl(fileName, type);
-
-    console.log("fileUrl", fileUrl);
-
     return fileUrl;
   } catch (error) {
     console.error('Failed to upload file:', error);
@@ -51,10 +48,6 @@ const deleteFileFromS3 = async (fileName: string, type?: UploadOptions): Promise
   if (!fileName) {
     throw new ErrorHandler('File name must be provided', 400);
   }
-
-  console.log("fileName", fileName);
-
-
   try {
     await deleteFile(fileName, type);
     return true;

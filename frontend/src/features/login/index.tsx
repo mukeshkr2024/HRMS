@@ -75,14 +75,14 @@ export const LoginPage = () => {
                                             <FormItem>
                                                 <FormLabel className="font-normal  text-[#1A1A1A]">Password</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="Enter password"  {...field} className="bg-gray-200  text-[#808080] font-normal rounded-md" />
+                                                    <Input placeholder="Enter password"  {...field} className="bg-gray-200  text-[#808080] font-normal rounded-md" type="password" />
                                                 </FormControl>
                                                 <FormMessage className="text-sm font-normal" />
                                             </FormItem>
                                         )}
                                     />
                                     <Button type="submit"
-                                        className="flex justify-center w-full px-4 py-3 font-urbanist font-bold text-sm leading-5 text-[#FFFFFF] bg-[#1FBE8E] hover:bg-[#1FBE8E] rounded-md mt-4 pb-5">Sign in</Button>
+                                        className="flex justify-center w-full px-4 py-3 font-urbanist font-bold text-sm leading-5 text-[#FFFFFF] bg-[#1FBE8E] hover:bg-[#1FBE8E] items-center rounded-md mt-4 pb-5">Sign in</Button>
                                 </form>
                             </Form>
                         </div>

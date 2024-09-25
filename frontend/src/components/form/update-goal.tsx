@@ -39,9 +39,7 @@ export const UpdateGoal = ({ goalId, setIsEditing, employeeId }: UpdateGoalProps
     }
 
     const handleUpdateProgress = () => {
-        // Ensure progress is within 0-100 range
         const clampedProgress = Math.min(Math.max(progress, 0), 100)
-        console.log('Updated progress:', clampedProgress)
         updateGoalProgressMutation.mutate({
             progress: clampedProgress
         }, {

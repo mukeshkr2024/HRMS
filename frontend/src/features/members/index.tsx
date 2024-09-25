@@ -6,9 +6,6 @@ import { memberColumns } from "./columns";
 export const TeamMembersPage = () => {
     const { data: members, isLoading } = useGetMembers()
 
-    console.log(members);
-
-
     if (isLoading) {
         return <CustomLoader className="pt-20" />
     }

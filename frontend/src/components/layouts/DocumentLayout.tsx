@@ -8,6 +8,7 @@ import { useDocumentStore } from "@/context/use-document";
 import { CirclePlus, FilePlus, Folder, Trash } from "lucide-react";
 import { useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
+import { toast } from "../ui/use-toast";
 
 const folders = [
     { id: 1, name: "All Files" },
@@ -36,7 +37,21 @@ export const DocumentLayout = () => {
     };
 
     const handleFileUpload = (values: { file: File | null }) => {
+        const MAX_FILE_SIZE_MB = 10; // Maximum file size in MB
+        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert MB to bytes
+
         if (values.file) {
+            // Check file size
+            if (values.file.size > MAX_FILE_SIZE_BYTES) {
+                console.error("File size exceeds 10MB");
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Please select a file smaller than 10MB",
+                })
+                return; // Exit the function to prevent upload
+            }
+
             uploadFileMutation.mutate({ file: values.file }, {
                 onSuccess: () => {
                     setIsUploadFileDialogOpen(false);
@@ -44,8 +59,14 @@ export const DocumentLayout = () => {
             });
         } else {
             console.error("No file selected");
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "No file selected",
+            })
         }
     };
+
 
     const handleDelete = () => {
         deleteDocumentMutation.mutate(
