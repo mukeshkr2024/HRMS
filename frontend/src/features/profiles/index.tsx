@@ -1,5 +1,5 @@
 import { AddNewProfile } from "@/features/profiles/components/add-new-profile";
-import { DepartmentDataTable } from "@/features/profiles/components/department-data-table";
+import { DepartmentDataTable } from "@/features/departments/components/department-data-table";
 import { Loader } from "lucide-react";
 import { useGetProfiles } from "./api/use-get-profiles";
 import { profileColumnData } from "./components/colums";

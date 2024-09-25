@@ -27,17 +27,18 @@ export const memberColumns: ColumnDef<Member>[] = [
     },
     {
         accessorKey: "assesment",
-        header: "",  // TODO:
-        // header: ({ column }) => (
-        //     <Button
-        //         variant="ghost"
-        //         onClick={() =>
-        //             column.toggleSorting(column.getIsSorted() === "asc")
-        //         }
-        //     >
-        //         Member
-        //     </Button>
-        // ),
+        header: ({ column }) => (
+            <div className="flex">
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                >
+                    Member
+                </Button>
+            </div>
+        ),
         cell: ({ row }) => (
             <Link to={`/members/${row.original._id}`}>
                 <div className="flex gap-5 items-center  font-urbanist">
@@ -58,17 +59,18 @@ export const memberColumns: ColumnDef<Member>[] = [
     },
     {
         accessorKey: "id",
-        header: "",  // TODO:
-        // header: ({ column }) => (
-        //     <Button
-        //         variant="ghost"
-        //         onClick={() =>
-        //             column.toggleSorting(column.getIsSorted() === "asc")
-        //         }
-        //     >
-        //         Email
-        //     </Button>
-        // ), 
+        header: ({ column }) => (
+            <div className="flex">
+                <Button
+                    variant="ghost"
+                    onClick={() =>
+                        column.toggleSorting(column.getIsSorted() === "asc")
+                    }
+                >
+                    Email
+                </Button>
+            </div>
+        ),
         cell: ({ row }) => (
             <div className="flex flex-col text-start text-[#3F3F3F] font-medium font-urbanist">
                 <p>{row.original.email}</p>

@@ -1,5 +1,5 @@
 import { useGetAssetIssues } from "@/features/assets/api/issues/use-get-assets";
-import { DepartmentDataTable } from "@/features/profiles/components/department-data-table";
+import { DepartmentDataTable } from "@/features/departments/components/department-data-table";
 import { ArrowLeft, Loader } from "lucide-react";
 import { memberColumnData } from "./columns";
 import { Link } from "react-router-dom";
@@ -26,7 +26,7 @@ export const MemberIssuesList = () => {
     }
 
     return (
-        <main className="w-full h-full font-urbanist pt-6 flex flex-col gap-y-4">
+        <main className="w-full h-full font-urbanist flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-2">
                 <Link
                     to="/members"

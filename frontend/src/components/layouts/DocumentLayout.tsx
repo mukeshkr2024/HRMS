@@ -5,21 +5,19 @@ import { FileUploadDialog } from "@/components/modal/add-new-file";
 import { AddNewDialog } from "@/components/modal/add-new-model";
 import { Button } from "@/components/ui/button";
 import { useDocumentStore } from "@/context/use-document";
-import { CirclePlus, FilePlus, Folder, Trash } from "lucide-react";
+import { CircleArrowLeft, CirclePlus, FilePlus, Folder, Trash } from "lucide-react";
 import { useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { toast } from "../ui/use-toast";
 
 const folders = [
     { id: 1, name: "All Files" },
-    // { id: 2, name: "Signature Files" },
-    // { id: 3, name: "Documents" },
 ];
 
 export const DocumentLayout = () => {
     const { employeeId } = useParams()
 
-    const { currentFolderId, selectedFolders, selectedFiles } = useDocumentStore();
+    const { currentFolderId, selectedFolders, selectedFiles, setCurrentFolderId, previousFolder } = useDocumentStore();
     const createFolderMutation = useCreateFolder(currentFolderId!, employeeId);
     const uploadFileMutation = useUploadFile(currentFolderId!, employeeId);
     const deleteDocumentMutation = useDeleteDocument();
@@ -37,8 +35,9 @@ export const DocumentLayout = () => {
     };
 
     const handleFileUpload = (values: { file: File | null }) => {
-        const MAX_FILE_SIZE_MB = 10; // Maximum file size in MB
-        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert MB to bytes
+        const MAX_FILE_SIZE_MB = 10;
+        const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+        const VIDEO_MIME_TYPES = ["video/mp4", "video/webm", "video/ogg"]; // Add any other video types you want to restrict
 
         if (values.file) {
             // Check file size
@@ -48,7 +47,18 @@ export const DocumentLayout = () => {
                     variant: "destructive",
                     title: "Error",
                     description: "Please select a file smaller than 10MB",
-                })
+                });
+                return; // Exit the function to prevent upload
+            }
+
+            // Check if the file is a video
+            if (VIDEO_MIME_TYPES.includes(values.file.type)) {
+                console.error("Video files are not allowed");
+                toast({
+                    variant: "destructive",
+                    title: "Error",
+                    description: "Video files are not allowed. Please select another file.",
+                });
                 return; // Exit the function to prevent upload
             }
 
@@ -63,7 +73,7 @@ export const DocumentLayout = () => {
                 variant: "destructive",
                 title: "Error",
                 description: "No file selected",
-            })
+            });
         }
     };
 
@@ -78,9 +88,20 @@ export const DocumentLayout = () => {
     };
     const totalSelectedFiles = selectedFiles.length + selectedFolders.length
 
+    const handleBackClick = () => {
+        if (previousFolder && previousFolder.parentId) {
+            setCurrentFolderId(previousFolder.parentId._id);
+        } else {
+            setCurrentFolderId(null);
+        }
+    };
+
+    console.log(previousFolder);
+
+
     return (
         <div className="w-full flex flex-col gap-y-4 relative">
-            <div className="mt-6">
+            <div>
                 <div className="flex items-center gap-4">
                     <div className="flex gap-2.5">
                         <img src="/icons/monitor-mobbile.svg" alt="" className="size-7" />
@@ -114,23 +135,28 @@ export const DocumentLayout = () => {
                             <FilePlus size={18} />
                         </Button>
                     </AddNewDialog>
-
+                    {previousFolder && (
+                        <div className="flex gap-2">
+                            <CircleArrowLeft
+                                onClick={handleBackClick}
+                                className="cursor-pointer"
+                            />
+                            <h3>{previousFolder.name}</h3>
+                        </div>
+                    )}
                     {totalSelectedFiles > 0 && <>
-                        <Button onClick={handleDelete} className="bg-red-600 text-white h-8 flex items-center gap-2">
+                        <Button onClick={handleDelete}
+                            disabled={deleteDocumentMutation.isPending}
+                            className="bg-red-600 text-white h-8 flex items-center gap-2 ml-auto">
                             <Trash size={18} /> Delete
                         </Button>
-                        {/* <Button onClick={handleArchive} className="bg-yellow-600 text-white h-8 flex items-center gap-2">
-                            <Archive size={18} /> Archive
-                        </Button>
-                        <Button onClick={handleMove} className="bg-blue-600 text-white h-8 flex items-center gap-2">
-                            <Move size={18} /> Move
-                        </Button> */}
+
                     </>
                     }
                 </div>
             </div>
             <div className="flex gap-8 w-full">
-                <div className="bg-[#F7F8FA] rounded-md w-[280px] min-h-[400px] hidden lg:block">
+                <div className="bg-[#F7F8FA] rounded-md w-[280px] h-[400px] hidden lg:block">
                     <div className="p-6 flex flex-col gap-y-4">
                         {folders.map(folder => (
                             <div key={folder.id} className="flex items-center gap-4">

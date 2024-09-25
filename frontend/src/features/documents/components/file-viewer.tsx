@@ -55,19 +55,22 @@ export const FileViewer = ({ children, url, fileType, name }: Props) => {
         return <p className="text-center text-muted-foreground">Unsupported file type</p>;
     };
 
-    const handleDownload = () => {
-        const link = document.createElement("a");
-        link.href = url;
+    const handleDownloadOrOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
 
-        // Use the provided 'name' prop as the file name for download
-        const fileName = name || url.split('/').pop() || "file";
-        link.setAttribute('download', fileName);
+        // Create a download link for the image
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+
+        // Set the download attribute to suggest a filename
+        downloadLink.download = name || url.split('/').pop() || "downloaded_image";
 
         // Append the link, click to trigger download, and then remove it
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
     };
+
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen((prev) => !prev)}>
@@ -79,9 +82,9 @@ export const FileViewer = ({ children, url, fileType, name }: Props) => {
                     </div>
                     <button
                         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={handleDownload}
+                        onClick={handleDownloadOrOpen}
                     >
-                        Download
+                        {fileType.startsWith("image/") ? "Open Image" : "Download"}
                     </button>
                 </div>
             </DialogContent>

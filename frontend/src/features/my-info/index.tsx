@@ -79,6 +79,10 @@ const formSchema = z.object({
     })).optional(), // TODO: fix validation error not showing 
     position: z.string().nonempty("Job title is required"),
     department: z.string().nonempty("Job title is required"),
+    linkedinUrl: z.string().url({ message: "Please provide a valid LinkedIn URL." }).optional(),
+    twitterUrl: z.string().url({ message: "Please provide a valid Twitter URL." }).optional(),
+    instagramUrl: z.string().url({ message: "Please provide a valid Instagram URL." }).optional(),
+    facebookUrl: z.string().url({ message: "Please provide a valid Facebook URL." }).optional(),
 });
 
 export type EmployeeFormSchemaType = z.infer<typeof formSchema>;
@@ -262,10 +266,10 @@ export const MyInfo = () => {
 
                         <EmployeeFormSection title="Social Links" icon="/icons/call-slash.svg">
                             <div className="grid lg:grid-cols-4 gap-4 max-w-5xl">
-                                <EmployeeFormFieldWrapper control={form.control} name="socialLinks.linkedin" label="LinkedIn" />
-                                <EmployeeFormFieldWrapper control={form.control} name="socialLinks.twitter" label="Twitter" />
-                                <EmployeeFormFieldWrapper control={form.control} name="socialLinks.instagram" label="Instagram" />
-                                <EmployeeFormFieldWrapper control={form.control} name="socialLinks.facebook" label="Facebook" />
+                                <EmployeeFormFieldWrapper control={form.control} name="linkedinUrl" label="LinkedIn" />
+                                <EmployeeFormFieldWrapper control={form.control} name="twitterUrl" label="Twitter" />
+                                <EmployeeFormFieldWrapper control={form.control} name="instagramUrl" label="Instagram" />
+                                <EmployeeFormFieldWrapper control={form.control} name="facebookUrl" label="Facebook" />
                             </div>
                         </EmployeeFormSection>
 

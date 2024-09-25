@@ -36,9 +36,27 @@ export const updateMemberIssue = CatchAsyncError(async (req: Request, res: Respo
 
         const { value } = req.body;
 
-        const issue = await Issue.findByIdAndUpdate(issueId, {
-            approval: value
-        })
+        if (!value) {
+            return res.status(400).json({ message: "Approval status is required." });
+        }
+
+        const employee = req.employee;
+
+        console.log(employee);
+
+        let toUpdate;
+
+        if (employee.role === "admin") {
+            toUpdate = {
+                status: value
+            }
+        } else {
+            toUpdate = {
+                approval: value,
+            }
+        }
+
+        const issue = await Issue.findByIdAndUpdate(issueId, toUpdate)
 
         if (!issue) {
             return next(new ErrorHandler("Issue not found", 400))

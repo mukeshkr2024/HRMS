@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../components/ui/button";
@@ -26,11 +26,14 @@ import { Asset } from "./asset-details";
 import { useUpdateAsset } from "../api/use-update-asset";
 
 const formSchema = z.object({
-    category: z.string(),
-    description: z.string(),
-    serialno: z.string(),
-    assignedDate: z.string()
+    category: z.string().min(1, { message: "Category is required" }), // Must not be empty
+    description: z.string().min(10, { message: "Description must be at least 10 characters long" }), // Minimum length validation
+    serialno: z.string().regex(/^[A-Za-z0-9]+$/, { message: "Serial number must be alphanumeric" }), // Alphanumeric validation
+    assignedDate: z.string().refine((date) => {
+        return !isNaN(Date.parse(date));
+    }, { message: "Assigned date must be a valid date in YYYY-MM-DD format" }) // Date validation
 });
+
 
 interface AssetModelProps {
     children?: React.ReactNode;
@@ -74,6 +77,13 @@ export const AddAssetModel = ({ employeeId, children, existingAsset }: AssetMode
             });
         }
     };
+
+    const [maxDate, setMaxDate] = useState("");
+
+    useEffect(() => {
+        const today = new Date().toISOString().split("T")[0];
+        setMaxDate(today);
+    }, []);
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(prev => !prev)}>
@@ -141,7 +151,7 @@ export const AddAssetModel = ({ employeeId, children, existingAsset }: AssetMode
                                     <FormItem>
                                         <FormLabel>Assigned Date</FormLabel>
                                         <FormControl>
-                                            <Input type="date" {...field} />
+                                            <Input type="date" {...field} max={maxDate} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

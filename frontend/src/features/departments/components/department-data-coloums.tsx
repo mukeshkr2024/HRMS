@@ -1,11 +1,11 @@
 
-import { useDeleteProfile } from "@/features/profiles/api/use-delete-profile";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Department } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Trash } from "lucide-react";
-import { AddNewDepartment } from "./add-new-model";
+import { AddNewDepartment } from "../../profiles/components/add-new-model";
+import { useDeleteDepartment } from "../api/use-delete-department";
 
 export const departmentColumnData: ColumnDef<Department>[] = [
     {
@@ -64,7 +64,7 @@ export const departmentColumnData: ColumnDef<Department>[] = [
         cell: ({
             row
         }) => {
-            const deleteMutation = useDeleteProfile()
+            const deleteMutation = useDeleteDepartment()
 
             const onDelete = (profileId: string) => {
                 if (!profileId) return;

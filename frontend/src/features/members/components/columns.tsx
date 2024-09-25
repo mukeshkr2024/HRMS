@@ -7,6 +7,7 @@ import { Issue } from "@/features/assets/components/assest-issue-status";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpdateMemberIssue } from "../api/use-update-member-issue";
+import { useAuthStore } from "@/context/useAuthStore";
 
 export const memberColumnData: ColumnDef<Issue>[] = [
     {
@@ -48,7 +49,7 @@ export const memberColumnData: ColumnDef<Issue>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => <p className="max-w-sm break-words">{row.original?.description}</p>,
+        cell: ({ row }) => <p className="max-w-[20rem] break-words">{row.original?.description}</p>,
     },
     {
         accessorKey: "description",
@@ -75,7 +76,10 @@ export const memberColumnData: ColumnDef<Issue>[] = [
             </Button>
         ),
         cell: ({ row }) => {
+            const { employee } = useAuthStore()
             const [selected, setSelected] = useState<string>(row.original?.approval)
+
+            console.log(employee);
 
             const mutation = useUpdateMemberIssue(row.original._id)
 
@@ -84,18 +88,30 @@ export const memberColumnData: ColumnDef<Issue>[] = [
                 mutation.mutate({ value })
             }
 
+            const color = statusColor(row.original.approval);
+
             return (
-                <Select value={selected} onValueChange={onChange}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="processing">Processing</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                    </SelectContent>
-                </Select>
+                <>
+                    {employee?.role !== "admin" ? <Select value={selected} onValueChange={onChange}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="approved">Approved</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                        </SelectContent>
+                    </Select> : (
+                        <div className="flex items-center gap-2 capitalize">
+                            <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: color }}
+                            />
+                            {row.original.approval}
+                        </div>
+                    )}
+                </>
+
             )
         }
     },
@@ -111,17 +127,43 @@ export const memberColumnData: ColumnDef<Issue>[] = [
             </Button>
         ),
         cell: ({ row }) => {
-            const color = statusColor(row.original.status);
+            const { employee } = useAuthStore()
+            const [selected, setSelected] = useState<string>(row.original?.approval)
+
+            console.log(employee);
+
+            const mutation = useUpdateMemberIssue(row.original._id)
+
+            const onChange = (value: string) => {
+                setSelected(value)
+                mutation.mutate({ value })
+            }
+
+            const color = statusColor(row.original.approval);
 
             return (
-                <div className="flex items-center gap-2 capitalize">
-                    <div
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: color }}
-                    />
-                    {row.original.status}
-                </div>
+                <>
+                    {employee?.role == "admin" ? <Select value={selected} onValueChange={onChange}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="approved">Approved</SelectItem>
+                            <SelectItem value="rejected">Rejected</SelectItem>
+                        </SelectContent>
+                    </Select> : (
+                        <div className="flex items-center gap-2 capitalize">
+                            <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: color }}
+                            />
+                            {row.original.approval}
+                        </div>
+                    )}
+                </>
+
             )
-        },
+        }
     },
 ];

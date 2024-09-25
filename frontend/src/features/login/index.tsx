@@ -5,6 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useEmployeeLogin } from "./api/use-login";
+import { Eye, EyeOff } from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
     email: z
@@ -12,11 +14,12 @@ const formSchema = z.object({
         .email({ message: "Please enter a valid email address." }),
     password: z
         .string()
-        .min(8, { message: "Password must be at least 8 characters long." })
+        .min(8, { message: "Password enter a valid password." })
 });
 
 export const LoginPage = () => {
     const { mutate } = useEmployeeLogin();
+    const [showPassword, setShowPassword] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -74,9 +77,21 @@ export const LoginPage = () => {
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="font-normal  text-[#1A1A1A]">Password</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Enter password"  {...field} className="bg-gray-200  text-[#808080] font-normal rounded-md" type="password" />
-                                                </FormControl>
+                                                <div className="relative">
+                                                    <FormControl>
+                                                        <Input placeholder="Enter password"  {...field} className="bg-gray-200  text-[#808080] font-normal rounded-md" type={showPassword ? "text" : "password"} />
+                                                    </FormControl>
+                                                    <div
+                                                        className="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                    >
+                                                        {showPassword ? (
+                                                            <Eye className="text-gray-500" size={16} />
+                                                        ) : (
+                                                            <EyeOff className="text-gray-500" size={16} />
+                                                        )}
+                                                    </div>
+                                                </div>
                                                 <FormMessage className="text-sm font-normal" />
                                             </FormItem>
                                         )}

@@ -1,5 +1,3 @@
-"use client"
-
 import { ColumnDef } from "@tanstack/react-table"
 import { Asset } from "./asset-details"
 import { formatDate } from "@/utils";
@@ -47,8 +45,6 @@ export const columns: ColumnDef<Asset>[] = [
             const handleDelete = () => {
                 mutation.mutate(row.original._id);
             }
-
-            // TODO: add api for update and delete
 
             if (employee?.role === "admin") {
                 return (

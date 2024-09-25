@@ -31,6 +31,10 @@ export interface IEmployee extends Document {
   name: string;
   avatar: string;
   workLocation: string;
+  linkedinUrl: string;
+  twitterUrl: string;
+  instagramUrl: string;
+  facebookUrl: string
 }
 
 const employeeSchema = new Schema<IEmployee>(
@@ -67,6 +71,18 @@ const employeeSchema = new Schema<IEmployee>(
       },
     ],
     languages: [{ type: String }],
+    linkedinUrl: {
+      type: String
+    },
+    twitterUrl: {
+      type: String
+    },
+    instagramUrl: {
+      type: String
+    },
+    facebookUrl: {
+      type: String
+    }
   },
   { timestamps: true }
 );

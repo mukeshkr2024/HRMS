@@ -47,10 +47,7 @@ const formSchema = z.object({
             required_error: "Gender is required",
             invalid_type_error: "Gender must be one of the valid options (male, female, other)"
         }),
-        maritalStatus: z.enum(["single", "married", "divorced", "widowed"], {
-            required_error: "Marital status is required",
-            invalid_type_error: "Marital status must be one of the valid options (single, married, divorced, widowed)"
-        }),
+        maritalStatus: z.string(),
         uan: z.string()
             .min(12, "UAN must be at least 12 characters long")
             .max(25, "UAN must be at most 25 characters long")

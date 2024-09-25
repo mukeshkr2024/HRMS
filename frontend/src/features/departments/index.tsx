@@ -1,7 +1,7 @@
 import { useGetDepartments } from "@/features/departments/api/use-get-departments";
 import { AddNewDepartment } from "@/features/profiles/components/add-new-model";
-import { departmentColumnData } from "@/features/profiles/components/department-data-coloums";
-import { DepartmentDataTable } from "@/features/profiles/components/department-data-table";
+import { departmentColumnData } from "@/features/departments/components/department-data-coloums";
+import { DepartmentDataTable } from "@/features/departments/components/department-data-table";
 import { Loader } from "lucide-react";
 
 export const DepartmentPage = () => {

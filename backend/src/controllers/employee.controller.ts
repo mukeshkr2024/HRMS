@@ -22,7 +22,11 @@ export const createEmployee = CatchAsyncError(async (req: Request, res: Response
       personalInformation: { firstName, middleName, lastName, preferredName, birthDate, gender, maritalStatus, uan, pan },
       address: { street1, street2, city, state, zipCode, country },
       compensation: { paySchedule, payType, payRate, payRateType },
-      password
+      password,
+      linkedinUrl,
+      twitterUrl,
+      instagramUrl,
+      facebookUrl
     } = req.body;
 
     // Validate required fields
@@ -101,6 +105,10 @@ export const createEmployee = CatchAsyncError(async (req: Request, res: Response
       contactInformation: contactInfo._id,
       reportsTo: reportsTo || null,
       workLocation: location,
+      linkedinUrl,
+      twitterUrl,
+      instagramUrl,
+      facebookUrl
     });
 
     // Update department and position with new employee
@@ -225,7 +233,11 @@ export const updateEmployeeById = CatchAsyncError(
     try {
       const {
         employeeNumber, personalInformation, address, compensation, contactInformation,
-        jobDetails, jobInformation, role, workLocation, password
+        jobDetails, jobInformation, role, workLocation, password,
+        linkedinUrl,
+        twitterUrl,
+        instagramUrl,
+        facebookUrl
       } = req.body;
 
       const employeeId = req.params.employeeId;
@@ -278,6 +290,10 @@ export const updateEmployeeById = CatchAsyncError(
             ? `${personalInformation?.firstName?.trim()} ${personalInformation?.middleName?.trim()} ${personalInformation?.lastName?.trim()}`
             : employee.name,
           workLocation: workLocation || employee.workLocation,
+          linkedinUrl,
+          twitterUrl,
+          instagramUrl,
+          facebookUrl
         },
         { new: true }
       );
@@ -376,7 +392,10 @@ export const updateMyInfo = CatchAsyncError(async (
   next: NextFunction
 ) => {
   try {
-    const { address, contactInformation, languages, educations, personalInformation } = req.body;
+    const { address, contactInformation, languages, educations, personalInformation, linkedinUrl,
+      twitterUrl,
+      instagramUrl,
+      facebookUrl } = req.body;
 
     // Find the employee
     const employee = await Employee.findById(req.employee.id).exec();
@@ -384,6 +403,7 @@ export const updateMyInfo = CatchAsyncError(async (
     if (!employee) {
       return next(new ErrorHandler("Employee not found", 404));
     }
+
 
     const updatedPersonalInfo = await PersonalInformation.findByIdAndUpdate(
       employee.personalInformation,

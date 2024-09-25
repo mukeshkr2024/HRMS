@@ -11,7 +11,7 @@ export const statusColor = (status: string) => {
         case "approved":
             color = "#28A745"; // Green
             break;
-        case "failed":
+        case "rejected":
             color = "#DC3545"; // Red
             break;
         default:
