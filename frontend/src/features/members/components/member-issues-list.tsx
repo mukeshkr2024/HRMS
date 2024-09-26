@@ -2,7 +2,7 @@ import { useGetAssetIssues } from "@/features/assets/api/issues/use-get-assets";
 import { DepartmentDataTable } from "@/features/departments/components/department-data-table";
 import { ArrowLeft, Loader } from "lucide-react";
 import { memberColumnData } from "./columns";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export type Issue = {
     _id: string;
@@ -15,7 +15,10 @@ export type Issue = {
 }
 
 export const MemberIssuesList = () => {
-    const { data, isLoading } = useGetAssetIssues()
+    const { memberId } = useParams()
+
+
+    const { data, isLoading } = useGetAssetIssues(memberId)
 
     if (isLoading) {
         return (<div className="h-full pt-20 w-full flex items-center justify-center">

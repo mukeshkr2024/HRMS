@@ -2,7 +2,7 @@ import { DashboardSideBar } from "@/components/sidebar";
 import { Footer } from "@/components/footer";
 import { useAuthStore } from "@/context/useAuthStore";
 import { Briefcase, FileBarChart, LayoutGrid, Monitor, User, UserPen, Users } from "lucide-react";
-import { Outlet } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 import { Navbar } from "../shared/navbar/navbar";
 
 interface Route {
@@ -27,7 +27,29 @@ export const DashboardLayout = () => {
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "Documents", route: "/documents", icon: FileBarChart },
     ];
-    const routes = employee?.role === "admin" ? adminRoutes : publicRoutes;
+
+    const leadRoutes: Route[] = [
+        { label: "Dashboard", route: "/", icon: LayoutGrid },
+        { label: "Team Members", route: "/members", icon: Users },
+        { label: "My Info", route: "/my-info", icon: Monitor },
+        { label: "Documents", route: "/documents", icon: FileBarChart },
+    ];
+
+    const managerRoutes: Route[] = [
+        { label: "Dashboard", route: "/", icon: LayoutGrid },
+        { label: "My Info", route: "/my-info", icon: Monitor },
+        { label: "Team Members", route: "/members", icon: Users },
+        { label: "Documents", route: "/documents", icon: FileBarChart },
+    ];
+
+    const routes = employee?.role === "admin"
+        ? adminRoutes
+        : employee?.role === "lead"
+            ? leadRoutes
+            : employee?.role === "manager"
+                ? managerRoutes
+                : publicRoutes;
+
     return (
         <div className="h-full w-full flex justify-between min-h-screen flex-col">
             <div className="w-full flex h-full">

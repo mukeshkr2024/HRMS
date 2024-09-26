@@ -136,9 +136,11 @@ export const createAssetIssue = CatchAsyncError(async (
 
 export const getIssues = CatchAsyncError(
     async (req: Request, res: Response, next: NextFunction) => {
+        const { employee } = req.query;
+        const employeeId = employee ? employee : req.employee.id
         try {
             const issues = await Issue.find({
-                employeeId: req.employee.id,
+                employeeId: employeeId,
             });
             return res.status(200).json(issues);
         } catch (error) {

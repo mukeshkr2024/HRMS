@@ -1,7 +1,8 @@
 import TopBar from "@/features/my-info/components/TopBar";
 import { useAuthStore } from "@/context/useAuthStore";
-import { Outlet, useParams } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import { CustomLoader } from "../shared/custom-loader";
+import { ArrowLeft } from "lucide-react";
 
 export const EmployeeInfoLayout = () => {
 
@@ -31,6 +32,13 @@ export const EmployeeInfoLayout = () => {
     ]
     return (
         <div>
+            <Link
+                to="/employees"
+                className="flex items-center gap-1 font-medium hover:text-slate-700"
+            >
+                <ArrowLeft className="h-4 w-4" />
+                Go Back
+            </Link>{" "}
             <TopBar
                 routes={TopBarRoutes}
             />
