@@ -404,6 +404,17 @@ export const updateMyInfo = CatchAsyncError(async (
       return next(new ErrorHandler("Employee not found", 404));
     }
 
+    if (linkedinUrl) {
+      employee.linkedinUrl = linkedinUrl;
+
+    } if (twitterUrl) {
+      employee.twitterUrl = twitterUrl;
+    } if (instagramUrl) {
+      employee.instagramUrl = instagramUrl;
+    }
+    if (facebookUrl) {
+      employee.facebookUrl = facebookUrl;
+    }
 
     const updatedPersonalInfo = await PersonalInformation.findByIdAndUpdate(
       employee.personalInformation,

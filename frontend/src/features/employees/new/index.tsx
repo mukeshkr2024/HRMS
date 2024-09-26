@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
 import { dateRegex } from "@/features/employee/info";
+import { emailPattern } from "@/features/my-info";
 
 const formSchema = z.object({
     employeeNumber: z
@@ -96,10 +97,10 @@ const formSchema = z.object({
         workEmail: z.string()
             .nonempty("Work email address is required")
             .email("Invalid work email address")
-            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid work email format."),
+            .regex(emailPattern, "Invalid work email format."),
         homeEmail: z.string()
             .email("Invalid home email address")
-            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid home email format.")
+            .regex(emailPattern, "Invalid home email format.")
             .optional()
     }),
     jobDetails: z.object({

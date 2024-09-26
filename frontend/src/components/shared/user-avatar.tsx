@@ -9,6 +9,9 @@ export const UserAvatar = ({
     name: string | undefined,
     className?: string
 }) => {
+
+    console.log(avatar);
+
     return (
         <Avatar className={className}>
             <AvatarImage

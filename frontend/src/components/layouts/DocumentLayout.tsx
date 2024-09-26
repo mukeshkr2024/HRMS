@@ -17,7 +17,7 @@ const folders = [
 export const DocumentLayout = () => {
     const { employeeId } = useParams()
 
-    const { currentFolderId, selectedFolders, selectedFiles, setCurrentFolderId, previousFolder } = useDocumentStore();
+    const { currentFolderId, selectedFolders, selectedFiles, setCurrentFolderId, previousFolder, setPreviousFolder } = useDocumentStore();
     const createFolderMutation = useCreateFolder(currentFolderId!, employeeId);
     const uploadFileMutation = useUploadFile(currentFolderId!, employeeId);
     const deleteDocumentMutation = useDeleteDocument();
@@ -33,6 +33,9 @@ export const DocumentLayout = () => {
             }
         });
     };
+
+    console.log();
+
 
     const handleFileUpload = (values: { file: File | null }) => {
         const MAX_FILE_SIZE_MB = 10;
@@ -90,11 +93,15 @@ export const DocumentLayout = () => {
 
     const handleBackClick = () => {
         if (previousFolder && previousFolder.parentId) {
+            // If there is a parent folder, navigate to the parent
             setCurrentFolderId(previousFolder.parentId._id);
         } else {
+            // If there's no parent folder, we're back at the root directory
             setCurrentFolderId(null);
+            setPreviousFolder(null); // Reset previous folder when at root
         }
     };
+
 
     console.log(previousFolder);
 

@@ -1,10 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar"
 
 import { useAuthStore } from "@/context/useAuthStore"
+import { LogOut } from "lucide-react"
 import React from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../ui/dropdown-menu"
 import { MobileSidebar } from "./mobile-sidebar"
-import { LogOut } from "lucide-react"
 
 interface Route {
     label: string;
@@ -24,19 +24,10 @@ export const Navbar = ({ routes }: DashboardSideBarProps) => {
             <MobileSidebar
                 routes={routes}
             />
-            {/* <div className="w-[60%] relative md:flex items-center hidden">
-                <div className="absolute left-4 flex items-center">
-                    <img src="/icons/search-icon.svg" className="w-5 h-5" alt="Search Icon" />
-                </div>
-                <Input
-                    placeholder="Search..."
-                    className="px-5 pl-10 rounded-[28px] w-full placeholder:text-end placeholder:text-[#808080] bg-[#F2F2F2]"
-                />
-            </div> */}
             <div className="flex gap-x-3 ml-auto">
-                <div className="size-[38px] rounded-full flex items-center justify-center bg-[#E5E5E5]">
+                {/* <div className="size-[38px] rounded-full flex items-center justify-center bg-[#E5E5E5]">
                     <img src="/icons/setting-icon.svg" className="size-[20px]" />
-                </div>
+                </div> */}
                 <div className="size-[38px] rounded-full flex items-center justify-center bg-[#E5E5E5]">
                     <img src="/icons/notification-icon.svg" className="size-[20px]" />
                 </div>
@@ -56,11 +47,9 @@ export const Navbar = ({ routes }: DashboardSideBarProps) => {
 const NavMenuDropdown = ({ children }: { children: React.ReactNode }) => {
     const { logout } = useAuthStore();
     const handleLogout = () => {
-        // Implement logout logic
         logout()
-
-
     }
+
     return (
         <DropdownMenu
             modal={false}>

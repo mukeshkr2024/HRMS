@@ -171,7 +171,8 @@ export const AddAssetModel = ({ employeeId, children, existingAsset }: AssetMode
                                     <FormItem>
                                         <FormLabel>Assigned Date</FormLabel>
                                         <FormControl>
-                                            <Input type="date" {...field} max={maxDate} />
+                                            <Input type="date" {...field} max={maxDate} min="2000-01-01"
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

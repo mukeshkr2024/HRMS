@@ -3,6 +3,7 @@ import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrappe
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/use-toast";
 import { useGetEmployee } from "@/features/my-info/api/use-get-employeeInfo";
 import { useUpdateMyInfo } from "@/features/my-info/api/use-update-myInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +11,8 @@ import { Loader, PlusCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
+
+export const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.(com|in)$/;
 
 const formSchema = z.object({
     employeeNumber: z.string().nonempty("Employee number is required"),
@@ -58,20 +61,33 @@ const formSchema = z.object({
         workEmail: z.string()
             .nonempty("Work email address is required")
             .email("Invalid work email address")
-            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid work email format."),
+            .regex(emailPattern, "Invalid work email format."),
         homeEmail: z.string()
             .email("Invalid home email address")
-            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid home email format.")
+            .regex(emailPattern, "Invalid home email format.")
             .optional()
     }),
     languages: z.array(z.object({
-        name: z.string().nonempty("Language is required"),
+        name: z.string().nonempty("Language is required").regex(/^[a-zA-Z]+$/, "Language must only contain letters"),
     })).optional(),
     educations: z.array(z.object({
-        college: z.string().nonempty("College is required"),
-        degree: z.string().nonempty("Degree is required"),
-        specialization: z.string().optional(),
-        gpa: z.string().optional(),
+        college: z.string()
+            .nonempty("College is required") // Ensure college is not empty
+            .min(2, "College name must be at least 2 characters long") // Minimum length for college name
+            .max(100, "College name must be at most 100 characters long"), // Maximum length for college name
+        degree: z.string()
+            .nonempty("Degree is required") // Ensure degree is not empty
+            .min(2, "Degree must be at least 2 characters long") // Minimum length for degree
+            .max(50, "Degree must be at most 50 characters long"), // Maximum length for degree
+        specialization: z.string()
+            .min(2, "Specialization must be at least 2 characters long") // Minimum length for specialization
+            .max(50, "Specialization must be at most 50 characters long")// Maximum length for specialization
+            .optional(),
+        gpa: z.string()
+            .optional()
+            .refine((val) => !val || /^[1-9](\.\d{1,2})?$/.test(val), {
+                message: "GPA must be a number between 1 and 9, with up to two decimal places", // Regex for GPA validation
+            }),
         startDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid start date format" }),
         endDate: z.string().refine(date => !isNaN(Date.parse(date)), { message: "Invalid end date format" })
     }).refine(data => new Date(data.startDate) < new Date(data.endDate), {
@@ -79,7 +95,7 @@ const formSchema = z.object({
     })).optional(), // TODO: fix validation error not showing 
     position: z.string().nonempty("Job title is required"),
     department: z.string().nonempty("Job title is required"),
-    linkedinUrl: z.string().url({ message: "Please provide a valid LinkedIn URL." }).optional(),
+    linkedinUrl: z.string().optional(),
     twitterUrl: z.string().url({ message: "Please provide a valid Twitter URL." }).optional(),
     instagramUrl: z.string().url({ message: "Please provide a valid Instagram URL." }).optional(),
     facebookUrl: z.string().url({ message: "Please provide a valid Facebook URL." }).optional(),
@@ -202,7 +218,46 @@ export const MyInfo = () => {
     }, [data, form]);
 
     const onSubmit = (values: EmployeeFormSchemaType) => {
-        mutation.mutate(values)
+        // Initialize a set to track seen degrees and specializations
+        const educations = values.educations || [];
+
+        const seenDegrees = new Set();
+        const seenSpecializations = new Set();
+
+        // Check for duplicates in educations
+        for (const edu of educations) {
+            // Normalize the degree and specialization for exact matching
+            const normalizedDegree = edu.degree.trim(); // Remove leading/trailing spaces
+            const normalizedSpecialization = edu.specialization ? edu.specialization.trim() : '';
+
+            // Check for duplicate degrees
+            if (seenDegrees.has(normalizedDegree)) {
+                toast({
+                    variant: "destructive",
+                    title: `Duplicate degree found: ${normalizedDegree}`
+                })
+                return;
+            }
+            seenDegrees.add(normalizedDegree);
+
+            // Check for duplicate specializations
+            if (normalizedSpecialization && seenSpecializations.has(normalizedSpecialization)) {
+                toast({
+                    variant: "destructive",
+                    title: `Duplicate specialization found: ${normalizedSpecialization}`
+                });
+                return;
+            }
+            if (normalizedSpecialization) {
+                seenSpecializations.add(normalizedSpecialization);
+            }
+        }
+
+        mutation.mutate(values, {
+            onSuccess: () => {
+                form.reset(values)
+            }
+        });
     };
 
     if (isLoading) {
@@ -298,12 +353,24 @@ export const MyInfo = () => {
                                                 name={`educations.${index}.gpa`}
                                                 label="GPA"
                                             />
-                                            <EmployeeFormFieldWrapper
-                                                control={form.control}
-                                                name={`educations.${index}.startDate`}
-                                                label="Start Date"
-                                                type="date"
-                                            />
+                                            <div className="flex flex-col gap-1.5">
+                                                <EmployeeFormFieldWrapper
+                                                    control={form.control}
+                                                    name={`educations.${index}.startDate`}
+                                                    label="Start Date"
+                                                    type="date"
+                                                />
+                                                {
+                                                    form.formState.errors.educations && form.formState.errors.educations[index] &&
+                                                    <p
+                                                        className="text-red-500 text-sm"
+                                                    >
+                                                        {
+                                                            form.formState.errors.educations[index].root?.message
+                                                        }
+                                                    </p>
+                                                }
+                                            </div>
                                             <EmployeeFormFieldWrapper
                                                 control={form.control}
                                                 name={`educations.${index}.endDate`}
@@ -380,7 +447,8 @@ export const MyInfo = () => {
                             type="submit"
                             variant={"saveAction"}
                             className="h-9 px-8 mt-6"
-                            disabled={form.formState.isSubmitting || !form.formState.isDirty}
+                            disabled={form.formState.isSubmitting
+                                || !form.formState.isDirty || mutation.isPending}
                         >
                             Save
                         </Button>

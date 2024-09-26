@@ -1,16 +1,17 @@
-import { useGetEmployee } from "@/features/my-info/api/use-get-employeeInfo";
-import { useGetEmployeeOptions } from "@/features/employees/api/use-get-employeeOptions";
-import { useUpdateEmployeeInfo } from "@/features/employees/api/use-update-employee";
 import { EmployeeFormSection } from "@/components/form/employee-form-section";
+import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useGetEmployeeOptions } from "@/features/employees/api/use-get-employeeOptions";
+import { useUpdateEmployeeInfo } from "@/features/employees/api/use-update-employee";
+import { emailPattern } from "@/features/my-info";
+import { useGetEmployee } from "@/features/my-info/api/use-get-employeeInfo";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
-import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
 
 export const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -74,16 +75,9 @@ const formSchema = z.object({
     compensation: z.object({
         paySchedule: z.string().nonempty("Pay schedule is required"),
         payType: z.string().nonempty("Pay type is required"),
-        payRate: z.string()
-            .transform((val) => {
-                const num = parseFloat(val);
-                if (isNaN(num)) {
-                    throw new Error("Pay rate must be a valid number");
-                }
-                return num;
-            })
-            .refine((val) => val > 0, { message: "Pay rate must be a positive number" })
-            .refine((val) => val >= 1, { message: "Pay rate must be at least $1" }),
+        payRate: z.coerce.number().gte(0, {
+            message: "Pay rate must be a positive number."
+        }),
         payRateType: z.string(),
     }),
     contactInformation: z.object({
@@ -99,10 +93,10 @@ const formSchema = z.object({
         workEmail: z.string()
             .nonempty("Work email address is required")
             .email("Invalid work email address")
-            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid work email format."),
+            .regex(emailPattern, "Invalid work email format."),
         homeEmail: z.string()
             .email("Invalid home email address")
-            .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Invalid home email format.")
+            .regex(emailPattern, "Invalid home email format.")
             .optional()
     }),
     jobDetails: z.object({
@@ -251,7 +245,11 @@ export const EmployeeInfo = () => {
     }, [employeeData, form]);
 
     const onSubmit = (values: EditEmployeeFormSchemaType) => {
-        mutation.mutate(values)
+        mutation.mutate(values, {
+            onSuccess: () => {
+                form.reset(values);
+            }
+        })
     };
 
     if (isLoading) {

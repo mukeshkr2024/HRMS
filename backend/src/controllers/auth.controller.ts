@@ -52,7 +52,7 @@ export const validateSession = CatchAsyncError(
       })
       .populate({
         path: "reportsTo",
-        select: "name -_id",
+        select: "name -_id avatar",
       })
       .populate({
         path: "department",

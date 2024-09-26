@@ -5,6 +5,7 @@ import { Edit, Trash } from "lucide-react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { AddIssueModal } from "./add-issue-model";
 import { useDeleteIssue } from "../api/issues/use-delete-assets";
+import { useParams } from "react-router-dom";
 
 export const columns: ColumnDef<Issue>[] = [
     {
@@ -55,6 +56,8 @@ export const columns: ColumnDef<Issue>[] = [
         cell: ({ row }) => {
 
             const deleteMutation = useDeleteIssue(row.original._id)
+            const { employeeId } = useParams();
+
 
             const handleDeleteConfirm = () => {
                 deleteMutation.mutate()
@@ -62,11 +65,11 @@ export const columns: ColumnDef<Issue>[] = [
 
             return (
                 <div className="flex items-center gap-2 capitalize">
-                    <AddIssueModal
+                    {!employeeId && <AddIssueModal
                         existingIssue={row.original}
                     >
                         <Edit className="cursor-pointer" size={18} />
-                    </AddIssueModal>
+                    </AddIssueModal>}
                     <ConfirmDialog onConfirm={handleDeleteConfirm}>
                         <Trash className="text-red-500 cursor-pointer" size={18} />
                     </ConfirmDialog>

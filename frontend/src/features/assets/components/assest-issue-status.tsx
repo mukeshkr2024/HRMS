@@ -3,6 +3,7 @@ import { AddIssueModal } from "./add-issue-model"
 import { DataTable } from "./data-table"
 import { columns } from "./isssue-colums"
 import { CustomLoader } from "../../../components/shared/custom-loader"
+import { useParams } from "react-router-dom"
 
 export type Issue = {
     _id: string
@@ -15,6 +16,8 @@ export type Issue = {
 
 export const AssetIssueStatus = () => {
 
+    const { employeeId } = useParams();
+
     const { data, isLoading } = useGetAssetIssues()
 
     return (
@@ -24,7 +27,7 @@ export const AssetIssueStatus = () => {
                     <img src="/icons/monitor-mobbile.svg" alt="" />
                     <span>Raise Issue</span>
                 </div>
-                <AddIssueModal />
+                {!employeeId && <AddIssueModal />}
             </div>
 
             {isLoading ? <CustomLoader className="min-h-20" /> : <div className="mt-6">

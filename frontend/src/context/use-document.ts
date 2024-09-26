@@ -16,7 +16,12 @@ interface DocumentState {
 
 export const useDocumentStore = create<DocumentState>((set) => ({
     currentFolderId: null,
-    setCurrentFolderId: (folderId: string | null) => set({ currentFolderId: folderId }),
+    setCurrentFolderId: (folderId: string | null) => {
+        set({
+            currentFolderId: folderId,
+            previousFolder: folderId ? undefined : null, // Clear previous folder at root
+        });
+    },
     previousFolder: null,
     setPreviousFolder: (folder: { name: string; parentId?: { _id: string } } | null) => set({ previousFolder: folder }),
     selectedFolders: [],
