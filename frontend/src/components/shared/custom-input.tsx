@@ -31,7 +31,7 @@ export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(({
                 "rounded-[4px] bg-[#FFFFFF] placeholder:text-[#707070] border-b-2 border-[#D1D1D1] hover:border-b-[#575757] focus:border-b-[#1FBE8E] focus:border-b-[3px]",
                 onError && "border-[#C50F1F]",
                 disabled && "border-[#E0E0E0] placeholder:text-[#BDBDBD]",
-                readOnly && "border-[#E0E0E0] placeholder:text-[#242424]", className
+                readOnly && "border-[#E0E0E0] placeholder:text-[#242424] focus:border-b-[#D1D1D1]", className
             )}
             {...rest}
         />

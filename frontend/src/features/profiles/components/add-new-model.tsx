@@ -1,3 +1,10 @@
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "../../../components/ui/button";
+import { Input } from "../../../components/ui/input";
+import { Textarea } from "../../../components/ui/textarea";
 import {
     Dialog,
     DialogContent,
@@ -15,20 +22,12 @@ import {
 } from "@/components/ui/form";
 import { useCreateDepartment } from "@/features/departments/api/use-create-depatment";
 import { useUpdateDepartment } from "@/features/departments/api/use-update-issue";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
-import { Textarea } from "../../../components/ui/textarea";
 
 const formSchema = z.object({
     name: z.string().min(1, "This field is required").max(255, "Name must be at most 255 characters long"),
     description: z.string().optional(),
 });
-
 
 export type DepartMentFormSchemaType = z.infer<typeof formSchema>;
 
@@ -39,7 +38,8 @@ interface AddDepartementModalProps {
 
 export const AddNewDepartment = ({ existingDepartement, children }: AddDepartementModalProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const mutation = existingDepartement ? useUpdateDepartment(existingDepartement?._id) : useCreateDepartment()
+    const mutation = existingDepartement ? useUpdateDepartment(existingDepartement?._id) : useCreateDepartment();
+
     const form = useForm<DepartMentFormSchemaType>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -50,38 +50,44 @@ export const AddNewDepartment = ({ existingDepartement, children }: AddDeparteme
 
     const { isSubmitting, isValid } = form.formState;
 
-    const onSubmit = (values: DepartMentFormSchemaType) => {
+    // Use useEffect to reset form values when existingDepartement changes
+    useEffect(() => {
         if (existingDepartement) {
-            mutation.mutate(values, {
-                onSuccess: () => {
-                    setIsOpen(false);
-                    form.reset();
-                }
-            })
-
+            form.reset({
+                name: existingDepartement.name || "",
+                description: existingDepartement.description || "",
+            });
         } else {
-            mutation.mutate(values, {
-                onSuccess: () => {
-                    setIsOpen(false);
-                    form.reset();
-                }
-            })
+            form.reset({
+                name: "",
+                description: "",
+            });
         }
+    }, [existingDepartement, form]);
+
+    const onSubmit = (values: DepartMentFormSchemaType) => {
+        mutation.mutate(values, {
+            onSuccess: () => {
+                setIsOpen(false);
+                form.reset();
+            },
+        });
     };
 
     return (
         <Dialog open={isOpen} onOpenChange={() => setIsOpen(prev => !prev)}>
             <DialogTrigger asChild>
-                {children || <Button
-                    variant="addAction"
-                    className="h-9 gap-2"
-                ><PlusCircle size={17} />Add New Department</Button>}
+                {children || (
+                    <Button variant="addAction" className="h-9 gap-2">
+                        <PlusCircle size={17} /> Add New Department
+                    </Button>
+                )}
             </DialogTrigger>
-            <DialogContent
-                className="w-[90%] rounded-md"
-            >
+            <DialogContent className="w-[90%] rounded-md">
                 <DialogHeader>
-                    <DialogTitle className="my-2">{existingDepartement ? "Update Departement" : "Add New Department"}</DialogTitle>
+                    <DialogTitle className="my-2">
+                        {existingDepartement ? "Update Department" : "Add New Department"}
+                    </DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-y-4">
                     <Form {...form}>
@@ -117,7 +123,7 @@ export const AddNewDepartment = ({ existingDepartement, children }: AddDeparteme
                                     variant="outline"
                                     className="w-28"
                                     onClick={() => {
-                                        setIsOpen(prev => !prev)
+                                        setIsOpen(prev => !prev);
                                         form.reset();
                                     }}
                                     type="button"
@@ -130,7 +136,6 @@ export const AddNewDepartment = ({ existingDepartement, children }: AddDeparteme
                                     type="submit"
                                 >
                                     {existingDepartement ? "Update" : "Submit"}
-
                                 </Button>
                             </div>
                         </form>

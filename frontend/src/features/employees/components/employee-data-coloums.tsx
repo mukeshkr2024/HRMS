@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Edit, Trash } from "lucide-react";
 import { Link } from "react-router-dom";
 import { UserAvatar } from "../../../components/shared/user-avatar";
+import { ConfirmDialog } from "@/components/confirm-dialog";
+import { useUpdateDeleteEmployee } from "../api/use-delete-employee";
 
 export type Employee = {
     employeeId: string;
@@ -70,7 +72,6 @@ export const EmployeeColumnData: ColumnDef<Employee>[] = [
                     </div>
                 </div>
             </Link>
-
         ),
     },
     {
@@ -97,15 +98,28 @@ export const EmployeeColumnData: ColumnDef<Employee>[] = [
     },
     {
         accessorKey: "linkedinUrl",
-        header: '',  // Empty header
-        cell: ({ row }) => (
-            <Link
-                to={row.original.linkedinUrl}
-                className="flex justify-end items-center"
-                target="_blank"
-            >
-                <img src="/icons/linkedIn.svg" alt="LinkedIn" />
-            </Link>
-        ),
+        header: '',
+        cell: ({ row }) => {
+            const mutation = useUpdateDeleteEmployee(row.original._id)
+            const handleDelete = () => {
+                mutation.mutate()
+            }
+            return (
+                <div className="flex gap-2">
+                    <Link to={`/employees/${row.original._id}`}>
+                        <Edit size={18}
+                            className="cursor-pointer"
+                        />
+                    </Link>
+                    <ConfirmDialog
+                        onConfirm={handleDelete}
+                    >
+                        <Trash size={18}
+                            className="text-red-500 cursor-pointer"
+                        />
+                    </ConfirmDialog>
+                </div>
+            )
+        },
     },
 ];

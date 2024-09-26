@@ -16,7 +16,7 @@ import {
 import { useCreateProfile } from "@/features/profiles/api/use-create-profile";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../../../components/ui/button";
@@ -51,6 +51,20 @@ export const AddNewProfile = ({ children, existingProfile }: AddProfileModalProp
     });
 
     const { isSubmitting, isValid } = form.formState;
+
+    useEffect(() => {
+        if (existingProfile) {
+            form.reset({
+                name: existingProfile?.name || "",
+                description: existingProfile?.description || "",
+            });
+        } else {
+            form.reset({
+                name: "",
+                description: "",
+            });
+        }
+    }, [existingProfile, form]);
 
     const onSubmit = (values: ProfileFormSchemaType) => {
         mutation.mutate(values, {

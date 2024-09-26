@@ -60,6 +60,26 @@ export const AddAssetModel = ({ employeeId, children, existingAsset }: AssetMode
 
     const { isSubmitting, isValid } = form.formState;
 
+    useEffect(() => {
+        if (existingAsset) {
+            form.reset({
+                category: existingAsset?.name || "",
+                description: existingAsset?.description || "",
+                serialno: existingAsset?.serialNo || "",
+                assignedDate: existingAsset?.assignedAt ? existingAsset.assignedAt?.slice(0, 10) : "",
+            })
+        } else {
+            form.reset({
+                category: "",
+                description: "",
+                serialno: "",
+                assignedDate: "",
+            })
+        }
+    }, [
+        existingAsset, form
+    ])
+
     const onSubmit = (values: AddAssetFormSchemaType) => {
         if (existingAsset) {
             mutation.mutate({ ...values }, {

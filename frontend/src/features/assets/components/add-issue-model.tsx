@@ -18,7 +18,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "../../../components/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { Textarea } from "../../../components/ui/textarea";
 import { useAddIssue } from "../api/use-add-issue";
@@ -49,6 +49,22 @@ export const AddIssueModal = ({ existingIssue, children }: AddIssueModalProps) =
     });
 
     const { isSubmitting, isValid } = form.formState;
+
+    useEffect(() => {
+        if (existingIssue) {
+            form.reset({
+                title: existingIssue?.title,
+                description: existingIssue?.description,
+            })
+        } else {
+            form.reset({
+                title: "",
+                description: "",
+            })
+        }
+    }, [
+        existingIssue, form
+    ])
 
     const onSubmit = (values: IssueFormSchemaType) => {
         if (existingIssue) {
