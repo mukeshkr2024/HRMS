@@ -6,6 +6,7 @@ import { Department } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Edit, Trash } from "lucide-react";
 import { AddNewProfile } from "./add-new-profile";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export const profileColumnData: ColumnDef<Department>[] = [
     {
@@ -19,10 +20,19 @@ export const profileColumnData: ColumnDef<Department>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => <>
-            <h3 className="font-medium">{row.original.name}</h3>
-            <p className="text-muted-foreground line-clamp-2 break-words max-w-xl">{row.original.description}</p>
-        </>
+        cell: ({ row }) => <div>
+            <h3 className="font-medium  max-w-xl">{row.original.name}</h3>
+            <HoverCard>
+                <HoverCardTrigger>
+                    <p className="text-muted-foreground line-clamp-2 break-words cursor-pointer">{row.original.description}</p>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-[40rem] h-auto break-words">
+                    {
+                        row.original.description
+                    }
+                </HoverCardContent>
+            </HoverCard>
+        </div>
     },
     {
         accessorKey: "employees",

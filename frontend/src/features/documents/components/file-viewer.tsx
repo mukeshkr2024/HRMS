@@ -55,21 +55,50 @@ export const FileViewer = ({ children, url, fileType, name }: Props) => {
         return <p className="text-center text-muted-foreground">Unsupported file type</p>;
     };
 
-    const handleDownloadOrOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleDownloadOrOpen = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
-        // Create a download link for the image
-        const downloadLink = document.createElement('a');
-        downloadLink.href = url;
+        if (!url) {
+            console.error("URL is not valid");
+            return;
+        }
 
-        // Set the download attribute to suggest a filename
-        downloadLink.download = name || url.split('/').pop() || "downloaded_image";
+        try {
+            // Fetch the file from the S3 object URL
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/octet-stream' // Use appropriate content type
+                }
+            });
 
-        // Append the link, click to trigger download, and then remove it
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch the file: ${response.statusText}`);
+            }
+
+            // Convert the response to a Blob
+            const blob = await response.blob();
+
+            // Create a temporary download link
+            const downloadLink = document.createElement('a');
+            const objectURL = URL.createObjectURL(blob);
+            downloadLink.href = objectURL;
+
+            // Set the download attribute to suggest a filename
+            downloadLink.download = name || url.split('/').pop() || "downloaded_file";
+
+            // Append the link, click to trigger download, and then remove it
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            // Release the object URL after use
+            URL.revokeObjectURL(objectURL);
+        } catch (error) {
+            console.error("Error downloading the file:", error);
+        }
     };
+
 
 
     return (
@@ -86,6 +115,7 @@ export const FileViewer = ({ children, url, fileType, name }: Props) => {
                     >
                         {fileType.startsWith("image/") ? "Open Image" : "Download"}
                     </button>
+                    <a href={url} download>down</a>
                 </div>
             </DialogContent>
         </Dialog>

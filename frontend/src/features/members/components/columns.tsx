@@ -128,9 +128,10 @@ export const memberColumnData: ColumnDef<Issue>[] = [
         ),
         cell: ({ row }) => {
             const { employee } = useAuthStore()
-            const [selected, setSelected] = useState<string>(row.original?.approval)
+            const [selected, setSelected] = useState<string>(row.original?.status)
 
             console.log(employee);
+
 
             const mutation = useUpdateMemberIssue(row.original._id)
 
