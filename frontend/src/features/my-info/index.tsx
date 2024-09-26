@@ -95,7 +95,7 @@ const formSchema = z.object({
     })).optional(), // TODO: fix validation error not showing 
     position: z.string().nonempty("Job title is required"),
     department: z.string().nonempty("Job title is required"),
-    linkedinUrl: z.string().optional(),
+    linkedinUrl: z.string().url({ message: "Please provide a valid Linkdein URL." }).optional(),
     twitterUrl: z.string().url({ message: "Please provide a valid Twitter URL." }).optional(),
     instagramUrl: z.string().url({ message: "Please provide a valid Instagram URL." }).optional(),
     facebookUrl: z.string().url({ message: "Please provide a valid Facebook URL." }).optional(),
@@ -269,6 +269,7 @@ export const MyInfo = () => {
             </div>
         );
     }
+
     return (
         <div className="w-full">
             <div className="w-full">
