@@ -18,7 +18,7 @@ export const AssetIssueStatus = () => {
 
     const { employeeId } = useParams();
 
-    const { data, isLoading } = useGetAssetIssues()
+    const { data, isLoading } = useGetAssetIssues(employeeId)
 
     return (
         <section className="w-full">
