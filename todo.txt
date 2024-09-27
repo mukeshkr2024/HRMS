@@ -1,3 +1,12 @@
 1. for goals => add milestones
 
 Goals feedback and assessement
+
+feedback:-
+- feedback about co-workers
+- if you are selected to provide feedback you will get notifications requesting feedback.(two simple and meaning questions)
+- the persons manager will automatically notified  that you provided feedback ;
+
+assessement:- 
+- self and manager assessement 
+- will recieve notifications and email your assessement now available 

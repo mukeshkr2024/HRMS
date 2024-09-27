@@ -1,11 +1,13 @@
-import { ColumnDef } from "@tanstack/react-table";
-import { formatDate, statusColor } from "@/utils";
-import { Issue } from "./assest-issue-status";
-import { Edit, Trash } from "lucide-react";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { AddIssueModal } from "./add-issue-model";
-import { useDeleteIssue } from "../api/issues/use-delete-assets";
+import { HoverCard, HoverCardContent } from "@/components/ui/hover-card";
+import { formatDate, statusColor } from "@/utils";
+import { HoverCardTrigger } from "@radix-ui/react-hover-card";
+import { ColumnDef } from "@tanstack/react-table";
+import { Edit, Trash } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { useDeleteIssue } from "../api/issues/use-delete-assets";
+import { AddIssueModal } from "./add-issue-model";
+import { Issue } from "./assest-issue-status";
 
 export const columns: ColumnDef<Issue>[] = [
     {
@@ -16,7 +18,14 @@ export const columns: ColumnDef<Issue>[] = [
         accessorKey: "description",
         header: "Description",
         cell: ({ row }) => (
-            <p className="max-w-xl break-words line-clamp-3">{row.original.description}</p>
+            <HoverCard>
+                <HoverCardTrigger>
+                    <p className="max-w-xl break-words line-clamp-3">{row.original.description}</p>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-[34rem]">
+                    <p className="max-w-full break-words line-clamp-3">{row.original.description}</p>
+                </HoverCardContent>
+            </HoverCard>
         ),
     },
     {

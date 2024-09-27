@@ -12,6 +12,7 @@ interface DocumentState {
     selectedFiles: string[];
     toggleFolderSelection: (id: string) => void;
     toggleFileSelection: (id: string) => void;
+    resetSelections: () => void;  // Reset selected folders and files when navigating to a new folder or file list.
 }
 
 export const useDocumentStore = create<DocumentState>((set) => ({
@@ -38,4 +39,5 @@ export const useDocumentStore = create<DocumentState>((set) => ({
             : [...state.selectedFiles, id];
         return { selectedFiles: newSelection };
     }),
+    resetSelections: () => set({ selectedFolders: [], selectedFiles: [] }),
 }));

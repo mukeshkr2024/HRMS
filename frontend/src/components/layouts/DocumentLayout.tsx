@@ -17,7 +17,7 @@ const folders = [
 export const DocumentLayout = () => {
     const { employeeId } = useParams()
 
-    const { currentFolderId, selectedFolders, selectedFiles, setCurrentFolderId, previousFolder, setPreviousFolder } = useDocumentStore();
+    const { currentFolderId, selectedFolders, selectedFiles, setCurrentFolderId, previousFolder, setPreviousFolder, resetSelections } = useDocumentStore();
     const createFolderMutation = useCreateFolder(currentFolderId!, employeeId);
     const uploadFileMutation = useUploadFile(currentFolderId!, employeeId);
     const deleteDocumentMutation = useDeleteDocument();
@@ -80,15 +80,19 @@ export const DocumentLayout = () => {
         }
     };
 
-
     const handleDelete = () => {
         deleteDocumentMutation.mutate(
             {
                 files: selectedFiles,
                 folders: selectedFolders,
+            }, {
+            onSuccess: () => {
+                resetSelections()
             }
+        }
         )
     };
+
     const totalSelectedFiles = selectedFiles.length + selectedFolders.length
 
     const handleBackClick = () => {
