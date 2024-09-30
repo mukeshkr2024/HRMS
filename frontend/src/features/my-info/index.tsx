@@ -220,9 +220,12 @@ export const MyInfo = () => {
     const onSubmit = (values: EmployeeFormSchemaType) => {
         // Initialize a set to track seen degrees and specializations
         const educations = values.educations || [];
+        const languages = values.languages || [];
 
         const seenDegrees = new Set();
         const seenSpecializations = new Set();
+        const seenLanguages = new Set();
+
 
         // Check for duplicates in educations
         for (const edu of educations) {
@@ -252,6 +255,22 @@ export const MyInfo = () => {
                 seenSpecializations.add(normalizedSpecialization);
             }
         }
+
+        // Check for duplicates in languages
+        for (const lang of languages) {
+            const normalizedLanguage = lang.name.trim(); // Normalize language name
+
+            // Check for duplicate languages
+            if (seenLanguages.has(normalizedLanguage)) {
+                toast({
+                    variant: "destructive",
+                    title: `Duplicate language found: ${normalizedLanguage}`
+                });
+                return;
+            }
+            seenLanguages.add(normalizedLanguage);
+        }
+
 
         mutation.mutate(values, {
             onSuccess: () => {

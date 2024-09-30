@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUpdateMemberIssue } from "../api/use-update-member-issue";
 import { useAuthStore } from "@/context/useAuthStore";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export const memberColumnData: ColumnDef<Issue>[] = [
     {
@@ -49,7 +50,20 @@ export const memberColumnData: ColumnDef<Issue>[] = [
                 <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => <p className="max-w-[20rem] break-words">{row.original?.description}</p>,
+        cell: ({ row }) => (
+            <div>
+                <HoverCard>
+                    <HoverCardTrigger>
+                        <p className="max-w-[20rem] break-words">{row.original?.description}</p>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-[20rem] h-auto break-words">
+                        {
+                            row.original.description
+                        }
+                    </HoverCardContent>
+                </HoverCard>
+            </div>
+        ),
     },
     {
         accessorKey: "description",

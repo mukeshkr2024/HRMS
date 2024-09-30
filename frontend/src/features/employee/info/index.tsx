@@ -1,5 +1,6 @@
 import { EmployeeFormSection } from "@/components/form/employee-form-section";
 import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
+import { ComboboxDemo } from "@/components/test";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useGetEmployeeOptions } from "@/features/employees/api/use-get-employeeOptions";
@@ -273,11 +274,10 @@ export const EmployeeInfo = () => {
         label: employee.name
     }))
 
-    console.log(form.formState.isDirty);
-
 
     return (
         <div>
+            <ComboboxDemo />
             <div>
                 <section className="mt-8">
                     <Form {...form}>
@@ -495,6 +495,7 @@ export const EmployeeInfo = () => {
                                         />
                                         <EmployeeFormFieldWrapper control={form.control} name="jobInformation.reportsTo" label="Reports To" className="w-64"
                                             useCombobox
+                                            reportId={employeeData?.reportsTo?._id || ""}
                                             options={employeeOptions}
                                         />
                                     </div>
