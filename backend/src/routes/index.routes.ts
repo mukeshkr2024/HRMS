@@ -13,6 +13,8 @@ import { goalRouter } from "./v1/goal.routes";
 import { positionRouter } from "./v1/position.routes";
 import { assetRouter } from "./v1/asset.routes";
 import { memberRouter } from "./v1/members.routes";
+import { feedBackRouter } from "./v1/feedback.routes";
+import { notificationRouter } from "./v1/notification.routes";
 
 export const router = express.Router();
 
@@ -57,3 +59,9 @@ router.use("/assets", assetRouter);
 
 // Member routes
 router.use("/members", memberRouter);
+
+// feedback routes
+router.use("/feedbacks", feedBackRouter)
+
+// notifications routes
+router.use("/notifications", notificationRouter)

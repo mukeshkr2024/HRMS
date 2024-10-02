@@ -9,7 +9,7 @@ type Props = {
 export default function TopBar({ routes }: Props) {
     const { pathname } = useLocation();
     return (
-        <div className="flex gap-x-6 pt-4">{
+        <div className="flex gap-x-6 pt-2">{
             routes.map((route) => (
                 <Link to={route.href} key={route.href}>
                     <Button variant="outline" className={cn("rounded-[28px] h-8 font-semibold px-7", route.href === pathname ? "bg-[#D8FFF3] hover:bg-[#D8FFF3]" : "")}>{route.label}</Button>

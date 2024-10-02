@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncError";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import Announcement from "../models/announcements";
+import { Notification } from "../models/notifications.model";
 
 export const createAnnouncement = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +29,18 @@ export const getAllAnnouncements = CatchAsyncError(
         path: "createdBy",
         select: "name avatar"
       }).select("description createdBy");
-      return res.status(200).json({ announcements });
+
+      const notifications = await Notification.find({
+        employeeId: req.employee.id,
+        isRead: false
+      }).populate({
+        path: "createdBy",
+        select: "name avatar"
+      }).sort({
+        createdAt: -1
+      })
+
+      return res.status(200).json({ announcements, notifications });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }

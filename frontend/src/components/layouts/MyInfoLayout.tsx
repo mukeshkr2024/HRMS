@@ -23,17 +23,13 @@ export const MyInfoLayout = () => {
             label: "Assets",
             href: '/assets',
         },
-        // {
-        //     label: "Training",
-        //     href: '/training',
-        // },
-        // {
-        //     label: "To-do",
-        //     href: '/tasks',
-        // },
         {
             label: "Goals",
             href: "/goals"
+        },
+        {
+            label: "Feedback",
+            href: "/feedback"
         }
     ]
     return (

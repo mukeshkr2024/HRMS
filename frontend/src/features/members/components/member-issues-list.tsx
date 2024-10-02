@@ -1,8 +1,8 @@
 import { useGetAssetIssues } from "@/features/assets/api/issues/use-get-assets";
 import { DepartmentDataTable } from "@/features/departments/components/department-data-table";
-import { ArrowLeft, Loader } from "lucide-react";
+import { Loader } from "lucide-react";
+import { useParams } from "react-router-dom";
 import { memberColumnData } from "./columns";
-import { Link, useParams } from "react-router-dom";
 
 export type Issue = {
     _id: string;
@@ -30,16 +30,7 @@ export const MemberIssuesList = () => {
 
     return (
         <main className="w-full h-full font-urbanist flex flex-col gap-y-4">
-            <div className="flex flex-col gap-y-2">
-                <Link
-                    to="/members"
-                    className="flex items-center gap-1 font-medium hover:text-slate-700"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    Go Back
-                </Link>{" "}
-                <h2 className="text-black font-semibold text-2xl">Raised Issues</h2>
-            </div>
+            <h2 className="text-black font-semibold text-2xl">Raised Issues</h2>
             <div>
                 <DepartmentDataTable
                     // @ts-ignore

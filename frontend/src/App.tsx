@@ -6,6 +6,8 @@ import { NotFound } from "@/components/not-found";
 import { PrivateRoutes } from "@/routes/private-routes";
 import { UnprotectedRoutes } from "@/routes/unprotect-routes";
 import { Route, Routes } from "react-router-dom";
+import { InboxLayout } from "./components/layouts/InboxLayout";
+import { MemberInfoLayout } from "./components/layouts/MemberInfoLayout";
 import { AssetsPage } from "./features/assets";
 import { DepartmentPage } from "./features/departments";
 import { FilesPage } from "./features/documents";
@@ -15,8 +17,11 @@ import { EmployeeGoalsPage } from "./features/employee/goals";
 import { EmployeeInfo } from "./features/employee/info";
 import { EmployeesPage } from "./features/employees";
 import { NewEmployeePage } from "./features/employees/new";
+import { FeedbackPage } from "./features/feedback";
 import { GoalPage } from "./features/goals";
 import { HomePage } from "./features/home";
+import { InboxPage } from "./features/inbox";
+import { SubmitFeedBack } from "./features/inbox/feedback/component/submit-feedback";
 import LoginPage from "./features/login";
 import { TeamMembersPage } from "./features/members";
 import { MemberDetail } from "./features/members/detail";
@@ -36,6 +41,10 @@ function App() {
         {/* Main Dashboard Layout */}
         <Route element={<DashboardLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route element={<InboxLayout />}>
+            <Route path="/inbox" element={<InboxPage />} />
+            <Route path="/inbox/feedback/view/:feedbackId" element={<SubmitFeedBack />} />
+          </Route>
 
           {/* My Info Section */}
           <Route element={<MyInfoLayout />}>
@@ -60,7 +69,10 @@ function App() {
           <Route path="/departments" element={<DepartmentPage />} />
           <Route path="/profiles" element={<ProfilesPage />} />
           <Route path="/members" element={<TeamMembersPage />} />
-          <Route path="/members/:memberId" element={<MemberDetail />} />
+          <Route element={<MemberInfoLayout />}>
+            <Route path="/members/:memberId" element={<MemberDetail />} />
+            <Route path="/members/:memberId/feedbacks" element={<FeedbackPage />} />
+          </Route>
 
           {/* Reports and Documents */}
           <Route element={<DocumentLayout />}>

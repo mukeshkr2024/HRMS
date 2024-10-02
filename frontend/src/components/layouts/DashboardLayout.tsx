@@ -1,7 +1,7 @@
 import { DashboardSideBar } from "@/components/sidebar";
 import { Footer } from "@/components/footer";
 import { useAuthStore } from "@/context/useAuthStore";
-import { Briefcase, FileBarChart, LayoutGrid, Monitor, User, UserPen, Users } from "lucide-react";
+import { Briefcase, FileBarChart, Inbox, LayoutGrid, Monitor, User, UserPen, Users } from "lucide-react";
 import { Outlet, Route } from "react-router-dom";
 import { Navbar } from "../shared/navbar/navbar";
 
@@ -15,6 +15,7 @@ export const DashboardLayout = () => {
     const { employee } = useAuthStore();
     const adminRoutes: Route[] = [
         { label: "Dashboard", route: "/", icon: LayoutGrid },
+        { label: "Inbox", route: "/inbox", icon: Inbox },
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "People", route: "/employees", icon: User },
         { label: "Team Members", route: "/members", icon: Users },
@@ -24,12 +25,14 @@ export const DashboardLayout = () => {
     ];
     const publicRoutes: Route[] = [
         { label: "Dashboard", route: "/", icon: LayoutGrid },
+        { label: "Inbox", route: "/inbox", icon: Inbox },
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "Documents", route: "/documents", icon: FileBarChart },
     ];
 
     const leadRoutes: Route[] = [
         { label: "Dashboard", route: "/", icon: LayoutGrid },
+        { label: "Inbox", route: "/inbox", icon: Inbox },
         { label: "Team Members", route: "/members", icon: Users },
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "Documents", route: "/documents", icon: FileBarChart },
@@ -37,6 +40,7 @@ export const DashboardLayout = () => {
 
     const managerRoutes: Route[] = [
         { label: "Dashboard", route: "/", icon: LayoutGrid },
+        { label: "Inbox", route: "/inbox", icon: Inbox },
         { label: "My Info", route: "/my-info", icon: Monitor },
         { label: "Team Members", route: "/members", icon: Users },
         { label: "Documents", route: "/documents", icon: FileBarChart },

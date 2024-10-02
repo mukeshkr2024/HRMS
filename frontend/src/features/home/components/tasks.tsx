@@ -6,6 +6,7 @@ import { AddNewTaskPopup } from "./add-task";
 import { useGetTasks } from "../api/task/use-get-tasks";
 import { useDeleteTask } from "../api/task/use-delete-task";
 import { useUpdateTask } from "../api/task/use-update-task";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const CheckedIcon = () => (
     <svg width="20" height="20" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Checked">
@@ -26,7 +27,7 @@ const UnCheckedIcon = () => (
 );
 
 export const Tasks = () => {
-    const { data, isFetched } = useGetTasks();
+    const { data, isFetched, isLoading } = useGetTasks();
 
     return (
         <Card className="bg-[#F7F8FA] p-4">
@@ -36,7 +37,18 @@ export const Tasks = () => {
                     <Button className="h-8 font-normal bg-[#FFFFFF] hover:bg-[#fbfafa] text-[#313131] shadow-sm">Create Task</Button>
                 </AddNewTaskPopup>
             </div>
-            <div className="mt-5 flex flex-col gap-y-2" style={{ height: "350px", overflowY: "auto" }}>
+            <div className="mt-5 flex flex-col gap-y-2 custom-scrollbar" style={{ height: "350px", overflowY: "auto" }}>
+                {
+                    isLoading && (
+                        <>
+                            {
+                                Array.from({ length: 5 }).map((_, index) => (
+                                    <Skeleton className="w-full h-10" key={index} />
+                                ))
+                            }
+                        </>
+                    )
+                }
                 {isFetched ? (
                     data?.tasks?.length ? (
                         data.tasks.map((task: any) => (

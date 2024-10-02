@@ -256,7 +256,6 @@ export const MyInfo = () => {
             }
         }
 
-        // Check for duplicates in languages
         for (const lang of languages) {
             const normalizedLanguage = lang.name.trim(); // Normalize language name
 

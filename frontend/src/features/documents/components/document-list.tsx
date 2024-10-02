@@ -27,7 +27,7 @@ export const DocumentList: React.FC<DocumentListProps> = ({ data }) => {
     const { selectedFolders, selectedFiles, toggleFolderSelection, toggleFileSelection } = useDocumentStore();
 
     return (
-        <div className="w-full font-urbanist overflow-y-auto">
+        <div className="w-full font-urbanist overflow-y-auto custom-scrollbar">
             <div className="flex w-full">
                 {data?.folders?.length > 0 || data?.files?.length > 0 ? (
                     <div className="flex flex-col gap-y-3 w-full">

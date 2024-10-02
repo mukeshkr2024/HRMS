@@ -11,8 +11,6 @@ export const HomePage = () => {
             <div className="mt-4 flex flex-col lg:flex-row gap-4">
                 <div className="flex-1">
                     <Announcements />
-                    {/* TODO : add later */}
-                    {/* <Celebrations /> */}
                 </div>
                 <div className="lg:w-[360px] flex flex-col gap-4">
                     <Profile />
