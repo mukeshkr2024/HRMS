@@ -9,6 +9,7 @@ import { useDeleteAnnouncement } from "../api/announcement/use-delete-announceme
 import { AddNewAnnouncementPopup } from "./add-new-announcement";
 import { timeAgo } from "@/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "react-router-dom";
 
 interface Announcement {
     _id: string;
@@ -77,7 +78,9 @@ export const Announcements = () => {
                                     </h4>
                                     <p className="text-muted-foreground">{notification.message}</p>
                                 </div>
-                                <Button variant="outline" className="mt-2 h-9">Give Feedback</Button>
+                                <Link to={`/inbox${notification?.redirectUrl}?notification_id=${notification?._id}`}>
+                                    <Button variant="outline" className="mt-2 h-9">Give Feedback</Button>
+                                </Link>
                             </div>
                         ))}
                         {data?.announcements.map((announcement: Announcement) => (

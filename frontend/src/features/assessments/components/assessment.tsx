@@ -51,6 +51,7 @@ const formSchema = z.object({
 
 export const Assessment = ({ type, data, onSubmit, isVisible, hideField, name }: Props) => {
     const initialData = type === "self" ? data?.selfAssessment : data?.managerAssessment;
+    console.log(hideField);
 
     const form = useForm<FormData>({
         resolver: zodResolver(formSchema),
@@ -117,33 +118,37 @@ export const Assessment = ({ type, data, onSubmit, isVisible, hideField, name }:
                 ) : (
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 w-full">
-                            <SelectField
-                                name="answer1"
-                                label={getQuestionText("How well do you think your contributions are recognized?", type === "manager")}
-                                options={[
-                                    { value: "Highly Recognized", label: "Highly Recognized" },
-                                    { value: "Moderately Recognized", label: "Moderately Recognized" },
-                                    { value: "Poorly Recognized", label: "Poorly Recognized" },
-                                ]}
-                                control={form.control}
-                            />
-                            <SelectField
-                                name="answer2"
-                                label={getQuestionText("What could significantly improve your ability to excel at work?", type === "manager")}
-                                options={[
-                                    { value: "betterTools", label: "Better Tools" },
-                                    { value: "moreTraining", label: "More Training" },
-                                    { value: "greaterAutonomy", label: "Greater Autonomy" },
-                                ]}
-                                control={form.control}
-                            />
+                            {!hideField && <>
+                                <SelectField
+                                    name="answer1"
+                                    label={getQuestionText("How well do you think your contributions are recognized?", type === "manager")}
+                                    options={[
+                                        { value: "Highly Recognized", label: "Highly Recognized" },
+                                        { value: "Moderately Recognized", label: "Moderately Recognized" },
+                                        { value: "Poorly Recognized", label: "Poorly Recognized" },
+                                    ]}
+                                    control={form.control}
+                                />
+                                <SelectField
+                                    name="answer2"
+                                    label={getQuestionText("What could significantly improve your ability to excel at work?", type === "manager")}
+                                    options={[
+                                        { value: "betterTools", label: "Better Tools" },
+                                        { value: "moreTraining", label: "More Training" },
+                                        { value: "greaterAutonomy", label: "Greater Autonomy" },
+                                    ]}
+                                    control={form.control}
+                                />
+                            </>}
                             <FormField
                                 control={form.control}
                                 name="answer3"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>{getQuestionText("What do you believe are your key strengths at work?", type === "manager")}</FormLabel>
-                                        <Textarea {...field} placeholder="List strengths (e.g., communication, problem-solving)" />
+                                        <Textarea
+                                            disabled={hideField}
+                                            {...field} placeholder="List strengths (e.g., communication, problem-solving)" />
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -154,20 +159,22 @@ export const Assessment = ({ type, data, onSubmit, isVisible, hideField, name }:
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>{getQuestionText("What areas could you improve in, and how do you plan to do so?", type === "manager")}</FormLabel>
-                                        <Textarea {...field} placeholder="Describe how you plan to improve" />
+                                        <Textarea
+                                            disabled={hideField}
+                                            {...field} placeholder="Describe how you plan to improve" />
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" variant="saveAction" className="w-40">
+                            {!hideField && <Button type="submit" variant="saveAction" className="w-40">
                                 Submit
-                            </Button>
+                            </Button>}
                         </form>
                     </Form>
                 )}
             </CardContent>
             {!isVisible && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 bg-opacity-75">
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 bg-opacity-95">
                     <Lock size={48} className="text-gray-500" />
                     <p className="text-gray-500 mt-2">Complete your assessment to unlock this section.</p>
                 </div>

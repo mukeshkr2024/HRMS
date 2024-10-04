@@ -36,7 +36,7 @@ export const getAssessmentById = CatchAsyncError(
         try {
 
             const { assessmentId } = req.params;
-            const assessment = await Assessment.findById(assessmentId).populate("selfAssessment").populate("managerAssessment")
+            const assessment = await Assessment.findById(assessmentId).populate("selfAssessment").populate("managerAssessment").populate("employee", "name")
 
             if (!assessment) {
                 return next(new ErrorHandler("Assessment not found", 404));

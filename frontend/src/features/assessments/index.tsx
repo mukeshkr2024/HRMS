@@ -1,8 +1,4 @@
-import { useAuthStore } from "@/context/useAuthStore";
-import { useEffect, useState } from "react";
-import { useGetAssessment } from "./api/use-get-assement";
-import { useGetAssessments } from "./api/use-get-assement-list";
-import { useUpdateAssessment } from "./api/use-update-assement";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Select,
     SelectContent,
@@ -11,9 +7,13 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Assessment } from "./components/assessment";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuthStore } from "@/context/useAuthStore";
+import { useEffect, useState } from "react";
+import { useGetAssessment } from "./api/use-get-assement";
+import { useGetAssessments } from "./api/use-get-assement-list";
+import { useUpdateAssessment } from "./api/use-update-assement";
+import { Assessment } from "./components/assessment";
 
 
 export const Assessments = ({
@@ -57,6 +57,14 @@ export const Assessments = ({
             )
         }
 
+        if (!assessments?.length) {
+            return (
+                <div className="w-full text-center">
+                    <h3 className="text-lg text-gray-600">No assessments available</h3>
+                </div>
+            );
+        }
+
         if (userRole === "admin") { // TODO: later change to employee role
             return (
                 <>
@@ -73,7 +81,7 @@ export const Assessments = ({
                         onSubmit={(data) => handleSubmit(data, "manager")}
                         isVisible={assessment?.selfAssessment?.isCompleted}
                         hideField={true}
-                        name="Mukesh kumar"
+                        name={assessment?.employee?.name}
                     />
                 </>
             )
@@ -86,7 +94,7 @@ export const Assessments = ({
                         onSubmit={(data) => handleSubmit(data, "manager")}
                         isVisible={true}
                         hideField={false}
-                        name="Mukesh kumar"
+                        name={assessment?.employee?.name}
                     />
                     <Assessment
                         type="self"

@@ -8,12 +8,12 @@ interface SelectFieldProps {
     control: any;
 }
 
-export const SelectField = ({ name, label, options, control, }: SelectFieldProps) => {
+export const SelectField = ({ name, label, options, control }: SelectFieldProps) => {
     return (
-        <FormField control={control} name={name} render={({ field }) => (
+        <FormField control={control} name={name} render={({ field, fieldState }) => (
             <FormItem className="flex-1">
                 <FormLabel>{label}</FormLabel>
-                <Select {...field} onValueChange={field.onChange}>
+                <Select {...field} onValueChange={field.onChange} value={field.value}>
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
                     </SelectTrigger>
@@ -23,7 +23,7 @@ export const SelectField = ({ name, label, options, control, }: SelectFieldProps
                         ))}
                     </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage>{fieldState.error?.message}</FormMessage>
             </FormItem>
         )} />
     );
