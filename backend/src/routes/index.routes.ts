@@ -15,6 +15,7 @@ import { assetRouter } from "./v1/asset.routes";
 import { memberRouter } from "./v1/members.routes";
 import { feedBackRouter } from "./v1/feedback.routes";
 import { notificationRouter } from "./v1/notification.routes";
+import { assessmentRouter } from "./v1/assessment.routes";
 
 export const router = express.Router();
 
@@ -65,3 +66,6 @@ router.use("/feedbacks", feedBackRouter)
 
 // notifications routes
 router.use("/notifications", notificationRouter)
+
+// Assessment routes
+router.use("/assessments", assessmentRouter)

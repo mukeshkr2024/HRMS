@@ -7,57 +7,52 @@ import { Employee } from "../models/employee.model";
 
 const FEEDBACK_REQUEST_NOTIFICATION_TYPE = "feedback-request";
 
+// Utility function to calculate the due date
 const calculateDueDate = (days: number): Date => {
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + days);
     return currentDate;
 };
 
-export const requestFeedBack = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+// Request feedback from an employee
+export const requestFeedback = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const { giverId, receiverId } = req.body;
 
-    // Validate if giverId and receiverId are present
     if (!giverId || !receiverId) {
         return next(new ErrorHandler("Feedback giver and receiver are required.", 400));
     }
 
-    // Get authenticated user
     const authUser = await Employee.findById(req.employee.id);
     if (!authUser) {
         return next(new ErrorHandler("Authenticated user not found.", 404));
     }
 
-    // Check if feedback receiver exists
     const feedbackReceiver = await Employee.findById(receiverId);
     if (!feedbackReceiver) {
         return next(new ErrorHandler("Feedback receiver not found.", 404));
     }
 
-    // Create feedback
     const feedback = await Feedback.create({
         feedbackGiver: giverId,
         feedbackReceiver: receiverId,
         requestedBy: authUser._id,
         question1Response: "",
         question2Response: "",
-        dueDate: calculateDueDate(15) // Calculate due date
+        dueDate: calculateDueDate(15),
     });
 
     if (!feedback) {
         return next(new ErrorHandler("Failed to create feedback request.", 500));
     }
 
-    // Create notification
     const notification = await Notification.create({
         employeeId: giverId,
         notificationType: FEEDBACK_REQUEST_NOTIFICATION_TYPE,
         title: `Feedback Request from ${authUser.name}`,
         message: `Please give feedback to ${feedbackReceiver.name}`,
         redirectUrl: `/feedback/view/${feedback._id}`,
-        createdBy: authUser._id
+        createdBy: authUser._id,
     });
-
-
 
     console.log("Notification Created:", {
         notificationId: notification._id,
@@ -74,144 +69,107 @@ export const requestFeedBack = CatchAsyncError(async (req: Request, res: Respons
     });
 });
 
-export const getFeedbackById = CatchAsyncError(
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const { feedbackId } = req.params;
-
-            const feedback = await Feedback.findById(feedbackId).populate({
-                path: "feedbackReceiver",
-                select: "name jobTitle avatar"
-            })
-
-            if (!feedback) {
-                return next(new ErrorHandler("Feedback not found.", 404));
-            }
-
-            const notification = await Notification.findOneAndUpdate({
-                employeeId: feedback.feedbackGiver,
-                redirectUrl: `/feedback/view/${feedback._id}`,
-                isRead: true
-            });
-
-            console.log(notification);
-
-
-            return res.status(200).json(feedback)
-
-        } catch (error) {
-            return next(new ErrorHandler(error, 400));
-        }
-    }
-)
-
-export const submitFeedback = CatchAsyncError(async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+// Get feedback by its ID
+export const getFeedbackById = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const { feedbackId } = req.params;
-    const { response1, response2 } = req.body;
+    const { notification_id } = req.query;
 
-    const feedback = await Feedback.findByIdAndUpdate(feedbackId, {
-        question1Response: response1,
-        question2Response: response2,
-        submitted: true,
-    }, { new: true });
-
-
+    const feedback = await Feedback.findById(feedbackId).populate({
+        path: "feedbackReceiver",
+        select: "name jobTitle avatar",
+    });
 
     if (!feedback) {
         return next(new ErrorHandler("Feedback not found.", 404));
     }
 
+    const response = await Notification.findByIdAndUpdate(notification_id, {
+        isRead: true,
+    });
+
+    console.log(response);
+
+    return res.status(200).json(feedback);
+});
+
+// Submit feedback
+export const submitFeedback = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    const { feedbackId } = req.params;
+    const { response1, response2 } = req.body;
+
+    const feedback = await Feedback.findByIdAndUpdate(
+        feedbackId,
+        {
+            question1Response: response1,
+            question2Response: response2,
+            submitted: true,
+        },
+        { new: true }
+    );
+
+    if (!feedback) {
+        return next(new ErrorHandler("Feedback not found.", 404));
+    }
 
     return res.status(200).json({ message: "Feedback submitted successfully." });
 });
 
-export const getMemberFeedbacks = CatchAsyncError(
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const { memberId } = req.params;
-            const { start, end, page = 1, limit = 10 } = req.query;
+// Get feedbacks for a specific member
+export const getMemberFeedbacks = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    const { memberId } = req.params;
+    const { start, end, page = 1, limit = 10 } = req.query;
 
-            let startDate: Date | null = null;
-            let endDate: Date | null = null;
+    let startDate: Date | null = start ? new Date(start as string) : null;
+    let endDate: Date | null = end ? new Date(end as string) : null;
 
-            if (start && end) {
-                startDate = new Date(start as string);
-                endDate = new Date(end as string);
-
-                if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-                    return res.status(400).json({ message: "Invalid date format." });
-                }
-            }
-
-            // Create a date filter object
-            const dateFilter: any = {};
-            if (startDate) {
-                dateFilter.$gte = startDate;
-            }
-            if (endDate) {
-                dateFilter.$lte = endDate;
-            }
-
-            const skip = (page - 1) * limit; // Calculate the number of documents to skip
-            const feedbacks = await Feedback.find({
-                feedbackReceiver: memberId,
-                submitted: true,
-                ...(startDate || endDate ? { createdAt: dateFilter } : {}) // Apply date filter only if either date is provided
-            }).populate({
-                path: 'feedbackGiver',
-                select: 'name avatar jobTitle'
-            }).sort({ createdAt: -1 })
-                .skip(skip) // Skip the previous pages
-                .limit(Number(limit)); // Limit the number of documents returned
-
-            const pendings = await Feedback.find({
-                feedbackReceiver: memberId,
-                submitted: false,
-                ...(startDate || endDate ? { createdAt: dateFilter } : {})
-            }).populate({
-                path: 'feedbackGiver',
-                select: 'name avatar jobTitle'
-            });
-
-            return res.json({
-                pendings,
-                feedbacks,
-                page: Number(page),
-                hasMore: feedbacks.length === Number(limit) // Check if there are more feedbacks to load
-            });
-
-        } catch (error) {
-            return next(new ErrorHandler(error, 400));
-        }
+    if (startDate && isNaN(startDate.getTime()) || endDate && isNaN(endDate.getTime())) {
+        return res.status(400).json({ message: "Invalid date format." });
     }
-);
 
+    const dateFilter: Record<string, Date> = {};
+    if (startDate) dateFilter.$gte = startDate;
+    if (endDate) dateFilter.$lte = endDate;
 
-export const deleteFeedBackRequest = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const feedbacks = await Feedback.find({
+        feedbackReceiver: memberId,
+        submitted: true,
+        ...(startDate || endDate ? { createdAt: dateFilter } : {}),
+    })
+        .populate("feedbackGiver", "name avatar jobTitle")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit));
+
+    const pendings = await Feedback.find({
+        feedbackReceiver: memberId,
+        submitted: false,
+        ...(startDate || endDate ? { createdAt: dateFilter } : {}),
+    }).populate("feedbackGiver", "name avatar jobTitle");
+
+    return res.json({
+        pendings,
+        feedbacks,
+        page: Number(page),
+        hasMore: feedbacks.length === Number(limit),
+    });
+});
+
+// Delete feedback request
+export const deleteFeedbackRequest = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const { feedbackRequestId } = req.params;
 
-    // Validate if feedbackRequestId is provided
-    if (!feedbackRequestId) {
-        return next(new ErrorHandler("Feedback request ID is required.", 400));
-    }
-
-    // Find the feedback request
     const feedback = await Feedback.findById(feedbackRequestId);
     if (!feedback) {
         return next(new ErrorHandler("Feedback request not found.", 404));
     }
 
-    // Delete the feedback request
     await Feedback.findByIdAndDelete(feedbackRequestId);
 
-    // Delete the associated notification
     const notification = await Notification.findOneAndDelete({
         employeeId: feedback.feedbackGiver,
-        redirectUrl: `/feedback/view/${feedback._id}`
+        redirectUrl: `/feedback/view/${feedback._id}`,
     });
 
     console.log("Notification Deleted:", {
@@ -224,34 +182,14 @@ export const deleteFeedBackRequest = CatchAsyncError(async (req: Request, res: R
     });
 });
 
-export const getMyMembersForFeedback = CatchAsyncError(
-    async (req: Request, res: Response, next: NextFunction) => {
-        try {
+// Get all employees for feedback, based on user role
+export const getMyMembersForFeedback = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    const employeeId = req.employee.id;
+    const role = req.employee.role;
 
-            const employeeId = req.employee.id;
-            const role = req.employee.role;
+    const query = role === "admin" ? { _id: { $ne: employeeId } } : { reportsTo: employeeId, _id: { $ne: employeeId } };
 
-            console.log(employeeId);
+    const employees = await Employee.find(query).select("name email avatar");
 
-
-            console.log(role);
-
-            let employees;
-
-            if (role === "admin") {
-                employees = await Employee.find({
-                    _id: { $ne: employeeId }
-                });
-            } else {
-                employees = await Employee.find({
-                    reportsTo: employeeId,
-                    _id: { $ne: employeeId }
-                }).select("name email avatar")
-            }
-
-            return res.json(employees)
-        } catch (error) {
-            return next(new ErrorHandler(error, 400));
-        }
-    }
-)
+    return res.json(employees);
+});

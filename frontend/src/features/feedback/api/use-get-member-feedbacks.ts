@@ -4,7 +4,7 @@ import { DateRange } from "react-day-picker";
 
 export const useGetMemberFeedbacks = (id: string, date: DateRange | undefined) => {
     return useInfiniteQuery({
-        queryKey: ["member-feedbacks", id, date],
+        queryKey: ["member-feedbacks"],
         queryFn: async ({ pageParam = 1 }) => {
             const queryParams = date && date.from && date.to
                 ? `start=${date.from.toISOString()}&end=${date.to.toISOString()}&page=${pageParam}&limit=1`

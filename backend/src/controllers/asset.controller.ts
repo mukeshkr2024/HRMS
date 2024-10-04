@@ -6,7 +6,6 @@ import { ErrorHandler } from "../utils/ErrorHandler";
 
 export const addAsset = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-
         const { category, description, serialno, assignedDate } = req.body;
         const { employee } = req.query;
         const employeeId = employee ? employee : req.employee._id;

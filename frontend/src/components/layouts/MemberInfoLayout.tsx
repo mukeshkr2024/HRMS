@@ -8,10 +8,8 @@ export const MemberInfoLayout = () => {
     const { memberId } = useParams();
     const { loading } = useAuthStore();
 
-    // Return the loader while loading the auth state
     if (loading) return <CustomLoader />;
 
-    // Fallback in case memberId is missing
     if (!memberId) {
         return (
             <div className="text-center text-red-500">
@@ -29,7 +27,10 @@ export const MemberInfoLayout = () => {
         {
             label: 'Feedbacks',
             href: `/members/${memberId}/feedbacks`,
-        },
+        }, {
+            label: "Assessments",
+            href: `/members/${memberId}/assessments`,
+        }
     ];
 
     return (

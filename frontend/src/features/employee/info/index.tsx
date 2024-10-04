@@ -1,6 +1,5 @@
 import { EmployeeFormSection } from "@/components/form/employee-form-section";
 import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
-import { ComboboxDemo } from "@/components/test";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useGetEmployeeOptions } from "@/features/employees/api/use-get-employeeOptions";
@@ -274,10 +273,8 @@ export const EmployeeInfo = () => {
         label: employee.name
     }))
 
-
     return (
         <div>
-            <ComboboxDemo />
             <div>
                 <section className="mt-8">
                     <Form {...form}>

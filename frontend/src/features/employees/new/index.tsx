@@ -1,16 +1,16 @@
-import { useCreateEmployee } from "@/features/employees/api/use-create-employee";
-import { useGetEmployeeOptions } from "@/features/employees/api/use-get-employeeOptions";
 import { EmployeeFormSection } from "@/components/form/employee-form-section";
+import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { dateRegex } from "@/features/employee/info";
+import { useCreateEmployee } from "@/features/employees/api/use-create-employee";
+import { useGetEmployeeOptions } from "@/features/employees/api/use-get-employeeOptions";
+import { emailPattern } from "@/features/my-info";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { EmployeeFormFieldWrapper } from "@/components/form/employee-form-wrapper";
-import { dateRegex } from "@/features/employee/info";
-import { emailPattern } from "@/features/my-info";
 
 const formSchema = z.object({
     employeeNumber: z
@@ -247,7 +247,6 @@ export const NewEmployeePage = () => {
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.uan" label="UAN" />
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.pan" label="PAN" />
                                     </div>
-
                                     <div className="flex gap-4">
                                         <EmployeeFormFieldWrapper control={form.control} name="personalInformation.gender" label="Gender"
                                             className="w-40"
@@ -279,7 +278,6 @@ export const NewEmployeePage = () => {
                                     </div>
                                 </div>
                             </EmployeeFormSection>
-
                             {/* Address */}
                             <EmployeeFormSection title="Address" icon="/icons/home-2.svg">
                                 <div className="flex flex-col gap-4">

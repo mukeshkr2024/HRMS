@@ -1,29 +1,11 @@
+import { IEmployee } from "@/context/useAuthStore";
 import { UploadAvatar } from "../../features/my-info/components/upload-avatar";
 import { UserAvatar } from "../shared/user-avatar";
 import { Card } from "../ui/card";
 
 export const MyInfoCard = ({ employee }: {
     employeeId?: string,
-    employee: {
-        avatar: string,
-        personalInformation: {
-            firstName: string,
-            middleName: string,
-            lastName: string
-        }
-        contactInformation: {
-            workPhone: string
-        }
-        email: string
-        reportsTo: {
-            name: string
-            avatar: string
-        },
-        department: {
-            name: string
-        },
-        workLocation: string
-    }
+    employee: IEmployee
 }) => {
     return (
         <Card className="flex flex-wrap lg:justify-between lg:items-center px-4 py-6 lg:px-14 lg:py-8 font-urbanist shadow-md relative">
@@ -42,7 +24,7 @@ export const MyInfoCard = ({ employee }: {
                 </div>
                 <div className="flex flex-col gap-y-4">
                     <h3 className="font-semibold sm:text-xl lg:text-3xl text-[#000000]">
-                        {employee?.personalInformation?.firstName} {employee?.personalInformation?.middleName} {employee?.personalInformation?.lastName}
+                        {employee?.name}
                     </h3>
                     <div className="flex flex-col lg:flex-row lg:gap-x-8 font-urbanist text-[#5C5C5C] font-medium gap-y-6">
                         <div className="flex gap-x-6 lg:gap-x-14 gap-y-4 lg:gap-y-0 flex-col lg:flex-row">
@@ -88,13 +70,6 @@ export const MyInfoCard = ({ employee }: {
                     </div>
                 </div>
             </div>
-            {/* {!employeeId && (
-                <div className="mt-4 lg:mt-0">
-                    <Button variant="outline" className="shadow-md">
-                        Request change
-                    </Button>
-                </div>
-            )} */}
         </Card>
     );
 };

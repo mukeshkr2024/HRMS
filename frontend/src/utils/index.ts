@@ -48,3 +48,21 @@ export const timeAgo = (dateString: string) => {
     if (interval >= 1) return `${interval} minute${interval === 1 ? '' : 's'} ago`;
     return 'just now';
 };
+
+
+export const formatDateToLocalString = (utcDateString: string, timeZone: string = 'Asia/Kolkata'): string => {
+    const date = new Date(utcDateString);
+
+    const options: Intl.DateTimeFormatOptions = {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+        timeZone: timeZone,
+    };
+
+    const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+    return `${formattedDate}`;
+};

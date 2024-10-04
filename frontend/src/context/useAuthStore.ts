@@ -3,7 +3,7 @@ import { create, SetState } from "zustand";
 import Cookies from 'js-cookie';
 
 
-type IEmployee = {
+export type IEmployee = {
   _id: string;
   name: string;
   email: string;
@@ -16,6 +16,10 @@ type IEmployee = {
     avatar: string;
   };
   role: string;
+  department: {
+    name: string;
+  }
+  workLocation: string;
 };
 
 type AuthState = {

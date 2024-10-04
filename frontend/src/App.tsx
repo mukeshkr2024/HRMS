@@ -11,6 +11,7 @@ import { MemberInfoLayout } from "./components/layouts/MemberInfoLayout";
 import { AssetsPage } from "./features/assets";
 import { DepartmentPage } from "./features/departments";
 import { FilesPage } from "./features/documents";
+import { TeamAssesmentPage } from "./features/employee/assessment";
 import { EmployeeAssetsPage } from "./features/employee/assets";
 import { EmployeeDocumentPage } from "./features/employee/document";
 import { EmployeeGoalsPage } from "./features/employee/goals";
@@ -27,6 +28,7 @@ import { TeamMembersPage } from "./features/members";
 import { MemberDetail } from "./features/members/detail";
 import { MyInfo } from "./features/my-info";
 import { ProfilesPage } from "./features/profiles";
+import { Assessments } from "./features/assessments";
 
 function App() {
   return (
@@ -51,6 +53,7 @@ function App() {
             <Route path="/my-info" element={<MyInfo />} />
             <Route path="/assets" element={<AssetsPage />} />
             <Route path="/goals" element={<GoalPage />} />
+            <Route path="/assessments" element={<Assessments />} />
           </Route>
 
           {/* Employees Section */}
@@ -72,6 +75,7 @@ function App() {
           <Route element={<MemberInfoLayout />}>
             <Route path="/members/:memberId" element={<MemberDetail />} />
             <Route path="/members/:memberId/feedbacks" element={<FeedbackPage />} />
+            <Route path="/members/:memberId/assessments" element={<TeamAssesmentPage />} />
           </Route>
 
           {/* Reports and Documents */}

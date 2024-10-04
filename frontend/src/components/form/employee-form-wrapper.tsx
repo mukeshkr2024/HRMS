@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { CustomInput } from "@/components/shared/custom-input";
-import { UseFormReturn } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import {
-    Command,
-    CommandGroup,
-    CommandItem,
-    CommandList,
-    CommandInput,
-    CommandEmpty,
-} from "@/components/ui/command";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/utils/cn";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/utils/cn";
+import { Check, ChevronsUpDown } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
 
 interface EmployeeFormFieldWrapperProps {
     control: UseFormReturn<any>["control"];
@@ -57,8 +57,6 @@ export const EmployeeFormFieldWrapper: React.FC<EmployeeFormFieldWrapperProps> =
             control={control}
             name={name}
             render={({ field }) => {
-                console.log(field.name);
-
                 return (
                     <FormItem className="flex flex-col">
                         <FormLabel className="font-urbanist text-[#5C5C5C] font-medium">{label}</FormLabel>

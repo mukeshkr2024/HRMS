@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetFeedbackNotifications } from "../api/use-get-feedback-notifications";
 
 interface Notification {
-    id: string;
+    _id: string;
     message: string;
     isRead: boolean;
     redirectUrl: string;
@@ -39,10 +39,10 @@ export const FeedbackList = () => {
                 <div>
                     {data?.notifications?.map((notification: Notification) => (
                         <div
-                            key={notification.id}
-                            className={`flex gap-4 w-full px-1.5 border-b py-1.5 mb-4 items-center cursor-pointer ${notification.isRead ? 'bg-gray-100 rounded-md' : 'bg-white'
+                            key={notification?._id}
+                            className={`flex gap-4 w-full px-1.5 border-b py-1.5 mb-4 items-center cursor-pointer ${!notification.isRead ? 'bg-gray-100 rounded-md' : 'bg-white'
                                 }`}
-                            onClick={() => navigate(`/inbox${notification?.redirectUrl}`)}
+                            onClick={() => navigate(`/inbox${notification?.redirectUrl}?notification_id=${notification?._id}`)}
                         >
                             <UserAvatar
                                 className="w-12 h-12"

@@ -34,7 +34,7 @@ export const PendingFeedbacks = ({ data }: Props) => {
         mutation.mutate(id)
     }
 
-    if (!data?.pages?.length || data?.pages[0]?.pendings?.length) return;
+    if (!data?.pages?.length || !data?.pages[0]?.pendings?.length) return;
 
 
     return (

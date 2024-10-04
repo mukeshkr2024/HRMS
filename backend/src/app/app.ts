@@ -7,6 +7,7 @@ import { ErrorMiddleware } from "../middleware/error";
 import cookieParser from "cookie-parser";
 import { main } from "../../scripts/test";
 import path from "path";
+import createAssessments from "../utils/cron-jobs";
 
 
 export const app = express();
@@ -52,3 +53,6 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
 
 // middleware
 app.use(ErrorMiddleware);
+
+// cron jobs
+createAssessments()
