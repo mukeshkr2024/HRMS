@@ -6,7 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 
 export const MemberInfoLayout = () => {
     const { memberId } = useParams();
-    const { loading } = useAuthStore();
+    const { loading, employee } = useAuthStore();
 
     if (loading) return <CustomLoader />;
 
@@ -18,8 +18,7 @@ export const MemberInfoLayout = () => {
         );
     }
 
-    // TopBar route configuration
-    const topBarRoutes = [
+    const managerRoutes = [
         {
             label: 'Raised Issues',
             href: `/members/${memberId}`,
@@ -31,7 +30,23 @@ export const MemberInfoLayout = () => {
             label: "Assessments",
             href: `/members/${memberId}/assessments`,
         }
+    ]
+
+    const topBarRoutes = [
+        {
+            label: 'Raised Issues',
+            href: `/members/${memberId}`,
+        },
+        {
+            label: 'Feedbacks',
+            href: `/members/${memberId}/feedbacks`,
+        },
     ];
+
+
+    const routes = employee?.role === 'manager' ? managerRoutes : topBarRoutes
+
+
 
     return (
         <div className="p-4">
@@ -46,7 +61,7 @@ export const MemberInfoLayout = () => {
             </Link>
 
             {/* TopBar Navigation */}
-            <TopBar routes={topBarRoutes} />
+            <TopBar routes={routes} />
 
             {/* Content */}
             <div className="mt-4">

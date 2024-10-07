@@ -15,19 +15,25 @@ export const getMembers = CatchAsyncError(
             let employees;
 
             if (role === "admin") {
-                employees = await Employee.find();
-            } else {
+                // Find all employees but exclude the current employee
                 employees = await Employee.find({
-                    reportsTo: employeeId
-                }).select("name email avatar")
+                    _id: { $ne: employeeId }
+                });
+            } else {
+                // Find employees who report to the current employee and exclude the current employee
+                employees = await Employee.find({
+                    reportsTo: employeeId,
+                    _id: { $ne: employeeId }
+                }).select("name email avatar");
             }
 
-            return res.json(employees)
+            return res.json(employees);
         } catch (error) {
             return next(new ErrorHandler(error, 400));
         }
     }
-)
+);
+
 
 export const updateMemberIssue = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {

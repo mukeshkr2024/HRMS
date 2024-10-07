@@ -33,18 +33,17 @@ export const MyInfoLayout = () => {
 
     const { role } = employee || {};
 
+    // Correctly merge routes based on role
     const routes =
-        role === "admin" || role === "lead"
-            ? [...commonRoutes, ...employeeOrLeadExtraRoutes]
-            : commonRoutes;
+        role === "admin" || role === "manager"
+            ? commonRoutes
+            : [...commonRoutes, ...employeeOrLeadExtraRoutes];  // Spread operator for merging arrays
 
     return (
         <div>
             <TopBar routes={routes} />
             <div className="mt-7">
-                {employee &&
-                    <MyInfoCard employee={employee} />
-                }
+                {employee && <MyInfoCard employee={employee} />}
             </div>
             <div className="mt-6">
                 <Outlet />
