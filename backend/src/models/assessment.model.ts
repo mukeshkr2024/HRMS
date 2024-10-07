@@ -9,10 +9,10 @@ interface IAssessmentData extends Document {
 }
 
 const assessmentDataSchema: Schema<IAssessmentData> = new Schema({
-    answer1: { type: String, required: true },
-    answer2: { type: String, required: true },
-    answer3: { type: String, required: true },
-    answer4: { type: String, required: true },
+    answer1: { type: String },
+    answer2: { type: String },
+    answer3: { type: String },
+    answer4: { type: String },
     isCompleted: { type: Boolean, default: false },
 }, { timestamps: true });
 

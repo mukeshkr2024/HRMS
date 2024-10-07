@@ -8,6 +8,7 @@ import { UnprotectedRoutes } from "@/routes/unprotect-routes";
 import { Route, Routes } from "react-router-dom";
 import { InboxLayout } from "./components/layouts/InboxLayout";
 import { MemberInfoLayout } from "./components/layouts/MemberInfoLayout";
+import { Assessments } from "./features/assessments";
 import { AssetsPage } from "./features/assets";
 import { DepartmentPage } from "./features/departments";
 import { FilesPage } from "./features/documents";
@@ -28,7 +29,6 @@ import { TeamMembersPage } from "./features/members";
 import { MemberDetail } from "./features/members/detail";
 import { MyInfo } from "./features/my-info";
 import { ProfilesPage } from "./features/profiles";
-import { Assessments } from "./features/assessments";
 
 function App() {
   return (

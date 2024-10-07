@@ -55,4 +55,4 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
 app.use(ErrorMiddleware);
 
 // cron jobs
-createAssessments()
+// createAssessments()

@@ -67,7 +67,6 @@ export const Assessment = ({ type, data, onSubmit, isVisible, hideField, name }:
         form.reset(initialData);
     }, [initialData, form]);
 
-    // Function to return question based on the assessment type
     const getQuestionText = (baseText: string, forManager: boolean) =>
         forManager && name ? `${baseText} about ${name}` : baseText;
 

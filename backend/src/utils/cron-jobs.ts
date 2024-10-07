@@ -27,8 +27,8 @@ export const createAssessments = async () => {
 
         // Create self-assessment and manager-assessment data
         const [selfAssessmentData, managerAssessmentData] = await Promise.all([
-            new AssessmentData({ answer1: " ", answer2: " ", answer3: " ", answer4: " ", isSubmitted: false }).save(),
-            new AssessmentData({ answer1: " ", answer2: " ", answer3: " ", answer4: " ", isSubmitted: false }).save()
+            new AssessmentData({ answer1: null, answer2: null, answer3: null, answer4: null, isSubmitted: false }).save(),
+            new AssessmentData({ answer1: null, answer2: null, answer3: null, answer4: null, isSubmitted: false }).save()
         ]);
 
         // Create the assessment
